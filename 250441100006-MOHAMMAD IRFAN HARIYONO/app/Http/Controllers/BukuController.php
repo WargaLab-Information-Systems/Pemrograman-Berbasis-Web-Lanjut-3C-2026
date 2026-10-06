@@ -2,57 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Buku;
 use Illuminate\Http\Request;
 
 class BukuController extends Controller
 {
-    // Soal 5
-    private $bukuList = [
-        [
-            'id' => 1,
-            'judul' => 'Sejarah Perang Dunia',
-            'penulis' => 'Saut Pasaribu',
-            'tahun_terbit' => 2020,
-            'kategori' => 'Sejarah'
-        ],
-        [
-            'id' => 2,
-            'judul' => 'Hujan',
-            'penulis' => 'Tere Liye',
-            'tahun_terbit' => 2016,
-            'kategori' => 'Fiksi'
-        ],
-        [
-            'id' => 3,
-            'judul' => 'The Power of Habit',
-            'penulis' => 'Charles Duhigg',
-            'tahun_terbit' => 2019,
-            'kategori' => 'Motivasi'
-        ],
-        [
-            'id' => 4,
-            'judul' => 'Koala Kumal',
-            'penulis' => 'Raditya Dika',
-            'tahun_terbit' => 2016,
-            'kategori' => 'Kisah Hidup'
-        ],
-        [
-            'id' => 5,
-            'judul' => 'Filosofi Teras',
-            'penulis' => 'Henry Manampiring',
-            'tahun_terbit' => 2020,
-            'kategori' => 'Filsafat'
-        ],
-    ];
-
     public function index()
     {
-        return view('buku.index', ['bukuList' => $this->bukuList]);
+        // Mengambil data dari database beserta nama kategorinya
+        $bukuList = Buku::with('kategori')->get()->map(function ($buku) {
+            return [
+                'id' => $buku->id,
+                'judul' => $buku->judul,
+                'penulis' => $buku->penulis,
+                'tahun_terbit' => $buku->tahun_terbit,
+                'kategori' => $buku->kategori->nama ?? 'Tidak Ada',
+            ];
+        });
+
+        return view('buku.index', ['bukuList' => $bukuList]);
     }
 
     public function show($id)
     {
-        $buku = collect($this->bukuList)->firstWhere('id', (int)$id);
+        // Cari data di database
+        $bukuData = Buku::with('kategori')->find($id);
+
+        $buku = null;
+        if ($bukuData) {
+            $buku = [
+                'id' => $bukuData->id,
+                'judul' => $bukuData->judul,
+                'penulis' => $bukuData->penulis,
+                'tahun_terbit' => $bukuData->tahun_terbit,
+                'kategori' => $bukuData->kategori->nama ?? 'Tidak Ada',
+            ];
+        }
 
         return view('buku.show', compact('buku'));
     }
