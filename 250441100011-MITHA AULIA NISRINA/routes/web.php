@@ -10,4 +10,3 @@ Route::get('/', function () {
 Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
 
 Route::get('/buku/{id}', [BukuController::class, 'show'])->name('buku.show');
-
