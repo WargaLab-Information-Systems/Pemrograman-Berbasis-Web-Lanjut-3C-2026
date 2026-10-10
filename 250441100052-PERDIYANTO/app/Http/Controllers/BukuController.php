@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Buku;
 use Illuminate\Http\Request;
 
 class BukuController extends Controller
@@ -44,19 +45,21 @@ class BukuController extends Controller
     ],
 ];
 
+
     public function index() {
-        return view('buku.index', ['buku' => $this->buku]);
+        $buku = Buku::join('kategoris', 'bukus.kategori_id', '=', 'kategoris.id')
+            ->select('bukus.*', 'kategoris.nama as kategori')
+            ->get();
+
+        return view('buku.index', ['buku' => $buku]);
     }
 
     public function show($id) {
-        $temu = null;
 
-        foreach ($this->buku as $buku) {
-            if ($buku["id"] == $id) {
-                $temu = $buku;
-                break;
-            } 
-        }
+        $temu = Buku::join('kategoris', 'bukus.kategori_id', '=', 'kategoris.id')
+            ->select('bukus.*', 'kategoris.nama as kategori')
+            ->where('bukus.id', $id)
+            ->first();
 
         return view('buku.show', ['buku' => $temu]);
     }
