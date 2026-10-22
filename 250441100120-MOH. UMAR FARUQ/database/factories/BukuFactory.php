@@ -22,6 +22,6 @@ class BukuFactory extends Factory
         'judul' => fake()->sentence(3),
         'penulis' => fake()->name(),
         'tahun_terbit' => fake()->year(),
-    ]; 
+    ];
 }
 }
