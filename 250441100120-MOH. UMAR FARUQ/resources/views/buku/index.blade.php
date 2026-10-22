@@ -9,7 +9,7 @@
         @foreach ($bukuList as $buku)
             <x-buku-card :buku="$buku">
                 <x-slot:extra>
-                    <span class="badge">Kategori: {{ $buku['kategori'] }}</span>
+                    <span class="badge">Kategori: {{ $buku->kategori->nama }}</span>
                 </x-slot:extra>
             </x-buku-card>
         @endforeach

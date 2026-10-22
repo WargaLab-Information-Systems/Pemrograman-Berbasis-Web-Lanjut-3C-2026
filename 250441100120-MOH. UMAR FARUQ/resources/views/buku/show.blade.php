@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', isset($buku) ? $buku['judul'] : 'Buku Tidak Ditemukan')
+@section('title', isset($buku) ? $buku->judul : 'Buku Tidak Ditemukan')
 
 @section('content')
     @if ($buku)
         <div class="card" style="max-width: 600px; margin: 0 auto;">
-            <h2>{{ $buku['judul'] }}</h2>
+            <h2>{{ $buku->judul }}</h2>
             <hr style="margin: 15px 0;">
-            <p><strong>ID Buku:</strong> {{ $buku['id'] }}</p>
-            <p><strong>Penulis:</strong> {{ $buku['penulis'] }}</p>
-            <p><strong>Tahun Terbit:</strong> {{ $buku['tahun_terbit'] }}</p>
-            <p><strong>Kategori:</strong> <span class="badge">{{ $buku['kategori'] }}</span></p>
+            <p><strong>ID Buku:</strong> {{ $buku->id }}</p>
+            <p><strong>Penulis:</strong> {{ $buku->penulis }}</p>
+            <p><strong>Tahun Terbit:</strong> {{ $buku->tahun_terbit }}</p>
+            <p><strong>Kategori:</strong> <span class="badge">{{ $buku->kategori->nama ?? '-' }}</span></p>
             
             <a href="{{ route('buku.index') }}" class="btn" style="background-color: #64748b; margin-top: 20px;">
                 &larr; Kembali ke Daftar Buku
