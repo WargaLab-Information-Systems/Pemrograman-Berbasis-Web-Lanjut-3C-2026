@@ -10,17 +10,15 @@
 
     <div class="book-card">
 
-        <h2>{{ $item['judul'] }}</h2>
+        <h2>{{ $item->judul }}</h2>
 
-        <p><b>Penulis:</b> {{ $item['penulis'] }}</p>
+        <p><b>Penulis:</b> {{ $item->penulis }}</p>
 
-        <p><b>Tahun:</b> {{ $item['tahun'] }}</p>
+        <p><b>Tahun:</b> {{ $item->tahun_terbit }}</p>
 
-        <p><b>Kategori:</b> {{ $item['kategori'] }}</p>
+        <p><b>Kategori:</b> {{ $item->kategori->nama }}</p>
 
-        <a href="{{ route('buku.show', $item['id']) }}" class="button">
-            Lihat Detail
-        </a>
+        <a href="{{ route('buku.show', $item->id) }}" class="button">Lihat Detail</a>
 
     </div>
 

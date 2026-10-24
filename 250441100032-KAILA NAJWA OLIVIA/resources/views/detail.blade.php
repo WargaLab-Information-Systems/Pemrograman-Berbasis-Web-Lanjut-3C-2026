@@ -6,15 +6,15 @@
 
 <div class="detail-card">
 
-    <h2> {{ $detail['judul'] }}</h2>
+    <h2>{{ $detail->judul }}</h2>
 
-    <p><b>ID Buku:</b> {{ $detail['id'] }}</p>
+    <p><b>ID Buku:</b> {{ $detail->id }}</p>
 
-    <p><b>Penulis:</b> {{ $detail['penulis'] }}</p>
+    <p><b>Penulis:</b> {{ $detail->penulis }}</p>
 
-    <p><b>Tahun Terbit:</b> {{ $detail['tahun'] }}</p>
+    <p><b>Tahun Terbit:</b> {{ $detail->tahun_terbit }}</p>
 
-    <p><b>Kategori:</b> {{ $detail['kategori'] }}</p>
+    <p><b>Kategori:</b> {{ $detail->kategori->nama }}</p>
 
     <a href="{{ route('buku.index') }}" class="button">
         ← Kembali
