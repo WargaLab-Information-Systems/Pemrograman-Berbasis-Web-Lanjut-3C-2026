@@ -19,14 +19,14 @@
     <nav>
         <a href="{{ route('home') }}">Beranda</a>
         <a href="{{ route('buku.index') }}">Daftar Buku</a>
-    </nav>
+    </nav> 
 
     <main>
         @yield('content')
     </main>
 
     <footer>
-        <p>© 2026 Perpustakaan Kita</p>
+        <p> 2026 Perpustakaan Kita</p>
     </footer>
 
 </body>
