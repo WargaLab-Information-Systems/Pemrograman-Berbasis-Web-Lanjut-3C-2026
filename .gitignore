@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.log
 .DS_Store
 .env
@@ -21,4 +22,39 @@
 /vendor
 Homestead.json
 Homestead.yaml
+=======
+# Root Gitignore for Monorepo Laravel Praktikum
+
+# Laravel Ignore Rules (Wildcard for any student subfolder)
+**/vendor/
+**/node_modules/
+**/.env
+**/.env.backup
+**/.env.production
+**/.env.*.local
+**/storage/*.key
+**/storage/framework/cache/data/*
+**/storage/framework/sessions/*
+**/storage/framework/views/*
+**/storage/logs/*
+**/bootstrap/cache/*
+**/public/storage
+**/public/build
+**/.phpunit.result.cache
+**/Homestead.json
+**/Homestead.yaml
+**/auth.json
+**/npm-debug.log
+**/yarn-error.log
+
+# IDE & OS Ignore Rules
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+>>>>>>> dc3473b24dacbb16cdad8615f3c4d8694c001f0d
 Thumbs.db
