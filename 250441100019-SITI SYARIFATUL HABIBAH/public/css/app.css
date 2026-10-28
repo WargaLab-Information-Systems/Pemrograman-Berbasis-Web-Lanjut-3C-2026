@@ -1,0 +1,386 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+
+.header {
+    background-color: #1f3c88;
+    color: white;
+    padding: 25px 0;
+}
+
+
+.header h1 {
+    margin-bottom: 5px;
+}
+
+
+.navbar {
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.nav-content {
+    display: flex;
+    gap: 25px;
+    padding: 15px 0;
+}
+
+
+.navbar a {
+    text-decoration: none;
+    color: #1f3c88;
+    font-weight: bold;
+}
+
+
+.content {
+    min-height: 70vh;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+
+.hero {
+    background-color: white;
+    padding: 50px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+
+.hero h2 {
+    margin-bottom: 15px;
+}
+
+
+.hero p {
+    margin-bottom: 25px;
+    color: #666;
+}
+
+
+.button {
+    display: inline-block;
+    background-color: #1f3c88;
+    color: white;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+
+.button:hover {
+    background-color: #162d68;
+}
+
+
+.page-header {
+    margin-bottom: 25px;
+}
+
+
+.page-header h2 {
+    margin-bottom: 8px;
+}
+
+
+.page-header p {
+    color: #666;
+}
+
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+
+.book-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+.book-card h3 {
+    margin-bottom: 15px;
+    color: #1f3c88;
+}
+
+
+.book-card p {
+    margin-bottom: 8px;
+}
+
+
+.book-card-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+
+.category {
+    display: inline-block;
+    background-color: #e8eefc;
+    color: #1f3c88;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 13px;
+}
+
+
+.detail-card,
+.not-found {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+
+.detail-card h3,
+.not-found h3 {
+    color: #1f3c88;
+    margin-bottom: 20px;
+}
+
+
+.detail-info p {
+    margin-bottom: 12px;
+}
+
+
+.footer {
+    background-color: #1f3c88;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+
+@media (max-width: 768px) {
+
+    .book-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* =========================================================
+   MODUL 4 - Halaman /buku (tabel, formulir, pesan)
+   ========================================================= */
+
+[hidden] {
+    display: none !important;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.alert-sukses {
+    background-color: #e6f6ec;
+    color: #176b3a;
+    border: 1px solid #a8dcbc;
+}
+
+.alert-error {
+    background-color: #fdeaea;
+    color: #a12626;
+    border: 1px solid #f0b4b4;
+}
+
+.form-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-card h3 {
+    color: #1f3c88;
+    margin-bottom: 15px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: 2px solid #1f3c88;
+    border-color: #1f3c88;
+}
+
+.form-group .input-error {
+    border-color: #c0392b;
+    background-color: #fff6f6;
+}
+
+.field-error {
+    display: block;
+    color: #c0392b;
+    margin-top: 5px;
+    min-height: 16px;
+}
+
+.form-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions .button {
+    margin-top: 0;
+}
+
+button.button {
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+button.button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.button-secondary {
+    background-color: #6c757d;
+}
+
+.button-secondary:hover {
+    background-color: #565e64;
+}
+
+.button-kecil {
+    padding: 6px 12px;
+    margin-top: 0;
+    font-size: 13px;
+}
+
+.button-ubah {
+    background-color: #d98e04;
+}
+
+.button-ubah:hover {
+    background-color: #b57503;
+}
+
+.button-hapus {
+    background-color: #c0392b;
+}
+
+.button-hapus:hover {
+    background-color: #992d22;
+}
+
+.table-wrap {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;
+}
+
+.table-buku {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-buku th,
+.table-buku td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.table-buku th {
+    background-color: #1f3c88;
+    color: white;
+}
+
+.table-buku tbody tr:hover {
+    background-color: #f5f8ff;
+}
+
+.table-buku .info-row {
+    text-align: center;
+    color: #666;
+    padding: 25px;
+}
+
+.sel-aksi {
+    white-space: nowrap;
+}
+
+.sel-aksi .button {
+    margin-right: 4px;
+}
+
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pagination-bar .button {
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pagination-bar {
+        flex-direction: column;
+    }
+
+}
