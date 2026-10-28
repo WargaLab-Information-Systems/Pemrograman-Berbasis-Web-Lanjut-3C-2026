@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreBukuRequest;
-use App\Http\Requests\UpdateBukuRequest;
+use App\Http\Resources\BukuResource;
 use App\Models\Buku;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BukuController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $bukus = Buku::query()
-            ->with('kategori')                 // eager loading
-            ->withCount('peminjamans')         // jumlah peminjaman per buku
+            ->with('kategori')
+            ->withCount('peminjamans')
             ->when($request->filled('cari'), function ($q) use ($request) {
                 $cari = $request->query('cari');
                 $q->where(function ($w) use ($cari) {
@@ -25,34 +25,20 @@ class BukuController extends Controller
             })
             ->when($request->filled('kategori'), fn ($q) => $q->where('kategori_id', $request->query('kategori')))
             ->when($request->filled('tahun'), fn ($q) => $q->where('tahun_terbit', $request->query('tahun')))
-            ->latest()                         // terbaru lebih dulu
-            ->latest('id')                     // pembeda jika created_at sama
+            ->latest()
+            ->latest('id')
             ->paginate(10)
-            ->withQueryString();               // query string terbawa saat pindah halaman
+            ->withQueryString();
 
-        return response()->json([
-            'message' => 'Daftar buku berhasil diambil',
-            'data'    => $bukus->items(),
-            'meta'    => [
-                'current_page' => $bukus->currentPage(),
-                'per_page'     => $bukus->perPage(),
-                'total'        => $bukus->total(),
-                'last_page'    => $bukus->lastPage(),
-                'from'         => $bukus->firstItem(),
-                'to'           => $bukus->lastItem(),
-            ],
-            'links'   => [
-                'first' => $bukus->url(1),
-                'last'  => $bukus->url($bukus->lastPage()),
-                'prev'  => $bukus->previousPageUrl(),
-                'next'  => $bukus->nextPageUrl(),
-            ],
-        ], 200);
+        return BukuResource::collection($bukus)
+            ->additional(['message' => 'Daftar buku berhasil diambil']);
     }
 
-    public function store(StoreBukuRequest $request): JsonResponse
+        public function store(Request $request): JsonResponse
     {
-        $buku = Buku::create($request->validated());   // BUKAN $request->all()
+        $data = $request->validate($this->aturan(), $this->pesan(), $this->atribut());
+
+        $buku = Buku::create($data);
         $buku->load('kategori');
 
         return response()->json([
@@ -71,9 +57,11 @@ class BukuController extends Controller
         ], 200);
     }
 
-    public function update(UpdateBukuRequest $request, Buku $buku): JsonResponse
+    public function update(Request $request, Buku $buku): JsonResponse
     {
-        $buku->update($request->validated());
+        $data = $request->validate($this->aturan(true), $this->pesan(), $this->atribut());
+
+        $buku->update($data);
 
         return response()->json([
             'message' => 'Buku berhasil diperbarui',
@@ -83,8 +71,6 @@ class BukuController extends Controller
 
     public function destroy(Buku $buku): JsonResponse
     {
-        // Tabel peminjamans punya foreign key ke bukus (tanpa cascade).
-        // Tanpa pengecekan ini, menghapus buku yang pernah dipinjam jadi error 500.
         if ($buku->peminjamans()->exists()) {
             return response()->json([
                 'message' => 'Buku tidak dapat dihapus karena memiliki riwayat peminjaman',
@@ -94,5 +80,55 @@ class BukuController extends Controller
         $buku->delete();
 
         return response()->json(['message' => 'Buku berhasil dihapus'], 200);
+    }
+
+    private function aturan(bool $sebagian = false): array
+    {
+        $aturan = [
+            'kategori_id'  => ['bail', 'required', 'exists:kategoris,id'],
+            'judul'        => ['bail', 'required', 'string', 'min:3', 'max:150'],
+            'penulis'      => ['bail', 'required', 'string', 'min:3', 'max:100'],
+            'tahun_terbit' => ['bail', 'required', 'integer', 'between:1900,' . date('Y')],
+        ];
+
+        if ($sebagian) {
+            foreach ($aturan as $kolom => $rule) {
+                $aturan[$kolom] = array_merge(['sometimes'], $rule);
+            }
+        }
+
+        return $aturan;
+    }
+
+    private function pesan(): array
+    {
+        return [
+            'kategori_id.required' => 'Kategori wajib diisi.',
+            'kategori_id.exists'   => 'Kategori yang dipilih tidak valid.',
+
+            'judul.required' => 'Judul buku wajib diisi.',
+            'judul.string'   => 'Judul buku harus berupa teks.',
+            'judul.min'      => 'Judul buku minimal :min karakter',
+            'judul.max'      => 'Judul buku maksimal :max karakter.',
+
+            'penulis.required' => 'Penulis wajib diisi.',
+            'penulis.string'   => 'Penulis harus berupa teks.',
+            'penulis.min'      => 'Penulis minimal :min karakter.',
+            'penulis.max'      => 'Penulis maksimal :max karakter.',
+
+            'tahun_terbit.required' => 'Tahun terbit wajib diisi.',
+            'tahun_terbit.integer'  => 'Tahun terbit harus berupa bilangan bulat.',
+            'tahun_terbit.between'  => 'Tahun terbit harus antara :min sampai :max',
+        ];
+    }
+
+    private function atribut(): array
+    {
+        return [
+            'kategori_id'  => 'kategori',
+            'judul'        => 'judul',
+            'penulis'      => 'penulis',
+            'tahun_terbit' => 'tahun terbit',
+        ];
     }
 }

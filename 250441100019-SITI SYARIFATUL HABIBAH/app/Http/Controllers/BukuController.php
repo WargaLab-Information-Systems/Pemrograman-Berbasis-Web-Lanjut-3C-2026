@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buku;
+use App\Models\Kategori;
 
 class BukuController extends Controller
 {
-    // Ubah model menjadi array dengan bentuk yang sama seperti data lama,
-    // supaya view Modul 1 tidak perlu diubah sama sekali.
     private function formatBuku(Buku $buku): array
     {
         return [
@@ -21,13 +20,9 @@ class BukuController extends Controller
 
     public function index()
     {
-        $buku = Buku::with('kategori')
-            ->orderBy('id')
-            ->get()
-            ->map(fn (Buku $item) => $this->formatBuku($item))
-            ->all();
+        $kategoris = Kategori::orderBy('nama')->get(['id', 'nama']);
 
-        return view('buku.index', compact('buku'));
+        return view('buku.index', compact('kategoris'));
     }
 
     public function show($id)
