@@ -4,7 +4,7 @@
 
 <div class="hero">
 
-    <h2>Selamat Datang di Perpustakaan Kita 📚</h2>
+    <h2>Selamat Datang di Perpustakaan Kita </h2>
 
     <p>
         Temukan berbagai macam buku menarik untuk dibaca.
