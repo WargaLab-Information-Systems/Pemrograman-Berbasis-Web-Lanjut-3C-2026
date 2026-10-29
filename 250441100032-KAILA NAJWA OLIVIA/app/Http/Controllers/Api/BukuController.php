@@ -5,72 +5,80 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBukuRequest;
 use App\Http\Requests\UpdateBukuRequest;
+use App\Http\Resources\BukuResource;
 use App\Models\Buku;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BukuController extends Controller
 {
+    // GET: Menampilkan daftar buku
     public function index(Request $request): JsonResponse
     {
-    $query = Buku::with('kategori')
-        ->withCount('peminjaman');
+        $query = Buku::with('kategori')
+            ->withCount('peminjaman');
 
-    // Pencarian berdasarkan judul atau penulis
-    if ($request->filled('cari')) {
-        $cari = $request->cari;
+        // Pencarian berdasarkan judul atau penulis
+        if ($request->filled('cari')) {
+            $cari = $request->cari;
 
-        $query->where(function ($q) use ($cari) {
-            $q->where('judul', 'like', "%{$cari}%")
-              ->orWhere('penulis', 'like', "%{$cari}%");
-        });
+            $query->where(function ($q) use ($cari) {
+                $q->where('judul', 'like', "%{$cari}%")
+                    ->orWhere('penulis', 'like', "%{$cari}%");
+            });
+        }
+
+        // Filter berdasarkan kategori
+        if ($request->filled('kategori')) {
+            $query->where('kategori_id', $request->kategori);
+        }
+
+        // Filter berdasarkan tahun terbit
+        if ($request->filled('tahun')) {
+            $query->where('tahun_terbit', $request->tahun);
+        }
+
+        $buku = $query->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar buku berhasil ditampilkan.',
+            'data' => BukuResource::collection($buku->items()),
+            'meta' => [
+                'current_page' => $buku->currentPage(),
+                'last_page' => $buku->lastPage(),
+                'per_page' => $buku->perPage(),
+                'total' => $buku->total(),
+            ],
+            'links' => [
+                'first' => $buku->url(1),
+                'last' => $buku->url($buku->lastPage()),
+                'prev' => $buku->previousPageUrl(),
+                'next' => $buku->nextPageUrl(),
+            ],
+        ], 200);
     }
 
-    // Filter berdasarkan kategori
-    if ($request->filled('kategori')) {
-        $query->where('kategori_id', $request->kategori);
-    }
-
-    // Filter berdasarkan tahun terbit
-    if ($request->filled('tahun')) {
-        $query->where('tahun_terbit', $request->tahun);
-    }
-
-    // Mengurutkan buku terbaru dan tampilkan 10 data per halaman
-    $buku = $query->latest()
-        ->paginate(10)
-        ->withQueryString();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Daftar buku berhasil ditampilkan.',
-        'data' => $buku->items(),
-        'meta' => [
-            'current_page' => $buku->currentPage(),
-            'last_page' => $buku->lastPage(),
-            'per_page' => $buku->perPage(),
-            'total' => $buku->total(),
-        ],
-        'links' => [
-            'first' => $buku->url(1),
-            'last' => $buku->url($buku->lastPage()),
-            'prev' => $buku->previousPageUrl(),
-            'next' => $buku->nextPageUrl(),
-        ],
-    ], 200);
-    }
-
+    // POST: Menambahkan buku menggunakan kategori pilihan pengguna
     public function store(StoreBukuRequest $request): JsonResponse
     {
-        $buku = Buku::create($request->validated());
+        $data = $request->validated();
+
+        // Kategori diambil dari pilihan form, bukan dari judul
+        $data['kategori_id'] = (int) $data['kategori_id'];
+
+        $buku = Buku::create($data);
 
         return response()->json([
             'success' => true,
             'message' => 'Buku berhasil ditambahkan.',
-            'data' => $buku,
+            'data' => new BukuResource($buku->load('kategori')),
         ], 201);
     }
 
+    // GET: Menampilkan detail satu buku
     public function show(string $id): JsonResponse
     {
         $buku = Buku::with(['kategori', 'peminjaman'])->find($id);
@@ -85,12 +93,15 @@ class BukuController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detail buku berhasil ditampilkan.',
-            'data' => $buku,
+            'data' => new BukuResource($buku),
         ], 200);
     }
 
-    public function update(UpdateBukuRequest $request, string $id): JsonResponse
-    {
+    // PUT/PATCH: Mengubah data buku
+    public function update(
+        UpdateBukuRequest $request,
+        string $id
+    ): JsonResponse {
         $buku = Buku::find($id);
 
         if (!$buku) {
@@ -100,15 +111,23 @@ class BukuController extends Controller
             ], 404);
         }
 
-        $buku->update($request->validated());
+        $data = $request->validated();
+
+        // Jika kategori dipilih, simpan kategori yang dipilih
+        if (isset($data['kategori_id'])) {
+            $data['kategori_id'] = (int) $data['kategori_id'];
+        }
+
+        $buku->update($data);
 
         return response()->json([
             'success' => true,
             'message' => 'Buku berhasil diperbarui.',
-            'data' => $buku,
+            'data' => new BukuResource($buku->fresh()->load('kategori')),
         ], 200);
     }
 
+    // DELETE: Menghapus buku
     public function destroy(string $id): JsonResponse
     {
         $buku = Buku::find($id);
