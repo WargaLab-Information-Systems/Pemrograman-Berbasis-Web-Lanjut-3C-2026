@@ -3,19 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buku;
+use App\Models\Kategori;
 
 class BukuController extends Controller
 {
     public function index()
     {
-        
-        $daftarBuku = Buku::with('kategori')
-            ->orderBy('id')
-            ->get()
-            ->map(fn (Buku $buku) => $this->formatBuku($buku));
-
+        // Data buku diambil oleh JavaScript dari GET /api/buku.
+        // Controller hanya menyediakan daftar kategori untuk pilihan pada formulir.
         return view('buku.index', [
-            'daftarBuku' => $daftarBuku,
+            'daftarKategori' => Kategori::orderBy('nama')->get(['id', 'nama']),
         ]);
     }
 
