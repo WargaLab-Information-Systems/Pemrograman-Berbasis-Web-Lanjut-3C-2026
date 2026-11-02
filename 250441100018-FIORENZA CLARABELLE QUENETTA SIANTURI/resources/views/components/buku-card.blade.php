@@ -11,7 +11,7 @@
         <p>
             <strong>Penulis:</strong>
             {{ $penulis }}
-        </p>
+        </p> 
 
         <p>
             <strong>Tahun:</strong>

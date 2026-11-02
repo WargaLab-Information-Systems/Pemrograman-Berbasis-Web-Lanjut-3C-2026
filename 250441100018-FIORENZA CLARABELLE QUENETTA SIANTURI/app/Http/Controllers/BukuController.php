@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Buku; 
- 
+use App\Models\Buku;
+use App\Models\Kategori;
+
 class BukuController extends Controller
 {
     public function index()
     {
-        $buku = Buku::with('kategori')->get();
+        $kategoris = Kategori::all();
 
-        return view('buku.index', compact('buku'));
+        return view('buku.index', compact('kategoris'));
     }
 
     public function show($id)
@@ -20,4 +21,3 @@ class BukuController extends Controller
         return view('buku.show', compact('buku'));
     }
 }
-
