@@ -1,0 +1,13 @@
+$kind: http-request
+name: ""
+url: http://localhost:8000/api/buku
+method: GET
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+    }
+order: 1000
