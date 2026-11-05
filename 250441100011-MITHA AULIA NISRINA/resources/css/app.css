@@ -321,9 +321,7 @@ a {
     align-items: center;
 
     overflow: hidden;
-    isolation: isolate;
 
-    background-image: url("/images/home-library.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -332,7 +330,7 @@ a {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: 1;
 
     background: linear-gradient(
         90deg,
@@ -341,9 +339,14 @@ a {
         rgba(39, 17, 27, 0.46) 70%,
         rgba(39, 17, 27, 0.25) 100%
     );
+
+    pointer-events: none;
 }
 
 .hero-content {
+    position: relative;
+    z-index: 2;
+
     width: min(1180px, calc(100% - 50px));
     margin: 0 auto;
 
@@ -458,6 +461,7 @@ a {
     gap: 3px;
 
     color: rgba(255, 255, 255, 0.85);
+    z-index: 2;
 }
 
 .hero-caption span {
@@ -740,9 +744,7 @@ a {
     justify-content: center;
 
     overflow: hidden;
-    isolation: isolate;
 
-    background-image: url("/images/home-reading.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -751,7 +753,7 @@ a {
 .reading-overlay {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: 1;
 
     background: linear-gradient(
         90deg,
@@ -759,9 +761,14 @@ a {
         rgba(43, 20, 30, 0.63) 52%,
         rgba(43, 20, 30, 0.4) 100%
     );
+
+    pointer-events: none;
 }
 
 .reading-content {
+    position: relative;
+    z-index: 2;
+
     width: min(780px, calc(100% - 50px));
 
     padding: 80px 40px;
@@ -1932,5 +1939,1221 @@ a {
     .footer-bottom {
         margin-top: 25px;
         padding-top: 16px;
+    }
+}
+
+/* =========================================================
+   FORM KELOLA BUKU - MODUL 4
+   ========================================================= */
+
+.book-form-section {
+    width: min(1000px, calc(100% - 50px));
+
+    margin: 15px auto 55px;
+    padding: 38px 42px 42px;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(169, 71, 107, 0.055),
+            transparent 28%
+        ),
+        #ffffff;
+
+    border: 1px solid #eadde1;
+    border-radius: 14px;
+
+    box-shadow: 0 10px 32px rgba(70, 35, 48, 0.07);
+}
+
+/* Heading khusus form agar tidak terlalu besar */
+
+.book-form-section .section-heading {
+    max-width: 680px;
+
+    margin: 0 auto 30px;
+}
+
+.book-form-section .section-heading > span {
+    margin-bottom: 10px;
+}
+
+.book-form-section .section-heading h2 {
+    font-size: 30px;
+}
+
+.book-form-section .section-heading p {
+    max-width: 570px;
+
+    margin-top: 12px;
+
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+#form-buku {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 20px 24px;
+}
+
+/* Setiap kelompok label dan input */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.form-group label {
+    color: #5f3f4b;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 0.02em;
+}
+
+/* Input dan select */
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 46px;
+
+    padding: 0 14px;
+
+    color: #4d3540;
+
+    background: #fffafb;
+
+    border: 1px solid #e5d6dc;
+    border-radius: 7px;
+
+    outline: none;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.form-group input::placeholder {
+    color: #ae9da4;
+}
+
+/* Saat input dipilih */
+
+.form-group input:focus,
+.form-group select:focus {
+    background: #ffffff;
+
+    border-color: #b96886;
+
+    box-shadow: 0 0 0 3px rgba(169, 71, 107, 0.09);
+}
+
+/* Select */
+
+.form-group select {
+    cursor: pointer;
+}
+
+/* =========================================================
+   TOMBOL FORM
+   ========================================================= */
+
+.form-actions {
+    grid-column: 1 / -1;
+
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 5px;
+}
+
+/*
+   Tombol form menggunakan class detail-button,
+   tetapi dibuat khusus agar tidak mengikuti layout link kartu.
+*/
+
+.form-actions .detail-button {
+    min-width: 145px;
+
+    margin: 0;
+    padding: 12px 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #8f3d5e;
+    border-radius: 7px;
+
+    background: #8f3d5e;
+    color: #ffffff;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 13px rgba(143, 61, 94, 0.17);
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.form-actions .detail-button:hover {
+    background: #74304c;
+    border-color: #74304c;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 17px rgba(143, 61, 94, 0.22);
+}
+
+.form-actions .detail-button:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+/* =========================================================
+   PESAN BERHASIL DAN ERROR
+   ========================================================= */
+
+#pesan-form {
+    width: 100%;
+}
+
+.success-message,
+.error-message {
+    margin: 0 0 24px;
+    padding: 12px 15px;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.success-message {
+    color: #486451;
+
+    background: #f0f7f2;
+
+    border: 1px solid #d4e7d9;
+    border-left: 4px solid #709a7b;
+}
+
+.error-message {
+    color: #8b3d4b;
+
+    background: #fff4f5;
+
+    border: 1px solid #efd7dc;
+    border-left: 4px solid #b85c6d;
+}
+
+/* Pesan saat daftar buku kosong / gagal dimuat */
+
+.empty-book-message {
+    width: min(1000px, calc(100% - 50px));
+
+    margin: 0 auto 35px;
+    padding: 18px 20px;
+
+    color: #80636e;
+
+    background: #fff8fa;
+
+    border: 1px solid #eadde1;
+    border-radius: 8px;
+
+    text-align: center;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   PLACEHOLDER COVER BUKU
+   Untuk buku Modul 4 yang tidak memiliki image
+   ========================================================= */
+
+.book-cover-placeholder {
+    position: relative;
+    z-index: 2;
+
+    width: 145px;
+    min-height: 115px;
+
+    padding: 20px 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 6px;
+
+    box-shadow:
+        0 9px 20px rgba(50, 20, 30, 0.25),
+        0 3px 8px rgba(50, 20, 30, 0.14);
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.book-cover-placeholder span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #b77b91;
+
+    font-size: 7px;
+    font-weight: 700;
+
+    letter-spacing: 0.17em;
+}
+
+.book-cover-placeholder strong {
+    display: block;
+
+    color: #6f2945;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1.35;
+}
+
+.book-card:hover .book-cover-placeholder {
+    transform: scale(1.035);
+
+    box-shadow:
+        0 13px 26px rgba(50, 20, 30, 0.3),
+        0 4px 10px rgba(50, 20, 30, 0.16);
+}
+
+/* =========================================================
+   RESPONSIVE FORM
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .book-form-section {
+        width: calc(100% - 30px);
+
+        margin: 5px auto 45px;
+        padding: 30px 22px 28px;
+    }
+
+    .book-form-section .section-heading {
+        margin-bottom: 25px;
+    }
+
+    .book-form-section .section-heading h2 {
+        font-size: 26px;
+    }
+
+    #form-buku {
+        grid-template-columns: 1fr;
+
+        gap: 17px;
+    }
+
+    .form-actions {
+        grid-column: auto;
+    }
+
+    .form-actions .detail-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 450px) {
+    .book-form-section {
+        width: calc(100% - 24px);
+
+        padding: 26px 17px 22px;
+
+        border-radius: 10px;
+    }
+
+    .book-form-section .section-heading h2 {
+        font-size: 23px;
+    }
+
+    .book-form-section .section-heading p {
+        font-size: 12px;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 44px;
+
+        font-size: 12px;
+    }
+}
+
+/* =========================================================
+   TOMBOL UBAH DAN BATAL - MODUL 4
+   ========================================================= */
+
+.book-card-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: stretch;
+    margin-top: 18px;
+}
+
+.book-card-actions .detail-button {
+    margin-top: 0;
+}
+
+.edit-button {
+    min-width: 78px;
+    padding: 10px 16px;
+
+    border: 1px solid #d8a8b8;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #8f3d5e;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.edit-button:hover {
+    background: #8f3d5e;
+    border-color: #8f3d5e;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+.cancel-button {
+    min-width: 100px;
+    padding: 12px 20px;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8c4cb;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #80636e;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.cancel-button:hover {
+    background: #f8eef2;
+    border-color: #cda8b6;
+    color: #6f2945;
+
+    transform: translateY(-2px);
+}
+
+.form-actions {
+    gap: 10px;
+}
+
+@media (max-width: 450px) {
+    .book-card-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-button {
+        width: 100%;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-button,
+    .form-actions .detail-button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   FORM TAMBAHAN - COVER DAN DESKRIPSI
+   ========================================================= */
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+.form-group label .optional-label {
+    display: inline-block;
+
+    margin-left: 7px;
+    padding: 3px 7px;
+
+    color: #9a5870;
+    background: #fff2f6;
+
+    border-radius: 20px;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+}
+
+.form-group textarea {
+    width: 100%;
+    min-height: 125px;
+
+    padding: 13px 14px;
+
+    color: #4d3540;
+    background: #fffafb;
+
+    border: 1px solid #e5d6dc;
+    border-radius: 7px;
+
+    outline: none;
+    resize: vertical;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.form-group textarea::placeholder {
+    color: #ae9da4;
+}
+
+.form-group textarea:focus {
+    background: #ffffff;
+
+    border-color: #b96886;
+
+    box-shadow: 0 0 0 3px rgba(169, 71, 107, 0.09);
+}
+
+/* =========================================================
+   INPUT FILE
+   ========================================================= */
+
+.form-group input[type="file"] {
+    height: auto;
+
+    padding: 9px;
+
+    background: #fffafb;
+
+    cursor: pointer;
+}
+
+.form-group input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 9px 14px;
+
+    border: 0;
+    border-radius: 5px;
+
+    background: #fff0f5;
+    color: #8f3d5e;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+    background: #8f3d5e;
+    color: #ffffff;
+}
+
+.form-help {
+    display: block;
+
+    margin-top: 1px;
+
+    color: #a18b93;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   INFORMASI COVER LAMA
+   ========================================================= */
+
+.cover-old-info {
+    margin-top: 5px;
+    padding: 10px 13px;
+
+    color: #725f66;
+    background: #fff8fa;
+
+    border: 1px solid #eadde1;
+    border-left: 3px solid #c07a94;
+    border-radius: 6px;
+
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.cover-old-info strong {
+    color: #8f3d5e;
+}
+
+/* =========================================================
+   PREVIEW COVER
+   ========================================================= */
+
+.cover-preview-wrapper {
+    width: 190px;
+
+    margin-top: 9px;
+    padding: 13px;
+
+    flex-direction: column;
+    align-items: center;
+
+    background: #fff8fa;
+
+    border: 1px solid #eadde1;
+    border-radius: 8px;
+}
+
+.cover-preview-wrapper > span {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #a16a7e;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.15em;
+}
+
+.cover-preview-wrapper img {
+    display: block;
+
+    max-width: 150px;
+    max-height: 180px;
+
+    object-fit: contain;
+
+    border-radius: 5px;
+
+    box-shadow: 0 7px 17px rgba(70, 35, 48, 0.14);
+}
+
+/* =========================================================
+   TOMBOL AKSI CARD
+   ========================================================= */
+
+.book-card-actions {
+    display: grid;
+
+    grid-template-columns: 1fr auto;
+
+    gap: 10px;
+
+    align-items: stretch;
+
+    margin-top: 18px;
+}
+
+.book-card-actions .detail-button {
+    margin-top: 0;
+}
+
+.edit-button {
+    min-width: 78px;
+
+    padding: 10px 16px;
+
+    border: 1px solid #d8a8b8;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #8f3d5e;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.edit-button:hover {
+    background: #8f3d5e;
+    border-color: #8f3d5e;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   TOMBOL BATAL
+   ========================================================= */
+
+.form-actions {
+    gap: 10px;
+}
+
+.cancel-button {
+    min-width: 100px;
+
+    padding: 12px 20px;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8c4cb;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #80636e;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.cancel-button:hover {
+    background: #f8eef2;
+
+    border-color: #cda8b6;
+
+    color: #6f2945;
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   RESPONSIVE TAMBAHAN
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .form-group-full {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 450px) {
+    .book-card-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-button {
+        width: 100%;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-button,
+    .form-actions .detail-button {
+        width: 100%;
+    }
+
+    .cover-preview-wrapper {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   TABEL DATA BUKU - MODUL 4
+   ========================================================= */
+
+.book-table-section {
+    width: min(1100px, calc(100% - 50px));
+    margin: 10px auto 55px;
+}
+
+.book-table-section .section-heading {
+    max-width: 720px;
+    margin-bottom: 30px;
+}
+
+.book-table-section .section-heading h2 {
+    font-size: 30px;
+}
+
+.book-table-section .section-heading p {
+    max-width: 620px;
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.book-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #eadde1;
+    border-radius: 12px;
+
+    box-shadow: 0 9px 28px rgba(70, 35, 48, 0.06);
+}
+
+.book-table {
+    width: 100%;
+    min-width: 820px;
+
+    border-collapse: collapse;
+
+    color: #5f4b53;
+
+    font-size: 12px;
+}
+
+.book-table thead {
+    background: #8f3d5e;
+    color: #ffffff;
+}
+
+.book-table th {
+    padding: 15px 16px;
+
+    text-align: left;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.07em;
+
+    white-space: nowrap;
+}
+
+.book-table td {
+    padding: 15px 16px;
+
+    border-bottom: 1px solid #f0e4e8;
+
+    vertical-align: middle;
+}
+
+.book-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.book-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.book-table tbody tr:hover {
+    background: #fff8fa;
+}
+
+.table-number {
+    width: 55px;
+
+    color: #aa8794;
+
+    text-align: center;
+
+    font-weight: 700;
+}
+
+.table-category {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    color: #8f3d5e;
+    background: #fff0f5;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.table-title {
+    min-width: 180px;
+
+    color: #51313e;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.table-year {
+    white-space: nowrap;
+
+    color: #8f3d5e;
+
+    font-weight: 700;
+}
+
+.table-edit-button {
+    min-width: 70px;
+
+    padding: 8px 13px;
+
+    border: 1px solid #d8a8b8;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #8f3d5e;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.table-edit-button:hover {
+    background: #8f3d5e;
+    border-color: #8f3d5e;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+.table-empty-message {
+    padding: 30px !important;
+
+    color: #8d747d;
+
+    text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE TABEL
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .book-table-section {
+        width: calc(100% - 30px);
+
+        margin-bottom: 45px;
+    }
+
+    .book-table-section .section-heading h2 {
+        font-size: 26px;
+    }
+
+    .book-table-wrapper {
+        border-radius: 9px;
+    }
+}
+
+/* =========================================================
+   AKSI TABEL - UBAH DAN HAPUS
+   ========================================================= */
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    white-space: nowrap;
+}
+
+.table-delete-button {
+    min-width: 70px;
+
+    padding: 8px 13px;
+
+    border: 1px solid #e2b2bb;
+    border-radius: 6px;
+
+    background: #fff7f8;
+    color: #a34859;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.table-delete-button:hover {
+    background: #a34859;
+    border-color: #a34859;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+@media (max-width: 700px) {
+    .table-actions {
+        align-items: stretch;
+    }
+
+    .table-edit-button,
+    .table-delete-button {
+        min-width: 68px;
+    }
+}
+
+/* =========================================================
+   PLACEHOLDER COVER PADA DETAIL BUKU
+   ========================================================= */
+
+.detail-cover-placeholder {
+    width: 100%;
+    min-height: 420px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 35px;
+
+    background: linear-gradient(145deg, #fff4f7, #ead6dd);
+
+    border: 1px solid #e3cbd3;
+
+    text-align: center;
+}
+
+.detail-cover-placeholder span {
+    margin-bottom: 18px;
+
+    color: #a76a80;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.18em;
+}
+
+.detail-cover-placeholder strong {
+    max-width: 260px;
+
+    color: #63394a;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 25px;
+    line-height: 1.35;
+}
+
+.detail-cover-placeholder small {
+    margin-top: 18px;
+
+    color: #9b7d88;
+
+    font-size: 11px;
+}
+
+/* =========================================================
+   NOTIFIKASI PROSES API - MODUL 4
+   ========================================================= */
+
+#pesan-api {
+    width: 100%;
+    margin: 0 0 20px;
+}
+
+#pesan-api:empty {
+    display: none;
+}
+
+/* Tampilan dasar notifikasi */
+
+#pesan-api .success-message,
+#pesan-api .error-message {
+    position: relative;
+
+    margin: 0;
+    padding: 14px 18px 14px 46px;
+
+    border-radius: 9px;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+/* Notifikasi berhasil */
+
+#pesan-api .success-message {
+    color: #74394f;
+
+    background: #fff6f8;
+
+    border: 1px solid #e5cbd5;
+    border-left: 1px solid #e5cbd5;
+}
+
+#pesan-api .success-message::before {
+    content: "✓";
+
+    position: absolute;
+
+    top: 50%;
+    left: 17px;
+
+    width: 20px;
+    height: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    color: #ffffff;
+    background: #8f3d5e;
+
+    border-radius: 50%;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Notifikasi gagal */
+
+#pesan-api .error-message {
+    color: #943f4d;
+
+    background: #fff5f5;
+
+    border: 1px solid #e7c4c8;
+    border-left: 1px solid #e7c4c8;
+}
+
+#pesan-api .error-message::before {
+    content: "!";
+
+    position: absolute;
+
+    top: 50%;
+    left: 17px;
+
+    width: 20px;
+    height: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    color: #ffffff;
+    background: #a34859;
+
+    border-radius: 50%;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+    #pesan-api .success-message,
+    #pesan-api .error-message {
+        padding: 13px 15px 13px 43px;
+
+        font-size: 11px;
+    }
+
+    #pesan-api .success-message::before,
+    #pesan-api .error-message::before {
+        left: 15px;
     }
 }
