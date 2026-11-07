@@ -12,10 +12,16 @@ class Anggota extends Model
     protected $table = 'anggotas';
 
     protected $fillable = [
+        'user_id',
         'nama',
         'email',
         'no_telepon',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function peminjamans()
     {
