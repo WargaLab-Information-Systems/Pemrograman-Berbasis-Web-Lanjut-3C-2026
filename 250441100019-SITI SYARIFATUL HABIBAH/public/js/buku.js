@@ -1,17 +1,46 @@
+/**
+ * Halaman /buku (Modul 4, disesuaikan untuk Modul 5)
+ * Mengambil dan mengubah data buku lewat API menggunakan Fetch API + async/await.
+ *
+ *   GET    /api/buku        -> menampilkan tabel   (Soal 1)
+ *   POST   /api/buku        -> tambah buku         (Soal 2)
+ *   PUT    /api/buku/{id}   -> ubah buku           (Soal 3)
+ *   DELETE /api/buku/{id}   -> hapus buku          (Soal 4)
+ *
+ * Penanganan kesalahan (Soal 5): setiap request memeriksa response.ok
+ * dan dibungkus try/catch.
+ *
+ * Modul 5: API kini dilindungi login + permission.
+ *   - Request membawa token CSRF (X-CSRF-TOKEN) dan cookie session.
+ *   - Formulir dan tombol Ubah/Hapus hanya ada untuk yang punya permission
+ *     'kelola data buku' (admin dan petugas). Siswa hanya melihat daftar.
+ */
 (function () {
     'use strict';
 
+    // ---------------------------------------------------------------
+    // Elemen halaman dan konfigurasi
+    // ---------------------------------------------------------------
     const root = document.getElementById('app-buku');
-    const API_URL = root.dataset.apiUrl;        
-    const DETAIL_URL = root.dataset.detailUrl;  
+    const API_URL = root.dataset.apiUrl;        // dari Blade: url('/api/buku')
+    const DETAIL_URL = root.dataset.detailUrl;  // dari Blade: url('/buku')
 
+    // Modul 5: apakah pengguna ini boleh mengelola buku? (ditentukan Blade lewat @can)
+    const BISA_KELOLA = root.dataset.kelola === 'true';
+
+    // Token CSRF dari <meta name="csrf-token">.
+    // Wajib untuk POST/PUT/DELETE karena API memakai session login.
+    const tokenCsrf = document.querySelector('meta[name="csrf-token"]');
+
+    // Header wajib untuk API Laravel: minta balasan JSON.
     const HEADERS = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': tokenCsrf ? tokenCsrf.content : '',
     };
 
     const tbody = document.getElementById('tbody-buku');
-    const form = document.getElementById('form-buku');
+    const form = document.getElementById('form-buku');            // null jika bukan admin/petugas
     const judulForm = document.getElementById('judul-form');
     const tombolSimpan = document.getElementById('tombol-simpan');
     const tombolBatal = document.getElementById('tombol-batal');
@@ -26,13 +55,20 @@
         input[nama] = document.getElementById(nama);
     });
 
-   
-    let daftarBuku = [];       
+    // ---------------------------------------------------------------
+    // State
+    // ---------------------------------------------------------------
+    let daftarBuku = [];       // data buku yang sedang tampil di tabel
     let halamanSekarang = 1;
     let halamanTerakhir = 1;
-    let idDiedit = null;      
+    let idDiedit = null;       // null = mode tambah, angka = mode ubah
     let sedangMengirim = false;
 
+    // ---------------------------------------------------------------
+    // Fungsi bantu
+    // ---------------------------------------------------------------
+
+    // Membaca isi JSON dengan aman. Jika bukan JSON, kembalikan objek kosong.
     async function bacaJson(response) {
         try {
             return await response.json();
@@ -53,6 +89,16 @@
     }
 
     function pesanGagal(response, hasil, aksi) {
+        // Modul 5: kegagalan akibat login atau hak akses
+        if (response.status === 401) {
+            return 'Sesi Anda telah berakhir. Silakan login kembali.';
+        }
+        if (response.status === 403) {
+            return 'Anda tidak memiliki hak akses untuk operasi ini.';
+        }
+        if (response.status === 419) {
+            return 'Sesi kedaluwarsa. Muat ulang halaman, lalu coba lagi.';
+        }
         if (response.status === 404) {
             return 'Buku tidak ditemukan. Kemungkinan sudah dihapus.';
         }
@@ -65,6 +111,7 @@
     const PESAN_TIDAK_TERHUBUNG =
         'Tidak dapat terhubung ke API. Pastikan server berjalan, lalu coba lagi.';
 
+    // Menampilkan error validasi (422) di bawah masing-masing kolom.
     function tampilkanErrorValidasi(errors) {
         FIELD.forEach(function (nama) {
             const pesanField = errors[nama];
@@ -91,6 +138,9 @@
             : (idDiedit === null ? 'Tambah Buku' : 'Simpan Perubahan');
     }
 
+    // ---------------------------------------------------------------
+    // Menggambar tabel (memakai textContent, jadi aman dari XSS)
+    // ---------------------------------------------------------------
     function buatSel(teks) {
         const td = document.createElement('td');
         td.textContent = teks;
@@ -134,12 +184,18 @@
             detail.textContent = 'Detail';
             detail.className = 'button button-kecil';
 
-            sel.append(
-                detail,
-                buatTombol('Ubah', 'ubah', buku.id, 'button-ubah'),
-                buatTombol('Hapus', 'hapus', buku.id, 'button-hapus')
-            );
+            sel.append(detail);
 
+            // Modul 5: tombol Ubah dan Hapus hanya untuk yang berhak mengelola buku
+            if (BISA_KELOLA) {
+                sel.append(
+                    buatTombol('Ubah', 'ubah', buku.id, 'button-ubah'),
+                    buatTombol('Hapus', 'hapus', buku.id, 'button-hapus')
+                );
+            }
+
+            // Nama atribut mengikuti BukuResource:
+            //   buku.kategori (teks), buku.judul, buku.penulis, buku.tahun
             tr.append(
                 buatSel(String(nomorAwal + indeks)),
                 buatSel(buku.kategori ?? '-'),
@@ -162,6 +218,10 @@
         tombolBerikutnya.disabled = meta.current_page >= meta.last_page;
     }
 
+    // ---------------------------------------------------------------
+    // SOAL 1 - Mengambil data (GET /api/buku)
+    // Mengembalikan true jika berhasil, false jika gagal.
+    // ---------------------------------------------------------------
     async function muatBuku(halaman) {
         halaman = halaman || halamanSekarang;
         tampilkanBarisInfo('Memuat data...');
@@ -176,6 +236,8 @@
                 return false;
             }
 
+            // Halaman yang diminta sudah kosong (misalnya data terakhir di halaman itu
+            // baru dihapus): mundur satu halaman.
             if (hasil.data.length === 0 && halaman > 1) {
                 return await muatBuku(halaman - 1);
             }
@@ -194,6 +256,9 @@
         }
     }
 
+    // ---------------------------------------------------------------
+    // Mode formulir: tambah atau ubah (hanya dipakai admin/petugas)
+    // ---------------------------------------------------------------
     function kosongkanForm() {
         form.reset();
         idDiedit = null;
@@ -203,6 +268,7 @@
         bersihkanErrorValidasi();
     }
 
+    // SOAL 3 - tampilkan data buku yang dipilih pada formulir
     function mulaiUbah(id) {
         const buku = daftarBuku.find(function (item) {
             return item.id === id;
@@ -228,6 +294,9 @@
         input.judul.focus();
     }
 
+    // ---------------------------------------------------------------
+    // SOAL 2 dan 3 - Simpan: POST (tambah) atau PUT (ubah)
+    // ---------------------------------------------------------------
     async function simpanBuku(event) {
         event.preventDefault();
         if (sedangMengirim) {
@@ -259,12 +328,14 @@
             });
             const hasil = await bacaJson(response);
 
+            // Validasi gagal (422): tampilkan pesan per kolom, form TIDAK dikosongkan.
             if (response.status === 422) {
                 tampilkanErrorValidasi(hasil.errors || {});
                 tampilkanPesan('error', 'Data belum valid. Periksa isian yang diberi tanda merah.');
                 return;
             }
 
+            // Kegagalan lain (401, 403, 404, 500, dst.): jangan tampilkan pesan sukses.
             if (!response.ok) {
                 tampilkanPesan('error', pesanGagal(response, hasil, aksi));
                 if (response.status === 404) {
@@ -274,6 +345,8 @@
                 return;
             }
 
+            // Berhasil: kosongkan formulir, lalu muat ulang tabel tanpa reload halaman.
+            // Buku baru tampil paling atas di halaman 1 (API mengurutkan terbaru dulu).
             const pesanSukses = hasil.message || (modeUbah ? 'Buku berhasil diperbarui.' : 'Buku berhasil ditambahkan.');
             kosongkanForm();
             const berhasilMuat = await muatBuku(modeUbah ? halamanSekarang : 1);
@@ -288,6 +361,9 @@
         }
     }
 
+    // ---------------------------------------------------------------
+    // SOAL 4 - Hapus (DELETE /api/buku/{id}) dengan konfirmasi
+    // ---------------------------------------------------------------
     async function hapusBuku(id) {
         const buku = daftarBuku.find(function (item) {
             return item.id === id;
@@ -296,6 +372,7 @@
             return;
         }
 
+        // Jika pengguna membatalkan, tidak ada request yang dikirim.
         if (!window.confirm('Hapus buku "' + buku.judul + '"?')) {
             return;
         }
@@ -310,6 +387,8 @@
             const hasil = await bacaJson(response);
 
             if (!response.ok) {
+                // Contoh: 403 (tidak berhak), 409 (buku masih punya riwayat peminjaman),
+                // atau 404 (sudah terhapus).
                 tampilkanPesan('error', pesanGagal(response, hasil, 'menghapus buku'));
                 if (response.status === 404) {
                     await muatBuku();
@@ -330,13 +409,21 @@
         }
     }
 
-    form.addEventListener('submit', simpanBuku);
+    // ---------------------------------------------------------------
+    // Pasang event
+    // ---------------------------------------------------------------
 
-    tombolBatal.addEventListener('click', function () {
-        kosongkanForm();
-        bersihkanPesan();
-    });
+    // Formulir hanya ada untuk admin/petugas. Untuk siswa, bagian ini dilewati.
+    if (BISA_KELOLA && form) {
+        form.addEventListener('submit', simpanBuku);
 
+        tombolBatal.addEventListener('click', function () {
+            kosongkanForm();
+            bersihkanPesan();
+        });
+    }
+
+    // Satu listener untuk semua tombol Ubah/Hapus di tabel (event delegation).
     tbody.addEventListener('click', function (event) {
         const tombol = event.target.closest('button[data-aksi]');
         if (!tombol) {
@@ -363,5 +450,6 @@
         }
     });
 
+    // Muat data saat halaman pertama kali dibuka.
     muatBuku(1);
 })();

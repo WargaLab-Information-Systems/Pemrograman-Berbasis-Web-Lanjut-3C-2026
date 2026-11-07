@@ -1,74 +1,36 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<head>
+        <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <meta charset="UTF-8">
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="font-sans antialiased">
+        <div class="min-h-screen bg-gray-100">
+            @include('layouts.navigation')
 
-    <title>
-    @yield('title', "Cale's Library")
-    </title>
+            <!-- Page Heading -->
+            @isset($header)
+                <header class="bg-white shadow">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
 
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-
-</head>
-
-
-<body>
-
-
-    <header class="header">
-
-        <div class="container">
-
-            <h1>Perpustakaan Cale</h1>
-
-            <p>Buku-buku up to date ada di Perpustakaan Cale!</p>
-
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
         </div>
-
-    </header>
-
-
-    <nav class="navbar">
-
-        <div class="container nav-content">
-
-            <a href="{{ route('home') }}">
-                Beranda
-            </a>
-
-            <a href="{{ route('buku.index') }}">
-                Daftar Buku
-            </a>
-
-        </div>
-
-    </nav>
-
-
-    <main class="container content">
-
-        @yield('content')
-
-    </main>
-
-
-    <footer class="footer">
-
-        <div class="container">
-
-            <p>
-                &copy; 2026 Perpustakaan CALE
-            </p>
-
-        </div>
-
-    </footer>
-
-
-</body>
-
+    </body>
 </html>

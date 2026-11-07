@@ -9,6 +9,12 @@ class Peminjaman extends Model
 {
     use HasFactory;
 
+    // Alur status: diajukan -> dipinjam -> dikembalikan   (atau diajukan -> ditolak)
+    public const DIAJUKAN     = 'diajukan';
+    public const DIPINJAM     = 'dipinjam';
+    public const DIKEMBALIKAN = 'dikembalikan';
+    public const DITOLAK      = 'ditolak';
+
     protected $table = 'peminjamans';
 
     protected $fillable = [
@@ -17,6 +23,14 @@ class Peminjaman extends Model
         'tanggal_pinjam',
         'tanggal_kembali',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'tanggal_pinjam'  => 'date',
+            'tanggal_kembali' => 'date',
+        ];
+    }
 
     public function anggota()
     {

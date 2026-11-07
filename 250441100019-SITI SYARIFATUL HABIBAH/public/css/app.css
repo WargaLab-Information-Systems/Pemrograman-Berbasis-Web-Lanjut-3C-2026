@@ -384,3 +384,41 @@ button.button:disabled {
     }
 
 }
+
+/* =========================================================
+   MODUL 5 - Menu login/logout pada layout lama
+   ========================================================= */
+
+.nav-content {
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.nav-spacer {
+    flex: 1;
+}
+
+.nav-user {
+    color: #555;
+    font-weight: bold;
+}
+
+.nav-form {
+    margin: 0;
+}
+
+.nav-logout {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #c0392b;
+    font-weight: bold;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.form-pinjam {
+    display: inline-block;
+    margin-right: 10px;
+}
