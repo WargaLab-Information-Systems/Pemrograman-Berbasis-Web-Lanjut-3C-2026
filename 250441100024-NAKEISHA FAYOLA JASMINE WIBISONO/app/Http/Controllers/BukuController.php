@@ -8,11 +8,8 @@ class BukuController extends Controller
 {
     public function index()
     {
-        $daftarBuku = Buku::with('kategori')->get()
-            ->map(fn($b) => $this->format($b))
-            ->all();
-
-        return view('buku.index', compact('daftarBuku'));
+        // Tabel diisi lewat Fetch API, jadi tidak ada data yang dikirim dari sini.
+        return view('buku.index');
     }
 
     public function show($id)

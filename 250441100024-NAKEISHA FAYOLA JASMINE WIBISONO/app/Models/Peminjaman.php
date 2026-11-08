@@ -9,8 +9,13 @@ class Peminjaman extends Model
 {
     use HasFactory;
 
+    public const DIAJUKAN = 'diajukan';
+    public const DIPINJAM = 'dipinjam';
+    public const DIKEMBALIKAN = 'dikembalikan';
+    public const DITOLAK = 'ditolak';
+
     protected $table = 'peminjamans';
-    protected $fillable = ['anggota_id', 'buku_id', 'tanggal_pinjam', 'tanggal_kembali'];
+    protected $fillable = ['anggota_id', 'buku_id', 'tanggal_pinjam', 'tanggal_kembali', 'status'];
 
     public function anggota()
     {

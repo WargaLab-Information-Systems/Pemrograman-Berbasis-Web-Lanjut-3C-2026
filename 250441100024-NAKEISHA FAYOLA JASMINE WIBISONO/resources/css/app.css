@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
     --brand: #6d4c2f;
     --brand-light: #f5ecdf;
@@ -152,4 +156,20 @@ body {
     text-align: center;
     padding: 16px 0;
     color: var(--muted);
+}
+
+/* Tailwind (Breeze) menghapus ukuran judul bawaan; kembalikan untuk halaman e-Pustaka */
+.app-content h1,
+.app-content h2,
+.app-content h3 {
+    font-size: revert;
+    font-weight: revert;
+}
+
+.app-content h2 {
+    margin: 0 0 12px;
+}
+
+.app-content a {
+    text-decoration: none;
 }
