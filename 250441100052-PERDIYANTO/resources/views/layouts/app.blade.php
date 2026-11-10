@@ -1,30 +1,34 @@
+
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <title>@yield('title', 'Judul Default')</title>
-    @vite(['resources/css/app.css'])
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Perpustakaan Perdi') }}</title>
+
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/css/perpustakaan.css', 'resources/js/app.js'])
 </head>
+
 <body>
 
-    <div class="container">
-        <header>
-            <h1>Perpustakaan Perdi</h1>
-        </header>
+    @include('layouts.navigation')
 
-        <nav>
-            <a href="{{ route('home') }}">Beranda</a>
-            <a href="{{ route('buku.index') }}">Daftar Buku</a>
-        </nav>
-    </div>
+    @isset($header)
+        <header class="page-heading">
+            <div class="page-heading-content">
+                {{ $header }}
+            </div>
+        </header>
+    @endisset
 
     <main>
-        @yield('content')
+        {{ $slot }}
     </main>
-
-    <footer>
-        <p>&copy; 2026 - Perdiyanto 250441100052</p>
-    </footer>
 
 </body>
 </html>

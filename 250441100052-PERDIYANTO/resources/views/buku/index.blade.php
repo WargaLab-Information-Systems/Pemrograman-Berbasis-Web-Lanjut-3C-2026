@@ -1,16 +1,33 @@
-@extends('layouts.app')
+@extends('layouts.perpustakaan')
 
-@section('title','Daftar Buku')
+@section('title', 'Daftar Buku')
 
 @section('content')
-<h2>Semua Buku</h2>
+<div id="alert-area"></div>
 
-    <div class="daftar-buku">
-        @foreach ($buku as $b)
-            <x-kartu-buku :judul="$b['judul']" :penulis="$b['penulis']" :tahun="$b['tahun_terbit']" :id="$b['id']">
-                <x-slot:kategori>{{ $b['kategori'] }}</x-slot:kategori>
-            </x-kartu-buku>
-        @endforeach
-    </div>
+<table class="tabel-buku">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Kategori</th>
+            <th>Judul</th>
+            <th>Penulis</th>
+            <th>Tahun Terbit</th>
+        </tr>
+    </thead>
+    <tbody id="tbody-buku">
+        <tr><td colspan="5">Memuat data...</td></tr>
+    </tbody>
+</table>
 
+<div class="paginasi">
+    <button type="button" id="btn-prev">&laquo; Sebelumnya</button>
+    <span id="info-halaman"></span>
+    <button type="button" id="btn-next">Berikutnya &raquo;</button>
+</div>
 @endsection
+
+@push('scripts')
+    <script>const BISA_KELOLA = false;</script>
+    <script src="{{ asset('js/buku-client.js') }}"></script>
+@endpush
