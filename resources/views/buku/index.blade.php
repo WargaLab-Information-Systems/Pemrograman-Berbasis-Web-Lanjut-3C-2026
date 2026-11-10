@@ -103,7 +103,7 @@
 </style>
 
 @can('kelola-buku')
-    <p><a href="{{ route('buku.create') }}" class="btn">Tambah Buku</a></p>
+    <p style="margin: 0 0 20px"><a href="{{ route('buku.create') }}" class="btn">Tambah Buku</a></p>
 @endcan
 
 @if (session('success'))
