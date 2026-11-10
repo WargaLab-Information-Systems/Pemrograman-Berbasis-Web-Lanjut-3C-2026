@@ -1,76 +1,95 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-white leading-tight bg-blue-600 -m-6 p-6">
+            {{ __('Kelola Data Buku') }}
+        </h2>
+    </x-slot>
 
-@section('title', 'Daftar Buku - Perpustakaan Cendekia')
-
-@section('content')
+    <!-- Memuat CSS Bootstrap khusus untuk komponen di dalam halaman ini jika diperlukan -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <h2>Data Buku Perpustakaan</h2>
 
-    <!-- Wadah Pesan Error/Sukses -->
-    <div id="alert-container"></div>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
 
-    <!-- Form Tambah / Ubah Buku -->
-    <div class="card mb-4 p-3 shadow-sm">
-        <h4 id="form-title">Tambah Buku Baru</h4>
-        <form id="buku-form">
-            <input type="hidden" id="buku-id">
-            <div class="mb-3">
-                <label class="form-label">Kategori ID</label>
-                <input type="text" id="kategori" class="form-control" required>
+                    <h2 class="mb-4">Data Buku Perpustakaan Cendekia</h2>
+
+                    <!-- Wadah Pesan Error/Sukses -->
+                    <div id="alert-container"></div>
+
+                    <!-- Form Tambah / Ubah Buku -->
+                    <div class="card mb-4 p-3 shadow-sm">
+                        <h4 id="form-title">Tambah Buku Baru</h4>
+                        <form id="buku-form">
+                            <input type="hidden" id="buku-id">
+                            <div class="mb-3">
+                                <label class="form-label">Kategori ID</label>
+                                <input type="text" id="kategori" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Judul Buku</label>
+                                <input type="text" id="judul" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Penulis</label>
+                                <input type="text" id="penulis" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tahun Terbit</label>
+                                <input type="number" id="tahun_terbit" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-submit">Simpan</button>
+                            <button type="button" class="btn btn-secondary d-none" id="btn-cancel"
+                                onclick="resetForm()">Batal</button>
+                        </form>
+                    </div>
+
+                    <!-- Tabel Data Buku -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Kategori</th>
+                                    <th>Judul</th>
+                                    <th>Penulis</th>
+                                    <th>Tahun Terbit</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="buku-table-body">
+                                <!-- Data dimuat secara dinamis via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Judul Buku</label>
-                <input type="text" id="judul" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Penulis</label>
-                <input type="text" id="penulis" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Tahun Terbit</label>
-                <input type="number" id="tahun_terbit" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary" id="btn-submit">Simpan</button>
-            <button type="button" class="btn btn-secondary d-none" id="btn-cancel" onclick="resetForm()">Batal</button>
-        </form>
+        </div>
     </div>
 
-    <!-- Tabel Data Buku -->
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Kategori</th>
-                <th>Judul</th>
-                <th>Penulis</th>
-                <th>Tahun Terbit</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody id="buku-table-body">
-            <!-- Data dimuat secara dinamis -->
-        </tbody>
-    </table>
-
     <script>
-        const API_URL = '/api/buku';
+        // Diubah dari '/api/buku' menjadi '/buku' sesuai rute web.php yang baru
+        const API_URL = '/buku';
 
         function showAlert(message, type = 'danger') {
             document.getElementById('alert-container').innerHTML = `
-                                                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                                                    ${message}
-                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                </div>
-                                            `;
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
         }
 
         // 1. GET: Mengambil data menggunakan Fetch API & async/await
         async function fetchBuku() {
             try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Gagal mengambil data dari API.');
+                const response = await fetch(API_URL, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!response.ok) throw new Error('Gagal mengambil data buku.');
 
                 const result = await response.json();
-                // Karena Controller Anda mengembalikan struktur: { success: true, data: [...] }
                 const bukuList = result.data.data || result.data;
 
                 let tbody = document.getElementById('buku-table-body');
@@ -78,17 +97,17 @@
 
                 bukuList.forEach(buku => {
                     tbody.innerHTML += `
-                                                        <tr>
-                                                            <td>${buku.kategori_id ?? buku.kategori}</td>
-                                                            <td>${buku.judul}</td>
-                                                            <td>${buku.penulis}</td>
-                                                            <td>${buku.tahun_terbit}</td>
-                                                            <td>
-                                                                <button class="btn btn-warning btn-sm" onclick="editBuku(${buku.id}, '${buku.kategori_id ?? buku.kategori}', '${buku.judul}', '${buku.penulis}', ${buku.tahun_terbit})">Ubah</button>
-                                                                <button class="btn btn-danger btn-sm" onclick="deleteBuku(${buku.id})">Hapus</button>
-                                                            </td>
-                                                        </tr>
-                                                    `;
+                        <tr>
+                            <td>${buku.kategori_id ?? buku.kategori}</td>
+                            <td>${buku.judul}</td>
+                            <td>${buku.penulis}</td>
+                            <td>${buku.tahun_terbit}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editBuku(${buku.id}, '${buku.kategori_id ?? buku.kategori}', '${buku.judul}', '${buku.penulis}', ${buku.tahun_terbit})">Ubah</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteBuku(${buku.id})">Hapus</button>
+                            </td>
+                        </tr>
+                    `;
                 });
             } catch (error) {
                 showAlert(error.message);
@@ -112,7 +131,7 @@
 
             if (id) {
                 url = `${API_URL}/${id}`;
-                method = 'PUT'; // Endpoint PUT
+                method = 'PUT';
             }
 
             try {
@@ -120,7 +139,8 @@
                     method: method,
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                     },
                     body: JSON.stringify(payload)
                 });
@@ -135,7 +155,7 @@
                 }
 
                 resetForm();
-                fetchBuku(); // Memperbarui tabel otomatis tanpa reload halaman
+                fetchBuku();
                 showAlert('Data buku berhasil disimpan!', 'success');
             } catch (error) {
                 showAlert(error.message);
@@ -161,7 +181,10 @@
             try {
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Accept': 'application/json' }
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                    }
                 });
 
                 if (!response.ok) throw new Error('Gagal menghapus data buku.');
@@ -181,6 +204,7 @@
             document.getElementById('btn-cancel').classList.add('d-none');
         }
 
+        // Panggil fungsi muat data saat halaman dibuka
         fetchBuku();
     </script>
-@endsection
+</x-app-layout>
