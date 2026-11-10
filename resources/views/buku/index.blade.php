@@ -286,11 +286,21 @@
             <p>Lihat dan jelajahi koleksi buku perpustakaan.</p>
         </div>
 
-        <button type="button" class="btn btn-refresh" id="btnRefresh">
-            ↻ Muat Ulang
-        </button>
+        <div>
+            {{-- Tombol Tambah Buku hanya muncul untuk Admin & Petugas --}}
+            @can('kelola-buku')
+                <a href="{{ route('buku.create') }}" class="btn btn-primary me-2">
+                    + Tambah Buku
+                </a>
+            @endcan
+
+            <button type="button" class="btn btn-refresh" id="btnRefresh">
+                ↻ Muat Ulang
+            </button>
+        </div>
     </div>
 
+    
     {{-- Form Tambah dan Ubah Buku HANYA TAMPIL untuk Admin & Petugas --}}
     @hasanyrole('admin|petugas')
     <div class="library-card">

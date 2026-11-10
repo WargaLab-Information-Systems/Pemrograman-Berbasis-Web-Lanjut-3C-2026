@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Buku;
+use Illuminate\Support\Facades\DB;
 
 class BukuController extends Controller
 {
@@ -14,23 +15,34 @@ class BukuController extends Controller
         return view('buku.index', compact('buku'));
     }
 
-    public function show(int $id)
+    public function create()
+    {
+        return view('buku.create');
+    }
+
+    public function show($id)
     {
         $buku = Buku::with('kategori')->findOrFail($id);
-
         return view('buku.show', compact('buku'));
     }
 
+    // Perbaikan A2 (Soal 2b): Query Binding untuk mencegah SQL Injection
+    public function cari(Request $request)
+    {
+        $judul = $request->query('judul');
+        $buku = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
+
+        return response()->json($buku);
+    }
+
     /**
-     * METHOD SOAL A3 Soal 1: Menghapus data buku dari database
+     * Perbaikan A3 (Soal 2c): Menghapus data buku via route DELETE
      */
     public function destroy($id)
     {
-        // Cari data buku berdasarkan ID lalu hapus
         $buku = Buku::findOrFail($id);
         $buku->delete();
 
-        // Redirect kembali ke halaman daftar buku
         return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus!');
     }
 }
