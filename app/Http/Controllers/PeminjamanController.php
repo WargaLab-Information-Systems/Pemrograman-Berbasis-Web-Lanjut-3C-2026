@@ -82,19 +82,30 @@ class PeminjamanController extends Controller
     }
 
     // 2. Method Show (Soal 4: Menutup Celah IDOR A4 dengan Policy)
+    // public function show($id)
+    // {
+    //     $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
+
+    //     // Memanggil Policy view
+    //     Gate::authorize('view', $peminjaman);
+
+    //     // Jika request menginginkan JSON (seperti pengujian API/modul)
+    //     if (request()->wantsJson()) {
+    //         return response()->json($peminjaman);
+    //     }
+
+    //     return view('peminjaman.show', compact('peminjaman'));
+    // }
+
     public function show($id)
     {
         $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
 
-        // Memanggil Policy view
+        // Soal 4: Proteksi akses detail peminjaman menggunakan Policy
         Gate::authorize('view', $peminjaman);
 
-        // Jika request menginginkan JSON (seperti pengujian API/modul)
-        if (request()->wantsJson()) {
-            return response()->json($peminjaman);
-        }
-
-        return view('peminjaman.show', compact('peminjaman'));
+        // Kembalikan langsung respons JSON agar tidak membutuhkan file view Blade
+        return response()->json($peminjaman);
     }
 
     // 3. Setujui Peminjaman

@@ -47,14 +47,21 @@ Route::middleware(['auth'])->group(function () {
     // 5. Route Show Buku (Harus ditaruh di bawah /buku/create agar tidak bentrok)
     Route::get('/buku/{id}', [BukuController::class, 'show'])->name('buku.show');
 
-    // 6. Peminjaman
+Route::middleware(['auth'])->group(function () {
+
+    // 1. Dashboard, Buku, dll...
+
+    // 2. Peminjaman (Semua di dalam grup auth)
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     Route::patch('/peminjaman/{peminjaman}/kembali', [PeminjamanController::class, 'pengembalian'])->name('peminjaman.kembali');
-    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
     
+    // ROUTE DETAIL PEMINJAMAN (HANYA DITULIS 1 KALI DI SINI)
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+
     Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayatSaya'])->name('peminjaman.riwayat');
     Route::get('/riwayat-peminjaman/{id}', [PeminjamanController::class, 'riwayatBerdasarkanId'])->name('peminjaman.riwayat.id');
+});
 
     // 7. Laporan & Persetujuan (Admin & Petugas)
     Route::middleware(['role:admin|petugas'])->group(function () {
@@ -77,5 +84,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 }); // Penutup Route::middleware(['auth'])
+
+Route::get('/tes-error', function () {
+    abort(500, 'Tes Error Aplikasi');
+});
 
 require __DIR__.'/auth.php';

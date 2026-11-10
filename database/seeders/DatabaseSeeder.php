@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,6 +19,11 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RolePermissionSeeder::class,
+        ]);
+
+        // Soal 5 (c): Ganti password akun admin bawaan seeder
+        User::where('email', 'admin@gmail.com')->update([
+            'password' => Hash::make('AdminAman2026!')
         ]);
     }
 }
