@@ -18,7 +18,7 @@ Route::middleware('web')->group(function () {
 
 Route::middleware(['web', 'auth'])->group(function () {
 
-    Route::middleware('permission:kelola data buku')->group(function () {
+    Route::middleware('can:kelola-buku')->group(function () {
         Route::post('buku', [BukuController::class, 'store']);
         Route::match(['put', 'patch'], 'buku/{buku}', [BukuController::class, 'update']);
         Route::delete('buku/{buku}', [BukuController::class, 'destroy']);

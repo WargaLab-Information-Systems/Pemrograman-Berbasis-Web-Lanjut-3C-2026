@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBukuRequest;
+use App\Http\Requests\UpdateBukuRequest;
 use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Database\QueryException;
@@ -16,6 +18,32 @@ class BukuController extends Controller
         $bukus = Buku::with('kategori')->latest('id')->paginate(10);
 
         return view('buku.index', compact('kategoris', 'bukus'));
+    }
+
+    public function create()
+    {
+        return view('buku.create', ['kategoris' => Kategori::all()]);
+    }
+
+    public function store(StoreBukuRequest $request)
+    {
+        $buku = Buku::create($request->validated());
+
+        return redirect()->route('buku.index')
+            ->with('success', "Buku \"{$buku->judul}\" berhasil ditambahkan.");
+    }
+
+    public function edit(Buku $buku)
+    {
+        return view('buku.edit', ['buku' => $buku, 'kategoris' => Kategori::all()]);
+    }
+
+    public function update(UpdateBukuRequest $request, Buku $buku)
+    {
+        $buku->update($request->validated());
+
+        return redirect()->route('buku.index')
+            ->with('success', "Buku \"{$buku->judul}\" berhasil diperbarui.");
     }
 
     /**

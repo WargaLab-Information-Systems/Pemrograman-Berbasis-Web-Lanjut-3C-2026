@@ -21,6 +21,16 @@ Route::get('/', function () {
 // Tamu tidak dapat meminjam; tombol pinjam hanya muncul untuk yang berhak,
 // dan route peminjaman tetap dilindungi "auth" + permission.
 Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
+
+// Pengelolaan buku (tambah/ubah/hapus): login + Gate "kelola-buku" (admin & petugas).
+// Harus didaftarkan SEBELUM /buku/{id} agar /buku/create tidak dianggap sebagai id.
+Route::middleware(['auth', 'can:kelola-buku'])->group(function () {
+    Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');
+    Route::post('/buku', [BukuController::class, 'store'])->name('buku.store');
+    Route::get('/buku/{buku}/edit', [BukuController::class, 'edit'])->name('buku.edit');
+    Route::put('/buku/{buku}', [BukuController::class, 'update'])->name('buku.update');
+    Route::delete('/buku/{buku}', [BukuController::class, 'destroy'])->name('buku.destroy');
+});
 Route::get('/buku/{id}', [BukuController::class, 'show'])->name('buku.show');
 
 // Halaman yang membutuhkan login (middleware "auth").
@@ -34,15 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/petugas/dashboard', [DashboardController::class, 'petugas'])
         ->middleware('permission:akses dashboard petugas')->name('petugas.dashboard');
 
-    // Pengelolaan data buku (tambah/ubah/hapus) lewat /api/buku
-    // dan dilindungi permission "kelola data buku".
+    // Pengelolaan data buku: lihat grup "can:kelola-buku" di atas (dan /api/buku).
 
     // Pencarian buku: query memakai parameter binding (aman dari SQL Injection)
     Route::get('/buku-cari', [BukuController::class, 'cari'])->name('buku.cari');
-
-    // Hapus buku: HANYA method DELETE (dilindungi token CSRF); route GET lama dihapus
-    Route::delete('/buku/{buku}', [BukuController::class, 'destroy'])
-        ->middleware('permission:kelola data buku')->name('buku.destroy');
 
     // Profil sendiri
     Route::get('/profile', [ProfileController::class, 'edit'])

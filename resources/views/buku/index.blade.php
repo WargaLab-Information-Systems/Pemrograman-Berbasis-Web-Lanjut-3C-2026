@@ -102,73 +102,8 @@
     }
 </style>
 
-@can('kelola data buku')
-<div class="book-form">
-    <h3 id="judulForm">Tambah Buku</h3>
-
-    <form id="formBuku">
-        @csrf
-
-        <input type="hidden" id="buku_id">
-
-        <label for="kategori_id">Kategori</label>
-        <select id="kategori_id" name="kategori_id" required>
-            <option value="">Pilih kategori</option>
-
-            @foreach ($kategoris as $kategori)
-                <option value="{{ $kategori->id }}">
-                    {{ $kategori->nama }}
-                </option>
-            @endforeach
-        </select>
-
-        <label for="judul">Judul Buku</label>
-        <input
-            type="text"
-            id="judul"
-            name="judul"
-            minlength="3"
-            maxlength="150"
-            required
-        >
-
-        <label for="penulis">Penulis</label>
-        <input
-            type="text"
-            id="penulis"
-            name="penulis"
-            minlength="3"
-            maxlength="100"
-            required
-        >
-
-        <label for="tahun_terbit">Tahun Terbit</label>
-        <input
-            type="number"
-            id="tahun_terbit"
-            name="tahun_terbit"
-            min="1900"
-            max="{{ date('Y') }}"
-            required
-        >
-
-        <button type="submit" class="btn-save" id="btnSimpan">
-            Tambah Buku
-        </button>
-
-        <button
-            type="button"
-            class="btn-cancel"
-            id="btnBatal"
-            onclick="resetForm()"
-            hidden
-        >
-            Batal
-        </button>
-
-        <p id="pesanForm" class="book-message" role="alert"></p>
-    </form>
-</div>
+@can('kelola-buku')
+    <p><a href="{{ route('buku.create') }}" class="btn">Tambah Buku</a></p>
 @endcan
 
 @if (session('success'))
@@ -217,8 +152,8 @@
                             </form>
                         @endcan
 
-                        @can('kelola data buku')
-                            <button type="button" class="btn-edit" onclick="isiForm({{ $buku->id }})">Ubah</button>
+                        @can('kelola-buku')
+                            <a href="{{ route('buku.edit', $buku) }}" class="btn btn-light btn-sm">Ubah</a>
                             <form method="POST" action="{{ route('buku.destroy', $buku) }}" class="inline-form"
                                   onsubmit="return confirm(@js('Apakah kamu yakin ingin menghapus buku "'.$buku->judul.'"?'))">
                                 @csrf
@@ -238,102 +173,5 @@
 <div class="book-pagination">
     {{ $bukus->links() }}
 </div>
-
-@can('kelola data buku')
-<script>
-    const API_URL = '/api/buku';
-    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-
-    const formBuku = document.getElementById('formBuku');
-    const pesanForm = document.getElementById('pesanForm');
-
-    async function bacaRespons(response) {
-        let hasil;
-        try {
-            hasil = await response.json();
-        } catch (error) {
-            throw new Error('Respons server bukan JSON yang valid.');
-        }
-
-        if (!response.ok) {
-            if (hasil.errors) {
-                throw new Error(Object.values(hasil.errors).flat().join('\n') || hasil.message || 'Permintaan gagal.');
-            }
-            throw new Error(hasil.message || `Permintaan gagal (${response.status}).`);
-        }
-
-        return hasil;
-    }
-
-    function resetForm() {
-        formBuku.reset();
-        document.getElementById('buku_id').value = '';
-        document.getElementById('judulForm').textContent = 'Tambah Buku';
-        document.getElementById('btnSimpan').textContent = 'Tambah Buku';
-        document.getElementById('btnBatal').hidden = true;
-        pesanForm.textContent = '';
-    }
-
-    async function isiForm(id) {
-        pesanForm.textContent = '';
-
-        try {
-            const response = await fetch(`${API_URL}/${id}`, { headers: { 'Accept': 'application/json' } });
-            const hasil = await bacaRespons(response);
-            const detail = hasil.data?.data ?? hasil.data;
-
-            document.getElementById('buku_id').value = detail.id;
-            document.getElementById('judul').value = detail.judul ?? '';
-            document.getElementById('penulis').value = detail.penulis ?? '';
-            document.getElementById('tahun_terbit').value = detail.tahunTerbit ?? detail.tahun_terbit ?? '';
-
-            const pilihanKategori = document.getElementById('kategori_id');
-            if (detail.kategori_id !== undefined) {
-                pilihanKategori.value = detail.kategori_id;
-            } else {
-                const opsi = Array.from(pilihanKategori.options).find(o => o.textContent.trim() === detail.kategori);
-                pilihanKategori.value = opsi ? opsi.value : '';
-            }
-
-            document.getElementById('judulForm').textContent = 'Ubah Buku';
-            document.getElementById('btnSimpan').textContent = 'Simpan Perubahan';
-            document.getElementById('btnBatal').hidden = false;
-            document.getElementById('judulForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } catch (error) {
-            pesanForm.textContent = error.message;
-        }
-    }
-
-    formBuku.addEventListener('submit', async function (event) {
-        event.preventDefault();
-        pesanForm.textContent = '';
-
-        const id = document.getElementById('buku_id').value;
-        const dataBuku = {
-            kategori_id: document.getElementById('kategori_id').value,
-            judul: document.getElementById('judul').value.trim(),
-            penulis: document.getElementById('penulis').value.trim(),
-            tahun_terbit: Number(document.getElementById('tahun_terbit').value)
-        };
-
-        try {
-            const response = await fetch(id ? `${API_URL}/${id}` : API_URL, {
-                method: id ? 'PUT' : 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': CSRF_TOKEN
-                },
-                body: JSON.stringify(dataBuku)
-            });
-
-            await bacaRespons(response);
-            location.href = '/buku';
-        } catch (error) {
-            pesanForm.textContent = error.message;
-        }
-    });
-</script>
-@endcan
 
 @endsection

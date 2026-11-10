@@ -37,7 +37,7 @@
 </div>
 
 <div class="toolbar">
-    @can('kelola data buku')
+    @can('kelola-buku')
         <a class="btn" href="{{ route('buku.index') }}">Kelola Buku</a>
     @endcan
     @can('kelola peminjaman')

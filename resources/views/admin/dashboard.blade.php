@@ -30,7 +30,7 @@
     @can('kelola data pengguna')
         <a class="btn" href="{{ route('users.index') }}">Kelola Pengguna &amp; Role</a>
     @endcan
-    @can('kelola data buku')
+    @can('kelola-buku')
         <a class="btn btn-light" href="{{ route('buku.index') }}">Kelola Buku</a>
     @endcan
     @can('kelola peminjaman')

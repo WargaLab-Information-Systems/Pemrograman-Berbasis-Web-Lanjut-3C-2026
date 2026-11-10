@@ -374,8 +374,8 @@ class RbacTest extends TestCase
 
         $html = $this->actingAs($siswa)->get('/buku')->assertOk()->getContent();
 
-        $this->assertStringNotContainsString('id="formBuku"', $html);
-        $this->assertStringContainsString('const BISA_KELOLA = false', $html);
+        $this->assertStringNotContainsString(route('buku.create'), $html);
+        $this->assertStringNotContainsString('name="_method" value="DELETE"', $html);
         $this->assertStringNotContainsString('/admin/users', $html);
         $this->assertStringNotContainsString('href="'.route('laporan.index').'"', $html);
     }
@@ -384,8 +384,7 @@ class RbacTest extends TestCase
     {
         $html = $this->actingAs($this->buatUser('admin'))->get('/buku')->assertOk()->getContent();
 
-        $this->assertStringContainsString('id="formBuku"', $html);
-        $this->assertStringContainsString('const BISA_KELOLA = true', $html);
+        $this->assertStringContainsString(route('buku.create'), $html);
         $this->assertStringContainsString(route('users.index'), $html);
     }
 
