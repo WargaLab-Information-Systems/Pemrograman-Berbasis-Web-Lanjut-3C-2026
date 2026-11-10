@@ -83,7 +83,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('permission:memproses persetujuan peminjaman')->name('peminjaman.tolak');
     Route::post('/peminjaman/{peminjaman}/kembali', [PeminjamanController::class, 'kembali'])
         ->middleware('permission:mencatat pengembalian buku')->name('peminjaman.kembali');
-    // [A4 - RENTAN] Detail peminjaman tanpa pemeriksaan pemilik (IDOR)
+    // Detail: dibatasi oleh PeminjamanPolicy (pemilik atau admin/petugas)
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
 
     // Status & riwayat peminjaman sendiri
