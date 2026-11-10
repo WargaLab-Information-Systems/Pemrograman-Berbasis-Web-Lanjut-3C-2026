@@ -379,16 +379,18 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-// Soal 1 Rentan XSS: Menggunakan {!! !!} tanpa escaping pada judul buku di tabel
-                <tbody id="daftarBuku">
+                
+                <!-- <tbody id="daftarBuku">
                     @foreach($buku as $item)
                         <tr>
                             <td>{{ $item->id }}</td>
-                            <td>{{ $item->kategori->nama ?? '-' }}</td>
+                            <td>{{ $item->kategori->nama ?? '-' }}</td> -->
                             
-                            {{-- KODE CELAH A1 (RENTAN XSS): Menggunakan {!! !!} tanpa escaping --}}
-                            <td>{!! $item->judul !!}</td>
+                            <!-- {{-- KODE CELAH A1 (RENTAN XSS): Menggunakan {!! !!} tanpa escaping --}}
+                            <td>{!! $item->judul !!}</td> -->
                             
+                            <!-- <td>{{ $item->judul }}</td>
+
                             <td>{{ $item->penulis }}</td>
                             <td>{{ $item->tahun_terbit }}</td>
                             <td>
@@ -398,7 +400,31 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
+        </div> -->
+
+        <tbody id="daftarBuku">
+    @foreach($buku as $item)
+        <tr>
+            <td>{{ $item->id }}</td>
+            <td>{{ $item->kategori->nama ?? '-' }}</td>
+            
+            {{-- Perbaikan A1: Menggunakan Blade Escaping {{ }} --}}
+            <td>{{ $item->judul }}</td>
+
+            <td>{{ $item->penulis }}</td>
+            <td>{{ $item->tahun_terbit }}</td>
+            <td>
+                {{-- Perbaikan A3: Tombol Hapus menggunakan Form ber-token CSRF & Method DELETE --}}
+                <form action="{{ route('buku.destroy', $item->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="return confirm('Yakin hapus?')">Hapus</button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
 
                 <tbody id="daftarBuku">
                     <tr>

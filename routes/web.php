@@ -30,7 +30,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
     Route::get('/buku/{id}', [BukuController::class, 'show'])->name('buku.show');
     // ROUTE CELAH A3: Menghapus buku via GET
-    Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy']);
+    // Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy']);
 
     // 3. Kelola & Pengajuan Peminjaman (Admin, Petugas, & Siswa)
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
@@ -78,8 +78,11 @@ Route::middleware(['auth'])->get('/buku-cari', function (Request $request) {
     $judul = $request->query('judul');
     
     // Celah SQLi: Input $judul ditempel langsung tanpa parameter binding
-    $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+    // $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
     
+    // return response()->json($buku);
+
+    $buku = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
     return response()->json($buku);
 });
 
