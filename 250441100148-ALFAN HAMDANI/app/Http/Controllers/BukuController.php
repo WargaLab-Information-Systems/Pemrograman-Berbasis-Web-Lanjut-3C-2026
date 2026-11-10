@@ -30,8 +30,9 @@ class BukuController extends Controller
             ]);
         }
 
-        // Jika diakses langsung lewat browser, kembalikan tampilan Blade view
-        return view('buku.index');
+        // Jika diakses langsung lewat browser, ambil datanya dan kirimkan ke view Blade
+        $bukus = Buku::all();
+        return view('buku.index', compact('bukus'));
     }
 
     // Menyimpan Buku Baru (POST)
