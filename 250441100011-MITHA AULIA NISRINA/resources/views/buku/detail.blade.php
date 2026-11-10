@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
-@section('title', $bukuDitemukan ? $bukuDitemukan['title'] . ' - KATAMITHA' : 'Buku Tidak Ditemukan - KATAMITHA')
+@section(
+    'title',
+    $bukuDitemukan
+        ? $bukuDitemukan['title'] . ' - KATAMITHA'
+        : 'Buku Tidak Ditemukan - KATAMITHA'
+)
 
 @section('content')
 
@@ -16,53 +21,129 @@
                 {{ $bukuDitemukan['title'] }}
             </h2>
 
+
+            {{-- =====================================================
+                 COVER BUKU
+                 ===================================================== --}}
             <div class="detail-cover">
-                <img src="{{ asset('images/books/' . $bukuDitemukan['image']) }}" alt="Cover {{ $bukuDitemukan['title'] }}">
+
+                @if (!empty($bukuDitemukan['image']))
+
+                    <img
+                        src="{{ asset('images/books/' . $bukuDitemukan['image']) }}"
+                        alt="Cover {{ $bukuDitemukan['title'] }}"
+                    >
+
+                @else
+
+                    <div class="detail-cover-placeholder">
+
+                        <span>
+                            KATAMITHA
+                        </span>
+
+                        <strong>
+                            {{ $bukuDitemukan['title'] }}
+                        </strong>
+
+                        <small>
+                            Cover belum tersedia
+                        </small>
+
+                    </div>
+
+                @endif
+
             </div>
 
+
+            {{-- =====================================================
+                 DESKRIPSI / SINOPSIS
+                 ===================================================== --}}
             <div class="detail-description">
 
-                <h3>Sinopsis</h3>
+                <h3>
+                    Sinopsis
+                </h3>
 
                 <p>
-                    {{ $bukuDitemukan['description'] }}
+                    @if (!empty($bukuDitemukan['description']))
+
+                        {{ $bukuDitemukan['description'] }}
+
+                    @else
+
+                        Deskripsi buku belum tersedia.
+
+                    @endif
                 </p>
 
             </div>
 
+
+            {{-- =====================================================
+                 INFORMASI BUKU
+                 ===================================================== --}}
             <div class="detail-info">
 
                 <div class="info-item">
-                    <span>ID Buku</span>
+
+                    <span>
+                        ID Buku
+                    </span>
+
                     <strong>
                         {{ $bukuDitemukan['id'] }}
                     </strong>
+
                 </div>
 
+
                 <div class="info-item">
-                    <span>Penulis</span>
+
+                    <span>
+                        Penulis
+                    </span>
+
                     <strong>
                         {{ $bukuDitemukan['author'] }}
                     </strong>
+
                 </div>
 
+
                 <div class="info-item">
-                    <span>Tahun Terbit</span>
+
+                    <span>
+                        Tahun Terbit
+                    </span>
+
                     <strong>
                         {{ $bukuDitemukan['year'] }}
                     </strong>
+
                 </div>
 
+
                 <div class="info-item">
-                    <span>Kategori</span>
+
+                    <span>
+                        Kategori
+                    </span>
+
                     <strong>
                         {{ $bukuDitemukan['category'] }}
                     </strong>
+
                 </div>
 
             </div>
 
-            <a href="{{ route('buku.index') }}" class="back-button">
+
+            <a
+                href="{{ route('buku.index') }}"
+                class="back-button"
+            >
                 Kembali ←
             </a>
 
@@ -70,12 +151,17 @@
 
     @else
 
+        {{-- =====================================================
+             BUKU TIDAK DITEMUKAN
+             ===================================================== --}}
         <div class="not-found">
 
             <div class="not-found-icon">
+
                 <span class="book-shape">
                     <span></span>
                 </span>
+
             </div>
 
             <span class="not-found-label">
@@ -91,7 +177,10 @@
                 koleksi KATAMITHA.
             </p>
 
-            <a href="{{ route('buku.index') }}" class="back-button">
+            <a
+                href="{{ route('buku.index') }}"
+                class="back-button"
+            >
                 <span>←</span>
                 Kembali ke Daftar Buku
             </a>
