@@ -37,12 +37,12 @@ Route::middleware('auth')->group(function () {
     // Pengelolaan data buku (tambah/ubah/hapus) lewat /api/buku
     // dan dilindungi permission "kelola data buku".
 
-    // [A2 - RENTAN] Pencarian buku dengan query SQL mentah
+    // Pencarian buku: query memakai parameter binding (aman dari SQL Injection)
     Route::get('/buku-cari', [BukuController::class, 'cari'])->name('buku.cari');
 
-    // [A3 - RENTAN] Hapus buku lewat GET (tanpa token CSRF)
-    Route::get('/buku/{buku}/hapus', [\App\Http\Controllers\Api\BukuController::class, 'destroy'])
-        ->name('buku.hapus');
+    // Hapus buku: HANYA method DELETE (dilindungi token CSRF); route GET lama dihapus
+    Route::delete('/buku/{buku}', [BukuController::class, 'destroy'])
+        ->middleware('permission:kelola data buku')->name('buku.destroy');
 
     // Profil sendiri
     Route::get('/profile', [ProfileController::class, 'edit'])

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Buku;
 use App\Models\Kategori;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,13 +19,13 @@ class BukuController extends Controller
     }
 
     /**
-     * [A2 - RENTAN] SQL Injection: nilai "judul" digabungkan langsung ke string SQL.
+     * Pencarian buku berdasarkan judul (query dengan parameter binding).
      */
     public function cari(Request $request)
     {
         $judul = $request->query('judul');
 
-        $hasil = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        $hasil = DB::select('SELECT * FROM bukus WHERE judul = ?', [$judul]);
 
         return response()->json($hasil);
     }
@@ -34,5 +35,21 @@ class BukuController extends Controller
         $buku = Buku::with('kategori')->findOrFail($id);
 
         return view('buku.show', compact('buku'));
+    }
+
+    /** Hapus buku: hanya lewat DELETE + token CSRF. */
+    public function destroy(Buku $buku)
+    {
+        $judul = $buku->judul;
+
+        try {
+            $buku->delete();
+        } catch (QueryException) {
+            // Buku yang masih punya riwayat peminjaman tidak boleh dihapus (foreign key).
+            return back()->with('error', "Buku \"{$judul}\" masih memiliki data peminjaman sehingga tidak dapat dihapus.");
+        }
+
+        return redirect()->route('buku.index')
+            ->with('success', "Buku \"{$judul}\" berhasil dihapus.");
     }
 }

@@ -171,6 +171,13 @@
 </div>
 @endcan
 
+@if (session('success'))
+    <p class="book-message" role="status">{{ session('success') }}</p>
+@endif
+@if (session('error'))
+    <p class="book-message" role="alert">{{ session('error') }}</p>
+@endif
+
 <h3>Daftar Koleksi Buku</h3>
 
 <div class="book-table-wrapper">
@@ -191,8 +198,8 @@
                 <tr>
                     <td>{{ $bukus->firstItem() + $loop->index }}</td>
                     <td>{{ $buku->kategori->nama ?? '-' }}</td>
-                    {{-- [A1 - RENTAN] {!! !!} tidak melakukan escaping HTML --}}
-                    <td>{!! $buku->judul !!}</td>
+                    {{-- Blade escaping: karakter HTML diubah menjadi entitas, tampil sebagai teks --}}
+                    <td>{{ $buku->judul }}</td>
                     <td>{{ $buku->penulis }}</td>
                     <td>{{ $buku->tahun_terbit }}</td>
                     <td>
@@ -212,8 +219,12 @@
 
                         @can('kelola data buku')
                             <button type="button" class="btn-edit" onclick="isiForm({{ $buku->id }})">Ubah</button>
-                            <button type="button" class="btn-delete"
-                                    onclick="hapusBuku({{ $buku->id }}, @js(strip_tags($buku->judul)))">Hapus</button>
+                            <form method="POST" action="{{ route('buku.destroy', $buku) }}" class="inline-form"
+                                  onsubmit="return confirm(@js('Apakah kamu yakin ingin menghapus buku "'.$buku->judul.'"?'))">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-delete">Hapus</button>
+                            </form>
                         @endcan
                     </td>
                 </tr>
@@ -227,10 +238,6 @@
 <div class="book-pagination">
     {{ $bukus->links() }}
 </div>
-
-@if (session('success'))
-    <p class="book-message" role="status">{{ session('success') }}</p>
-@endif
 
 @can('kelola data buku')
 <script>
@@ -326,24 +333,6 @@
             pesanForm.textContent = error.message;
         }
     });
-
-    async function hapusBuku(id, judul) {
-        if (!confirm(`Apakah kamu yakin ingin menghapus buku "${judul}"?`)) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
-            });
-
-            await bacaRespons(response);
-            location.reload();
-        } catch (error) {
-            pesanForm.textContent = error.message;
-        }
-    }
 </script>
 @endcan
 
