@@ -7,10 +7,11 @@ use App\Models\Buku;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class PeminjamanController extends Controller
 {
-    // Helper internal untuk cek role Siswa (Aman dari error Spatie)
+    // Helper internal untuk cek role Siswa
     private function checkIsSiswa($user)
     {
         if (!$user) return false;
@@ -39,7 +40,7 @@ class PeminjamanController extends Controller
         return view('peminjaman.index', compact('peminjaman', 'bukuList', 'anggotaList'));
     }
 
-    // Halaman Riwayat Saya (Khusus Siswa / User Logged In)
+    // Halaman Riwayat Saya
     public function riwayatSaya()
     {
         $user = Auth::user();
@@ -52,7 +53,7 @@ class PeminjamanController extends Controller
         return view('peminjaman.riwayat', compact('riwayat'));
     }
 
-    // 1. Simpan Peminjaman (Otomatis Menggunakan Account Login)
+    // 1. Simpan Peminjaman
     public function store(Request $request)
     {
         $request->validate([
@@ -63,12 +64,8 @@ class PeminjamanController extends Controller
 
         $user = Auth::user();
         $isSiswa = $this->checkIsSiswa($user);
-
-        // Jika Siswa, status 'menunggu' (butuh ACC Admin/Guru)
-        // Jika Admin/Guru, status otomatis 'dipinjam'
         $status = $isSiswa ? 'menunggu' : 'dipinjam';
 
-        // Peminjam SELALU user yang sedang login saat ini
         Peminjaman::create([
             'anggota_id' => $user->id,
             'buku_id' => $request->buku_id,
@@ -84,40 +81,50 @@ class PeminjamanController extends Controller
         return redirect()->back()->with('success', $pesan);
     }
 
-    // 2. Setujui / ACC Peminjaman (Khusus Admin/Guru)
+    // 2. Method Show (Soal 4: Menutup Celah IDOR A4 dengan Policy)
+    public function show($id)
+    {
+        $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
+
+        // Memanggil Policy view
+        Gate::authorize('view', $peminjaman);
+
+        // Jika request menginginkan JSON (seperti pengujian API/modul)
+        if (request()->wantsJson()) {
+            return response()->json($peminjaman);
+        }
+
+        return view('peminjaman.show', compact('peminjaman'));
+    }
+
+    // 3. Setujui Peminjaman
     public function setujui($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
-        $peminjaman->update([
-            'status' => 'dipinjam'
-        ]);
+        $peminjaman->update(['status' => 'dipinjam']);
 
         return redirect()->back()->with('success', 'Pengajuan peminjaman berhasil disetujui!');
     }
 
-    // 3. Tolak Peminjaman (Khusus Admin/Guru)
+    // 4. Tolak Peminjaman
     public function tolak($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
-        $peminjaman->update([
-            'status' => 'ditolak'
-        ]);
+        $peminjaman->update(['status' => 'ditolak']);
 
         return redirect()->back()->with('success', 'Pengajuan peminjaman telah ditolak.');
     }
 
-    // 4. Pengembalian Buku
+    // 5. Pengembalian Buku
     public function pengembalian($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
-        $peminjaman->update([
-            'status' => 'dikembalikan'
-        ]);
+        $peminjaman->update(['status' => 'dikembalikan']);
 
         return redirect()->back()->with('success', 'Buku berhasil dikembalikan!');
     }
 
-    // 5. Halaman Laporan Perpustakaan & Persetujuan (Khusus Admin & Guru)
+    // 6. Halaman Laporan Perpustakaan
     public function laporan()
     {
         $persetujuanPinjam = Peminjaman::with(['anggota', 'buku'])
@@ -140,13 +147,12 @@ class PeminjamanController extends Controller
         ));
     }
 
-    // 6. Riwayat Berdasarkan ID (Memicu 403 Forbidden Jika Diintip Siswa Lain)
+    // 7. Riwayat Berdasarkan ID
     public function riwayatBerdasarkanId($id)
     {
         $user = Auth::user();
         $isSiswa = $this->checkIsSiswa($user);
 
-        // Jika yang membuka adalah Siswa DAN mencoba melihat ID akun milik orang lain -> LEMPAR 403
         if ($isSiswa && (string) $id !== (string) $user->id) {
             abort(403, 'User does not have the right roles.');
         }
@@ -158,14 +164,4 @@ class PeminjamanController extends Controller
 
         return view('peminjaman.riwayat', compact('riwayat'));
     }
-
-    // CELAH A4 Soal 1 (IDOR): Mengambil data peminjaman berdasarkan ID tanpa melakukan verifikasi kepemilikan user.
-    public function show($id)
-    {
-        // Menggunakan relasi 'anggota' dan 'buku' (Rentan IDOR)
-        $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
-
-        return response()->json($peminjaman);
-    }
-
 }
