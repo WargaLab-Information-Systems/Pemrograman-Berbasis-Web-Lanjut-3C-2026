@@ -1,41 +1,49 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Beranda') - e-Pustaka</title>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @vite(['resources/css/app.css'])
-</head>
-<body>
+        <title>{{ config('app.name', 'e-Pustaka') }}</title>
 
-    <header class="app-header">
-        <div class="container">
-            <h1 class="app-name">e-Pustaka</h1>
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="font-sans antialiased">
+        <div class="min-h-screen bg-gray-50">
+            <!-- Header merek, sama dengan halaman e-Pustaka lainnya -->
+            <header class="app-header">
+                <div class="container">
+                    <h1 class="app-name">e-Pustaka</h1>
+                </div>
+            </header>
+
+            @include('layouts.navigation')
+
+            <!-- Page Heading -->
+            @isset($header)
+                <header class="bg-brand-light border-b border-gray-200">
+                    <div class="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
+
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
+
+            <footer class="app-footer mt-8">
+                <div class="container">
+                    &copy; {{ date('Y') }} e-Pustaka
+                </div>
+            </footer>
         </div>
-    </header>
-
-    <nav class="app-navbar">
-        <div class="container">
-
-            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">
-                Beranda
-            </a>
-            <a href="{{ route('buku.index') }}" class="{{ request()->routeIs('buku.*') ? 'active' : '' }}">
-                Daftar Buku
-            </a>
-        </div>
-    </nav>
-
-    <main class="container app-content">
-        @yield('content')
-    </main>
-
-    <footer class="app-footer">
-        <div class="container">
-            &copy; {{ date('Y') }} e-Pustaka
-        </div>
-    </footer>
-
-</body>
+    </body>
 </html>
