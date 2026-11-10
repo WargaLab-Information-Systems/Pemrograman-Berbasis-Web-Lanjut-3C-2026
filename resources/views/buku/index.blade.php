@@ -186,46 +186,62 @@
             </tr>
         </thead>
 
-        <tbody id="tbodyBuku">
-            <tr>
-                <td colspan="6">Memuat data buku...</td>
-            </tr>
+        <tbody>
+            @forelse ($bukus as $buku)
+                <tr>
+                    <td>{{ $bukus->firstItem() + $loop->index }}</td>
+                    <td>{{ $buku->kategori->nama ?? '-' }}</td>
+                    {{-- [A1 - RENTAN] {!! !!} tidak melakukan escaping HTML --}}
+                    <td>{!! $buku->judul !!}</td>
+                    <td>{{ $buku->penulis }}</td>
+                    <td>{{ $buku->tahun_terbit }}</td>
+                    <td>
+                        <a href="{{ route('buku.show', $buku->id) }}" class="btn btn-light btn-sm">Detail</a>
+
+                        @guest
+                            <a href="{{ route('login') }}" class="btn btn-light btn-sm">Login untuk Meminjam</a>
+                        @endguest
+
+                        @can('mengajukan peminjaman buku')
+                            <form method="POST" action="{{ route('peminjaman.store') }}" class="inline-form">
+                                @csrf
+                                <input type="hidden" name="buku_id" value="{{ $buku->id }}">
+                                <button type="submit" class="btn btn-sm">Ajukan Pinjam</button>
+                            </form>
+                        @endcan
+
+                        @can('kelola data buku')
+                            <button type="button" class="btn-edit" onclick="isiForm({{ $buku->id }})">Ubah</button>
+                            <button type="button" class="btn-delete"
+                                    onclick="hapusBuku({{ $buku->id }}, @js(strip_tags($buku->judul)))">Hapus</button>
+                        @endcan
+                    </td>
+                </tr>
+            @empty
+                <tr><td colspan="6">Belum ada data buku.</td></tr>
+            @endforelse
         </tbody>
     </table>
 </div>
 
 <div class="book-pagination">
-    <button type="button" id="btnPrev" onclick="halamanSebelumnya()">
-        Sebelumnya
-    </button>
-
-    <span id="infoHalaman">Halaman 1</span>
-
-    <button type="button" id="btnNext" onclick="halamanBerikutnya()">
-        Berikutnya
-    </button>
+    {{ $bukus->links() }}
 </div>
 
+@if (session('success'))
+    <p class="book-message" role="status">{{ session('success') }}</p>
+@endif
+
+@can('kelola data buku')
 <script>
     const API_URL = '/api/buku';
-
-    // Hak akses dari server (hanya untuk menampilkan/menyembunyikan tombol;
-    // pemeriksaan sesungguhnya tetap dilakukan server pada setiap request API).
-    const SUDAH_LOGIN = @json(auth()->check());
-    const BISA_KELOLA = @json(auth()->check() && auth()->user()->can('kelola data buku'));
-    const BISA_PINJAM = @json(auth()->check() && auth()->user()->can('mengajukan peminjaman buku'));
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
-    const formBuku = document.getElementById('formBuku'); // null bila tidak berhak mengelola
-    const tbodyBuku = document.getElementById('tbodyBuku');
+    const formBuku = document.getElementById('formBuku');
     const pesanForm = document.getElementById('pesanForm');
-
-    let halamanAktif = 1;
-    let halamanTerakhir = 1;
 
     async function bacaRespons(response) {
         let hasil;
-
         try {
             hasil = await response.json();
         } catch (error) {
@@ -234,213 +250,12 @@
 
         if (!response.ok) {
             if (hasil.errors) {
-                const daftarError = Object.values(hasil.errors)
-                    .flat()
-                    .join('\n');
-
-                throw new Error(
-                    daftarError || hasil.message || 'Permintaan gagal.'
-                );
+                throw new Error(Object.values(hasil.errors).flat().join('\n') || hasil.message || 'Permintaan gagal.');
             }
-
-            throw new Error(
-                hasil.message || `Permintaan gagal (${response.status}).`
-            );
+            throw new Error(hasil.message || `Permintaan gagal (${response.status}).`);
         }
 
         return hasil;
-    }
-
-    function ambilDaftarBuku(hasil) {
-        let bagian = hasil;
-
-        for (let i = 0; i < 5; i++) {
-            if (Array.isArray(bagian)) {
-                return {
-                    bukus: bagian,
-                    meta: null
-                };
-            }
-
-            if (!bagian || typeof bagian !== 'object') {
-                break;
-            }
-
-            if (Array.isArray(bagian.data)) {
-                return {
-                    bukus: bagian.data,
-                    meta: bagian.meta ?? null
-                };
-            }
-
-            bagian = bagian.data;
-        }
-
-        return {
-            bukus: [],
-            meta: null
-        };
-    }
-
-    async function muatBuku() {
-        tbodyBuku.innerHTML = `
-            <tr>
-                <td colspan="6">Memuat data buku...</td>
-            </tr>
-        `;
-
-        try {
-            const response = await fetch(
-                `${API_URL}?page=${halamanAktif}`,
-                {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                }
-            );
-
-            const hasil = await bacaRespons(response);
-            const daftar = ambilDaftarBuku(hasil);
-            const bukus = daftar.bukus;
-            const meta = daftar.meta;
-
-            halamanAktif = meta?.current_page ?? 1;
-            halamanTerakhir = meta?.last_page ?? 1;
-
-            tbodyBuku.innerHTML = '';
-
-            if (bukus.length === 0) {
-                tbodyBuku.innerHTML = `
-                    <tr>
-                        <td colspan="6">Belum ada data buku.</td>
-                    </tr>
-                `;
-                perbaruiPagination();
-                return;
-            }
-
-            bukus.forEach((buku, index) => {
-                const baris = document.createElement('tr');
-
-                const nomor = meta?.from
-                    ? meta.from + index
-                    : (halamanAktif - 1) * 10 + index + 1;
-
-                const nilai = [
-                    nomor,
-                    buku.kategori ?? '-',
-                    buku.judul ?? '-',
-                    buku.penulis ?? '-',
-                    buku.tahunTerbit ?? buku.tahun_terbit ?? '-'
-                ];
-
-                nilai.forEach((isi) => {
-                    const kolom = document.createElement('td');
-                    kolom.textContent = isi;
-                    baris.appendChild(kolom);
-                });
-
-                const kolomAksi = document.createElement('td');
-
-                // Detail: untuk semua pengguna yang boleh melihat daftar buku
-                const tautanDetail = document.createElement('a');
-                tautanDetail.href = `/buku/${buku.id}`;
-                tautanDetail.className = 'btn btn-light btn-sm';
-                tautanDetail.textContent = 'Detail';
-                kolomAksi.appendChild(tautanDetail);
-
-                // Ajukan peminjaman: permission "mengajukan peminjaman buku"
-                if (BISA_PINJAM) {
-                    const formPinjam = document.createElement('form');
-                    formPinjam.method = 'POST';
-                    formPinjam.action = '/peminjaman';
-                    formPinjam.className = 'inline-form';
-
-                    [['_token', CSRF_TOKEN], ['buku_id', buku.id]].forEach(([nama, nilai]) => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = nama;
-                        input.value = nilai;
-                        formPinjam.appendChild(input);
-                    });
-
-                    const tombolPinjam = document.createElement('button');
-                    tombolPinjam.type = 'submit';
-                    tombolPinjam.className = 'btn btn-sm';
-                    tombolPinjam.textContent = 'Ajukan Pinjam';
-                    formPinjam.appendChild(tombolPinjam);
-                    kolomAksi.appendChild(formPinjam);
-                }
-
-                // Tamu: tidak bisa meminjam, arahkan untuk login
-                if (!SUDAH_LOGIN) {
-                    const tautanLogin = document.createElement('a');
-                    tautanLogin.href = '/login';
-                    tautanLogin.className = 'btn btn-light btn-sm';
-                    tautanLogin.textContent = 'Login untuk Meminjam';
-                    kolomAksi.appendChild(tautanLogin);
-                }
-
-                // Ubah & hapus: permission "kelola data buku"
-                if (BISA_KELOLA) {
-                    const tombolUbah = document.createElement('button');
-                    tombolUbah.type = 'button';
-                    tombolUbah.className = 'btn-edit';
-                    tombolUbah.textContent = 'Ubah';
-                    tombolUbah.addEventListener('click', () => {
-                        isiForm(buku.id);
-                    });
-
-                    const tombolHapus = document.createElement('button');
-                    tombolHapus.type = 'button';
-                    tombolHapus.className = 'btn-delete';
-                    tombolHapus.textContent = 'Hapus';
-                    tombolHapus.addEventListener('click', () => {
-                        hapusBuku(buku.id, buku.judul);
-                    });
-
-                    kolomAksi.append(tombolUbah, tombolHapus);
-                }
-                baris.appendChild(kolomAksi);
-                tbodyBuku.appendChild(baris);
-            });
-
-            perbaruiPagination();
-
-        } catch (error) {
-            console.error('Gagal memuat buku:', error);
-
-            tbodyBuku.innerHTML = `
-                <tr>
-                    <td colspan="6">Data buku gagal dimuat.</td>
-                </tr>
-            `;
-        }
-    }
-
-    function perbaruiPagination() {
-        document.getElementById('infoHalaman').textContent =
-            `Halaman ${halamanAktif} dari ${halamanTerakhir}`;
-
-        document.getElementById('btnPrev').disabled =
-            halamanAktif <= 1;
-
-        document.getElementById('btnNext').disabled =
-            halamanAktif >= halamanTerakhir;
-    }
-
-    function halamanSebelumnya() {
-        if (halamanAktif > 1) {
-            halamanAktif--;
-            muatBuku();
-        }
-    }
-
-    function halamanBerikutnya() {
-        if (halamanAktif < halamanTerakhir) {
-            halamanAktif++;
-            muatBuku();
-        }
     }
 
     function resetForm() {
@@ -456,88 +271,47 @@
         pesanForm.textContent = '';
 
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
+            const response = await fetch(`${API_URL}/${id}`, { headers: { 'Accept': 'application/json' } });
             const hasil = await bacaRespons(response);
-
-            let detail = hasil.data;
-
-            for (let i = 0; i < 4; i++) {
-                if (
-                    detail &&
-                    !Array.isArray(detail) &&
-                    detail.id !== undefined
-                ) {
-                    break;
-                }
-
-                detail = detail?.data;
-            }
-
-            if (!detail || detail.id === undefined) {
-                throw new Error('Detail buku tidak ditemukan.');
-            }
+            const detail = hasil.data?.data ?? hasil.data;
 
             document.getElementById('buku_id').value = detail.id;
             document.getElementById('judul').value = detail.judul ?? '';
             document.getElementById('penulis').value = detail.penulis ?? '';
-            document.getElementById('tahun_terbit').value =
-                detail.tahunTerbit ?? detail.tahun_terbit ?? '';
+            document.getElementById('tahun_terbit').value = detail.tahunTerbit ?? detail.tahun_terbit ?? '';
 
-            const pilihanKategori =
-                document.getElementById('kategori_id');
-
+            const pilihanKategori = document.getElementById('kategori_id');
             if (detail.kategori_id !== undefined) {
                 pilihanKategori.value = detail.kategori_id;
             } else {
-                const opsi = Array.from(pilihanKategori.options).find(
-                    option => option.textContent.trim() === detail.kategori
-                );
-
+                const opsi = Array.from(pilihanKategori.options).find(o => o.textContent.trim() === detail.kategori);
                 pilihanKategori.value = opsi ? opsi.value : '';
             }
 
             document.getElementById('judulForm').textContent = 'Ubah Buku';
             document.getElementById('btnSimpan').textContent = 'Simpan Perubahan';
             document.getElementById('btnBatal').hidden = false;
-
-            document.getElementById('judulForm').scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
-
+            document.getElementById('judulForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } catch (error) {
-            console.error('Gagal mengambil detail buku:', error);
             pesanForm.textContent = error.message;
         }
     }
 
-    if (formBuku) formBuku.addEventListener('submit', async function (event) {
+    formBuku.addEventListener('submit', async function (event) {
         event.preventDefault();
-
         pesanForm.textContent = '';
 
         const id = document.getElementById('buku_id').value;
-
         const dataBuku = {
             kategori_id: document.getElementById('kategori_id').value,
             judul: document.getElementById('judul').value.trim(),
             penulis: document.getElementById('penulis').value.trim(),
-            tahun_terbit: Number(
-                document.getElementById('tahun_terbit').value
-            )
+            tahun_terbit: Number(document.getElementById('tahun_terbit').value)
         };
 
-        const url = id ? `${API_URL}/${id}` : API_URL;
-        const method = id ? 'PUT' : 'POST';
-
         try {
-            const response = await fetch(url, {
-                method: method,
+            const response = await fetch(id ? `${API_URL}/${id}` : API_URL, {
+                method: id ? 'PUT' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -546,56 +320,31 @@
                 body: JSON.stringify(dataBuku)
             });
 
-            const hasil = await bacaRespons(response);
-
-            pesanForm.textContent =
-                hasil.message || 'Data buku berhasil disimpan.';
-
-            resetForm();
-
-            halamanAktif = 1;
-            await muatBuku();
-
+            await bacaRespons(response);
+            location.href = '/buku';
         } catch (error) {
-            console.error('Gagal menyimpan buku:', error);
             pesanForm.textContent = error.message;
         }
     });
 
     async function hapusBuku(id, judul) {
-        const setuju = confirm(
-            `Apakah kamu yakin ingin menghapus buku "${judul}"?`
-        );
-
-        if (!setuju) {
+        if (!confirm(`Apakah kamu yakin ingin menghapus buku "${judul}"?`)) {
             return;
         }
-
-        pesanForm.textContent = '';
 
         try {
             const response = await fetch(`${API_URL}/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': CSRF_TOKEN
-                }
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
             });
 
-            const hasil = await bacaRespons(response);
-
-            pesanForm.textContent =
-                hasil.message || 'Buku berhasil dihapus.';
-
-            await muatBuku();
-
+            await bacaRespons(response);
+            location.reload();
         } catch (error) {
-            console.error('Gagal menghapus buku:', error);
             pesanForm.textContent = error.message;
         }
     }
-
-    muatBuku();
 </script>
+@endcan
 
 @endsection

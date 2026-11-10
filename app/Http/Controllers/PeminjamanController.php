@@ -7,7 +7,6 @@ use App\Models\Peminjaman;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class PeminjamanController extends Controller
 {
@@ -42,10 +41,10 @@ class PeminjamanController extends Controller
         return view('peminjaman.pengembalian', compact('dipinjam', 'dikembalikan'));
     }
 
-    /** Detail satu peminjaman: hanya pemilik atau admin/petugas (PeminjamanPolicy). */
-    public function show(Peminjaman $peminjaman)
+    /** [A4 - RENTAN] Detail peminjaman tanpa pemeriksaan pemilik. */
+    public function show($id)
     {
-        Gate::authorize('view', $peminjaman);
+        $peminjaman = Peminjaman::findOrFail($id);
 
         return view('peminjaman.show', ['peminjaman' => $peminjaman->load(['anggota', 'buku.kategori', 'pemroses'])]);
     }

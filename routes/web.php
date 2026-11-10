@@ -37,6 +37,13 @@ Route::middleware('auth')->group(function () {
     // Pengelolaan data buku (tambah/ubah/hapus) lewat /api/buku
     // dan dilindungi permission "kelola data buku".
 
+    // [A2 - RENTAN] Pencarian buku dengan query SQL mentah
+    Route::get('/buku-cari', [BukuController::class, 'cari'])->name('buku.cari');
+
+    // [A3 - RENTAN] Hapus buku lewat GET (tanpa token CSRF)
+    Route::get('/buku/{buku}/hapus', [\App\Http\Controllers\Api\BukuController::class, 'destroy'])
+        ->name('buku.hapus');
+
     // Profil sendiri
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->middleware('permission:lihat profil sendiri')->name('profile.edit');
@@ -71,8 +78,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('permission:memproses persetujuan peminjaman')->name('peminjaman.tolak');
     Route::post('/peminjaman/{peminjaman}/kembali', [PeminjamanController::class, 'kembali'])
         ->middleware('permission:mencatat pengembalian buku')->name('peminjaman.kembali');
-    // Detail: dibatasi oleh PeminjamanPolicy (pemilik atau admin/petugas)
-    Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+    // [A4 - RENTAN] Detail peminjaman tanpa pemeriksaan pemilik (IDOR)
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
 
     // Status & riwayat peminjaman sendiri
     Route::get('/status-peminjaman', [RiwayatController::class, 'status'])
