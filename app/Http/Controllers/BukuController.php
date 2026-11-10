@@ -22,7 +22,7 @@ class BukuController extends Controller
     }
 
     /**
-     * METHOD SOAL A3: Menghapus data buku dari database
+     * METHOD SOAL A3 Soal 1: Menghapus data buku dari database
      */
     public function destroy($id)
     {

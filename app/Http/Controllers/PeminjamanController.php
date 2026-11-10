@@ -159,7 +159,7 @@ class PeminjamanController extends Controller
         return view('peminjaman.riwayat', compact('riwayat'));
     }
 
-    // CELAH A4 (IDOR): Mengambil data peminjaman berdasarkan ID tanpa melakukan verifikasi kepemilikan user.
+    // CELAH A4 Soal 1 (IDOR): Mengambil data peminjaman berdasarkan ID tanpa melakukan verifikasi kepemilikan user.
     public function show($id)
     {
         // Menggunakan relasi 'anggota' dan 'buku' (Rentan IDOR)

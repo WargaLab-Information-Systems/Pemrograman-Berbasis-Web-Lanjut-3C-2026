@@ -379,7 +379,7 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-
+// Soal 1 Rentan XSS: Menggunakan {!! !!} tanpa escaping pada judul buku di tabel
                 <tbody id="daftarBuku">
                     @foreach($buku as $item)
                         <tr>

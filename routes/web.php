@@ -49,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin|petugas'])->group(function () {
         Route::get('/laporan', [PeminjamanController::class, 'laporan'])->name('laporan.index');
         Route::patch('/peminjaman/{peminjaman}/setujui', [PeminjamanController::class, 'setujui'])->name('peminjaman.setujui');
-        // Route celah A4
+        // Route celah A4 Soal 1
         Route::patch('/peminjaman/{peminjaman}/tolak', [PeminjamanController::class, 'tolak'])->name('peminjaman.tolak');
         
         // CRUD Buku
