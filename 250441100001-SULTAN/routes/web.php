@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
     // -------------------------------------------------------------------
     // RUTE MODUL 6 - 4 CELAH KEAMANAN
     // -------------------------------------------------------------------
-    
+
     Route::get('/buku-cari', function (Request $request) {
         $judul = $request->query('judul');
         $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
@@ -84,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/peminjaman/store', function (Request $request) {
         $peminjamans = Cache::get('peminjamans', []);
-        
+
         $newItem = [
             'id' => time() . rand(10, 99),
             'user_id' => Auth::id(),
@@ -187,7 +187,8 @@ Route::middleware(['auth'])->group(function () {
             if (method_exists($newUser, 'assignRole')) {
                 $newUser->assignRole(strtolower($request->role));
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $users = Cache::get('app_users', []);
         $users[] = [
@@ -251,6 +252,10 @@ Route::middleware(['auth'])->group(function () {
         return view('laporan.index', compact('peminjamans'));
     })->name('laporan.index');
 
+    // Rute Form Tambah Buku (Dikunci dengan Gate kelola-buku agar Siswa mendapat 403 Forbidden)
+    Route::get('/buku/create', function () {
+        return view('buku.index');
+    })->middleware(['auth', 'can:kelola-buku']);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
