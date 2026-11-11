@@ -115,11 +115,14 @@
                     if (hasAction) {
                         let btnBorrow = canBorrowBuku ? `<button class="btn btn-success" onclick="pinjamBuku(${buku.id}, '${buku.judul}')">Pinjam Buku</button>` : '';
                         let btnEdit = canManageBuku ? `<button class="btn btn-warning" onclick="editBuku(${buku.id})">Ubah</button>` : '';
-                        let btnDelete = canManageBuku ? `<button class="btn btn-danger" onclick="deleteBuku(${buku.id})">Hapus</button>` : '';
+                        
+                        // CELAH A3: Menggunakan Tautan GET Unsafe (Rentan CSRF)
+                        let btnDelete = canManageBuku ? `<a href="/buku/${buku.id}/hapus" class="btn btn-danger">Hapus Unsafe</a>` : '';
 
                         actionTd = `<td>${btnBorrow} ${btnEdit} ${btnDelete}</td>`;
                     }
 
+                    // CELAH A1: innerHTML tanpa Escaping
                     tbody.innerHTML += `
                         <tr>
                             <td>${index + 1}</td>

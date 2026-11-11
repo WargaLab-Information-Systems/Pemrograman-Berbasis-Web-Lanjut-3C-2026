@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Peminjaman;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,33 @@ Route::get('/', function () {
 
 // Middleware Auth (Seluruh route di dalam grup ini wajib login)
 Route::middleware(['auth'])->group(function () {
+
+    // -------------------------------------------------------------------
+    // RUTE BARU MODUL 6 - SOAL 1 (4 CELAH KEAMANAN)
+    // -------------------------------------------------------------------
+    
+    // Celah A2: SQL Injection (Penggabungan String SQL Langsung)
+    Route::get('/buku-cari', function (Request $request) {
+        $judul = $request->query('judul');
+        $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        return response()->json($buku);
+    })->name('buku.cari.vulnerable');
+
+    // Celah A3: CSRF via HTTP GET (Menghapus Data Tanpa Token Validasi)
+    Route::get('/buku/{id}/hapus', function ($id) {
+        DB::table('bukus')->where('id', $id)->delete();
+        return back()->with('status', 'Buku berhasil dihapus!');
+    })->name('buku.hapus.unsafe');
+
+    // Celah A4: IDOR (Detail Peminjaman Tanpa Cek Kepemilikan User)
+    Route::get('/peminjaman/{id}', function ($id) {
+        $peminjaman = Peminjaman::findOrFail($id);
+        return view('peminjaman.show', compact('peminjaman'));
+    })->name('peminjaman.detail.unsafe');
+
+    // -------------------------------------------------------------------
+    // RUTE BAWAAN MODUL 5 (UTUH TANPA DIUBAH)
+    // -------------------------------------------------------------------
 
     // 1. Dashboard Sesuai Role
     Route::get('/dashboard', function () {
