@@ -16,12 +16,6 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        // 1. Pengecekan Permission Spatie
-        if (!$request->user()->can('Lihat profil sendiri')) {
-            abort(403, 'Anda tidak memiliki hak akses untuk melihat profil.');
-        }
-
-        // 2. Ownership Check: Selalu mengambil akun yang sedang login (bukan dari ID URL)
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
@@ -32,12 +26,6 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        // 1. Pengecekan Permission Spatie
-        if (!$request->user()->can('Ubah profil sendiri')) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengubah profil.');
-        }
-
-        // 2. Ownership Check: Hanya mengubah akun yang sedang login
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {

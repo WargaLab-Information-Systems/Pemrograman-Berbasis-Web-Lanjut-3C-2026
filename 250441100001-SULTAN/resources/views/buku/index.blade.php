@@ -24,41 +24,41 @@
                     .btn-success { background-color: #198754; color: white; }
                 </style>
 
-                {{-- HANYA DITAMPILKAN JIKA MEMILIKI PERMISSION 'Kelola data buku' (Admin & Petugas) --}}
-                @can('Kelola data buku')
-                <h3 class="text-lg font-bold mb-3">Form Data Buku</h3>
+                {{-- FORM HANYA DITAMPILKAN JIKA YANG LOGIN ADALAH ADMIN ATAU PETUGAS --}}
+                @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('petugas')))
+                    <h3 class="text-lg font-bold mb-3">Form Data Buku</h3>
 
-                <div class="form-container">
-                    <form id="formBuku">
-                        <input type="hidden" id="bukuId">
-                        
-                        <div class="form-group">
-                            <label for="kategori_id">ID Kategori:</label>
-                            <input type="number" id="kategori_id" required placeholder="Masukkan ID Kategori">
-                        </div>
-                        <div class="form-group">
-                            <label for="judul">Judul Buku:</label>
-                            <input type="text" id="judul" required placeholder="Masukkan Judul Buku">
-                        </div>
-                        <div class="form-group">
-                            <label for="penulis">Penulis:</label>
-                            <input type="text" id="penulis" required placeholder="Masukkan Nama Penulis">
-                        </div>
-                        <div class="form-group">
-                            <label for="tahun_terbit">Tahun Terbit:</label>
-                            <input type="number" id="tahun_terbit" required placeholder="Contoh: 2026">
-                        </div>
-                        
-                        <button type="submit" id="btnSubmit" class="btn btn-primary">Simpan Buku</button>
-                        <button type="button" id="btnCancel" class="btn btn-secondary" style="display:none;" onclick="resetForm()">Batal</button>
-                    </form>
-                </div>
-                @endcan
+                    <div class="form-container">
+                        <form id="formBuku">
+                            <input type="hidden" id="bukuId">
+                            
+                            <div class="form-group">
+                                <label for="kategori_id">ID Kategori:</label>
+                                <input type="number" id="kategori_id" required placeholder="Masukkan ID Kategori">
+                            </div>
+                            <div class="form-group">
+                                <label for="judul">Judul Buku:</label>
+                                <input type="text" id="judul" required placeholder="Masukkan Judul Buku">
+                            </div>
+                            <div class="form-group">
+                                <label for="penulis">Penulis:</label>
+                                <input type="text" id="penulis" required placeholder="Masukkan Nama Penulis">
+                            </div>
+                            <div class="form-group">
+                                <label for="tahun_terbit">Tahun Terbit:</label>
+                                <input type="number" id="tahun_terbit" required placeholder="Contoh: 2026">
+                            </div>
+                            
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Simpan Buku</button>
+                            <button type="button" id="btnCancel" class="btn btn-secondary" style="display:none;" onclick="resetForm()">Batal</button>
+                        </form>
+                    </div>
+                @endif
 
                 <h3 class="text-lg font-bold mt-4 mb-3">Daftar Koleksi Buku</h3>
                 <table class="tabel-buku" id="tabelBukuMain" 
-                       data-can-manage="{{ (auth()->check() && auth()->user()->can('Kelola data buku')) ? 'true' : 'false' }}"
-                       data-can-borrow="{{ (auth()->check() && auth()->user()->can('Mengajukan peminjaman buku')) ? 'true' : 'false' }}">
+                       data-can-manage="{{ (auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('petugas'))) ? 'true' : 'false' }}"
+                       data-can-borrow="{{ (auth()->check() && auth()->user()->hasRole('siswa')) ? 'true' : 'true' }}">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -66,9 +66,7 @@
                             <th>Judul</th>
                             <th>Penulis</th>
                             <th>Tahun Terbit</th>
-                            @canany(['Kelola data buku', 'Mengajukan peminjaman buku'])
                             <th>Aksi</th>
-                            @endcanany
                         </tr>
                     </thead>
                     <tbody id="tabelBuku">
@@ -115,14 +113,11 @@
                     if (hasAction) {
                         let btnBorrow = canBorrowBuku ? `<button class="btn btn-success" onclick="pinjamBuku(${buku.id}, '${buku.judul}')">Pinjam Buku</button>` : '';
                         let btnEdit = canManageBuku ? `<button class="btn btn-warning" onclick="editBuku(${buku.id})">Ubah</button>` : '';
-                        
-                        // CELAH A3: Menggunakan Tautan GET Unsafe (Rentan CSRF)
                         let btnDelete = canManageBuku ? `<a href="/buku/${buku.id}/hapus" class="btn btn-danger">Hapus Unsafe</a>` : '';
 
                         actionTd = `<td>${btnBorrow} ${btnEdit} ${btnDelete}</td>`;
                     }
 
-                    // CELAH A1: innerHTML tanpa Escaping
                     tbody.innerHTML += `
                         <tr>
                             <td>${index + 1}</td>
@@ -139,7 +134,7 @@
             }
         }
 
-        // FUNGSI PENGAJUAN PEMINJAMAN BUKU (Mendukung Simpan DB)
+        // FUNGSI PENGAJUAN PEMINJAMAN BUKU
         async function pinjamBuku(id, judul) {
             if (!confirm(`Apakah Anda ingin mengajukan peminjaman untuk buku: "${judul}"?`)) return;
 

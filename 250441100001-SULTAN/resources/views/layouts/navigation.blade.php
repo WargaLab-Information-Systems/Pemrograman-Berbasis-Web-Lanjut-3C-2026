@@ -16,31 +16,21 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    {{-- Semua Role (Admin, Petugas, Siswa) --}}
                     <x-nav-link :href="url('/buku')" :active="request()->is('buku')">
                         {{ __('Koleksi Buku') }}
                     </x-nav-link>
 
-                    {{-- Khusus Siswa / Role yang punya izin melihat riwayat sendiri --}}
-                    @can('Melihat riwayat peminjaman sendiri')
                     <x-nav-link :href="route('peminjaman.riwayat')" :active="request()->routeIs('peminjaman.riwayat')">
                         {{ __('Riwayat Saya') }}
                     </x-nav-link>
-                    @endcan
 
-                    {{-- Khusus Admin & Petugas --}}
-                    @hasanyrole('admin|petugas')
                     <x-nav-link :href="url('/laporan')" :active="request()->is('laporan')">
                         {{ __('Peminjaman & Laporan') }}
                     </x-nav-link>
-                    @endhasanyrole
 
-                    {{-- Khusus Admin --}}
-                    @role('admin')
                     <x-nav-link :href="url('/admin/users')" :active="request()->is('admin/users')">
                         {{ __('Kelola Akun & Role') }}
                     </x-nav-link>
-                    @endrole
                 </div>
             </div>
 
@@ -67,9 +57,8 @@
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
+                                onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Keluar') }}
                             </x-dropdown-link>
@@ -101,23 +90,17 @@
                 {{ __('Koleksi Buku') }}
             </x-responsive-nav-link>
 
-            @can('Melihat riwayat peminjaman sendiri')
             <x-responsive-nav-link :href="route('peminjaman.riwayat')" :active="request()->routeIs('peminjaman.riwayat')">
                 {{ __('Riwayat Saya') }}
             </x-responsive-nav-link>
-            @endcan
 
-            @hasanyrole('admin|petugas')
             <x-responsive-nav-link :href="url('/laporan')" :active="request()->is('laporan')">
                 {{ __('Peminjaman & Laporan') }}
             </x-responsive-nav-link>
-            @endhasanyrole
 
-            @role('admin')
             <x-responsive-nav-link :href="url('/admin/users')" :active="request()->is('admin/users')">
                 {{ __('Kelola Akun & Role') }}
             </x-responsive-nav-link>
-            @endrole
         </div>
 
         <!-- Responsive Settings Options -->
@@ -135,9 +118,8 @@
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
                     <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
+                        onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Keluar') }}
                     </x-responsive-nav-link>

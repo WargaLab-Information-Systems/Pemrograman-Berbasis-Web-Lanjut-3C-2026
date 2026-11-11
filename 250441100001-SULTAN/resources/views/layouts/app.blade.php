@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +10,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between text-gray-800">
 
     <div>
@@ -20,50 +22,40 @@
         <!-- Navigasi Utama Rata Tengah -->
         <nav class="bg-white border-b border-gray-200 py-3 flex justify-center items-center space-x-6 text-sm font-semibold text-gray-700">
             {{-- Link Beranda --}}
-            <a href="{{ route('dashboard') }}" 
-               class="{{ request()->routeIs('dashboard*') || request()->routeIs('*.dashboard') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
+            <a href="{{ route('dashboard') }}"
+                class="{{ request()->routeIs('dashboard*') || request()->routeIs('*.dashboard') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
                 Beranda
             </a>
 
-            {{-- Link Daftar Buku (Langsung ke Web URL /buku) --}}
-            @can('Lihat daftar buku')
-                <a href="{{ url('/buku') }}" 
-                   class="{{ request()->is('buku*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
-                    Daftar Buku
-                </a>
-            @endcan
+            {{-- Link Daftar Buku --}}
+            <a href="{{ url('/buku') }}"
+                class="{{ request()->is('buku*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
+                Daftar Buku
+            </a>
 
-            {{-- Link Riwayat Peminjaman (Khusus Siswa) --}}
-            @can('Melihat riwayat peminjaman sendiri')
-                <a href="{{ route('peminjaman.riwayat') }}" 
-                   class="{{ request()->routeIs('peminjaman.riwayat') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
-                    Riwayat Saya
-                </a>
-            @endcan
+            {{-- Link Riwayat Peminjaman --}}
+            <a href="{{ route('peminjaman.riwayat') }}"
+                class="{{ request()->routeIs('peminjaman.riwayat') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
+                Riwayat Saya
+            </a>
 
-            {{-- Link Laporan Peminjaman (Petugas & Admin) --}}
-            @can('Lihat laporan perpustakaan')
-                <a href="{{ route('laporan.index') }}" 
-                   class="{{ request()->routeIs('laporan.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
-                    Laporan Peminjaman
-                </a>
-            @endcan
+            {{-- Link Laporan Peminjaman --}}
+            <a href="{{ route('laporan.index') }}"
+                class="{{ request()->routeIs('laporan.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
+                Laporan Peminjaman
+            </a>
 
-            {{-- Link Kelola Akun (Khusus Admin) --}}
-            @role('admin')
-                <a href="{{ route('admin.users') }}" 
-                   class="{{ request()->routeIs('admin.users') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
-                    Kelola Akun
-                </a>
-            @endrole
+            {{-- Link Kelola Akun --}}
+            <a href="{{ route('admin.users') }}"
+                class="{{ request()->routeIs('admin.users') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
+                Kelola Akun
+            </a>
 
             {{-- Link Edit Profil --}}
-            @can('Lihat profil sendiri')
-                <a href="{{ route('profile.edit') }}" 
-                   class="{{ request()->routeIs('profile.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
-                    Edit Profil
-                </a>
-            @endcan
+            <a href="{{ route('profile.edit') }}"
+                class="{{ request()->routeIs('profile.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'hover:text-blue-600' }}">
+                Edit Profil
+            </a>
 
             {{-- Tombol Logout --}}
             <form method="POST" action="{{ route('logout') }}" class="inline">
@@ -86,4 +78,5 @@
     </footer>
 
 </body>
+
 </html>
