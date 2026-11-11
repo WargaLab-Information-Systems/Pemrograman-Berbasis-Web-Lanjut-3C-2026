@@ -4,7 +4,13 @@
 
 @section('content')
 
-    <section class="home-hero">
+    {{-- =====================================================
+         HERO / BAGIAN UTAMA HOME
+         ===================================================== --}}
+    <section
+        class="home-hero"
+        style="background-image: url('{{ asset('images/home-library.jpg') }}');"
+    >
 
         <div class="hero-overlay"></div>
 
@@ -42,6 +48,10 @@
 
     </section>
 
+
+    {{-- =====================================================
+         KOLEKSI BERDASARKAN KATEGORI
+         ===================================================== --}}
     <section class="collection-section">
 
         <div class="section-heading">
@@ -64,6 +74,7 @@
 
         </div>
 
+
         <div class="category-intro">
 
             <span>
@@ -79,7 +90,11 @@
 
         <div class="category-grid">
 
-            <a href="{{ route('buku.index', ['category' => 'Sastra & Fiksi']) }}" class="category-card">
+            {{-- 01 - Sastra & Fiksi --}}
+            <a
+                href="{{ route('buku.index', ['category' => 'Sastra & Fiksi']) }}"
+                class="category-card"
+            >
 
                 <span class="category-number">
                     01
@@ -110,7 +125,12 @@
 
             </a>
 
-            <a href="{{ route('buku.index', ['category' => 'Pengembangan Diri']) }}" class="category-card">
+
+            {{-- 02 - Pengembangan Diri --}}
+            <a
+                href="{{ route('buku.index', ['category' => 'Pengembangan Diri']) }}"
+                class="category-card"
+            >
 
                 <span class="category-number">
                     02
@@ -141,7 +161,12 @@
 
             </a>
 
-            <a href="{{ route('buku.index', ['category' => 'Sejarah & Sosial']) }}" class="category-card">
+
+            {{-- 03 - Sejarah & Sosial --}}
+            <a
+                href="{{ route('buku.index', ['category' => 'Sejarah & Sosial']) }}"
+                class="category-card"
+            >
 
                 <span class="category-number">
                     03
@@ -172,7 +197,12 @@
 
             </a>
 
-            <a href="{{ route('buku.index', ['category' => 'Pendidikan']) }}" class="category-card">
+
+            {{-- 04 - Pendidikan --}}
+            <a
+                href="{{ route('buku.index', ['category' => 'Pendidikan']) }}"
+                class="category-card"
+            >
 
                 <span class="category-number">
                     04
@@ -203,7 +233,12 @@
 
             </a>
 
-            <a href="{{ route('buku.index', ['category' => 'Teknologi & Digital']) }}" class="category-card">
+
+            {{-- 05 - Teknologi & Digital --}}
+            <a
+                href="{{ route('buku.index', ['category' => 'Teknologi & Digital']) }}"
+                class="category-card"
+            >
 
                 <span class="category-number">
                     05
@@ -234,7 +269,12 @@
 
             </a>
 
-            <a href="{{ route('buku.index', ['category' => 'Sains & Pengetahuan']) }}" class="category-card">
+
+            {{-- 06 - Sains & Pengetahuan --}}
+            <a
+                href="{{ route('buku.index', ['category' => 'Sains & Pengetahuan']) }}"
+                class="category-card"
+            >
 
                 <span class="category-number">
                     06
@@ -269,7 +309,14 @@
 
     </section>
 
-    <section class="home-reading">
+
+    {{-- =====================================================
+         BAGIAN AJAKAN MEMBACA
+         ===================================================== --}}
+    <section
+        class="home-reading"
+        style="background-image: url('{{ asset('images/home-reading.jpg') }}');"
+    >
 
         <div class="reading-overlay"></div>
 

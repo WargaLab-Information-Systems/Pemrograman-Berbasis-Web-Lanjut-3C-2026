@@ -2,67 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Buku;
-use Illuminate\Http\Request;
+use App\Models\Kategori;
+use Illuminate\View\View;
 
 class BukuCrudController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman kelola buku.
+     *
+     * Proses tambah, ubah, dan hapus buku tetap menggunakan
+     * RESTful API yang sudah dibuat pada modul sebelumnya.
      */
-    public function index()
+    public function index(): View
     {
-        $bukus = Buku::all();
-        return response()->json([
-            'data' => $bukus
-        ]);
-    }
+        $daftarKategori = Kategori::orderBy('nama')->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Buku $buku)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Buku $buku)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Buku $buku)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Buku $buku)
-    {
-        //
+        return view('kelola-buku.index', compact('daftarKategori'));
     }
 }
