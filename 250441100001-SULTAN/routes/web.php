@@ -268,6 +268,7 @@ Route::middleware(['auth'])->group(function () {
         return view('laporan.index', compact('peminjamans'));
     })->name('laporan.index');
 
+
 });
 
 require __DIR__.'/auth.php';

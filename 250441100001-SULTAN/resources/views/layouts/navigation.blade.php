@@ -20,17 +20,26 @@
                         {{ __('Koleksi Buku') }}
                     </x-nav-link>
 
+                    {{-- Menu Riwayat Khusus untuk Siswa --}}
+                    @if(auth()->check() && auth()->user()->hasRole('siswa'))
                     <x-nav-link :href="route('peminjaman.riwayat')" :active="request()->routeIs('peminjaman.riwayat')">
                         {{ __('Riwayat Saya') }}
                     </x-nav-link>
+                    @endif
 
+                    {{-- Menu Laporan Peminjaman hanya untuk Admin & Petugas (Soal 3) --}}
+                    @can('kelola-buku')
                     <x-nav-link :href="url('/laporan')" :active="request()->is('laporan')">
                         {{ __('Peminjaman & Laporan') }}
                     </x-nav-link>
+                    @endcan
 
+                    {{-- Menu Kelola Akun khusus untuk Admin --}}
+                    @if(auth()->check() && method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole('admin'))
                     <x-nav-link :href="url('/admin/users')" :active="request()->is('admin/users')">
                         {{ __('Kelola Akun & Role') }}
                     </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -59,7 +68,7 @@
                             @csrf
                             <x-dropdown-link :href="route('logout')"
                                 onclick="event.preventDefault();
-                                                this.closest('form').submit();">
+                                            this.closest('form').submit();">
                                 {{ __('Keluar') }}
                             </x-dropdown-link>
                         </form>
@@ -90,17 +99,23 @@
                 {{ __('Koleksi Buku') }}
             </x-responsive-nav-link>
 
+            @if(auth()->check() && auth()->user()->hasRole('siswa'))
             <x-responsive-nav-link :href="route('peminjaman.riwayat')" :active="request()->routeIs('peminjaman.riwayat')">
                 {{ __('Riwayat Saya') }}
             </x-responsive-nav-link>
+            @endif
 
+            @can('kelola-buku')
             <x-responsive-nav-link :href="url('/laporan')" :active="request()->is('laporan')">
                 {{ __('Peminjaman & Laporan') }}
             </x-responsive-nav-link>
+            @endcan
 
+            @if(auth()->check() && method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole('admin'))
             <x-responsive-nav-link :href="url('/admin/users')" :active="request()->is('admin/users')">
                 {{ __('Kelola Akun & Role') }}
             </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -120,7 +135,7 @@
                     @csrf
                     <x-responsive-nav-link :href="route('logout')"
                         onclick="event.preventDefault();
-                                        this.closest('form').submit();">
+                                    this.closest('form').submit();">
                         {{ __('Keluar') }}
                     </x-responsive-nav-link>
                 </form>
