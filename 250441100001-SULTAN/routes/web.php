@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Gate;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -34,30 +35,41 @@ Route::middleware(['auth'])->group(function () {
     })->name('peminjaman.riwayat');
 
     // -------------------------------------------------------------------
-    // RUTE MODUL 6 - 4 CELAH KEAMANAN
+    // RUTE MODUL 6 - PENUTUPAN CELAH IDOR (SOAL 4)
     // -------------------------------------------------------------------
+    
+    // Route Detail Peminjaman (Diamankan dengan Policy / Gate::authorize)
+    Route::get('/peminjaman/{id}', function ($id) {
+        $peminjamans = Cache::get('peminjamans', []);
+        $peminjaman = collect($peminjamans)->firstWhere('id', $id);
 
+        if (!$peminjaman) {
+            abort(404, 'Data peminjaman tidak ditemukan.');
+        }
+
+        // Memanggil Policy menggunakan Gate::authorize (Admin & Petugas boleh, Siswa hanya miliknya sendiri)
+        Gate::authorize('view', [$peminjaman]);
+
+        return view('peminjaman.show', compact('peminjaman'));
+    })->name('peminjaman.detail');
+
+    // Route Carian Buku yang Aman (Binding Query)
     Route::get('/buku-cari', function (Request $request) {
         $judul = $request->query('judul');
-        $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        $buku = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
         return response()->json($buku);
-    })->name('buku.cari.vulnerable');
+    })->name('buku.cari');
 
-    Route::get('/buku/{id}/hapus', function ($id) {
+    // Route Hapus Buku dengan Method DELETE (Menambal CSRF GET)
+    Route::delete('/buku/{id}', function ($id) {
         DB::table('bukus')->where('id', $id)->delete();
         return back()->with('status', 'Buku berhasil dihapus!');
-    })->name('buku.hapus.unsafe');
-
-    Route::get('/peminjaman/{id}', function ($id) {
-        $peminjaman = Peminjaman::findOrFail($id);
-        return view('peminjaman.show', compact('peminjaman'));
-    })->name('peminjaman.detail.unsafe');
+    })->name('buku.destroy');
 
     // -------------------------------------------------------------------
     // RUTE UTAMA PERPUSTAKAAN
     // -------------------------------------------------------------------
 
-    // 1. Dashboard Sesuai Role
     Route::get('/dashboard', function () {
         $user = Auth::user();
 
@@ -82,9 +94,14 @@ Route::middleware(['auth'])->group(function () {
         return view('buku.index');
     })->name('buku.index');
 
+    // Rute Form Tambah Buku (Dikunci dengan Gate kelola-buku Soal 3)
+    Route::get('/buku/create', function () {
+        return view('buku.index');
+    })->middleware(['can:kelola-buku']);
+
     Route::post('/peminjaman/store', function (Request $request) {
         $peminjamans = Cache::get('peminjamans', []);
-
+        
         $newItem = [
             'id' => time() . rand(10, 99),
             'user_id' => Auth::id(),
@@ -138,7 +155,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // 10. Akses Khusus Admin (DIKUNCI KETAT HANYA UNTUK ADMIN)
+    // Akses Khusus Admin (Dikunci khusus admin)
     Route::get('/dashboard/admin', function () {
         $user = Auth::user();
         if (!$user || !method_exists($user, 'hasRole') || !$user->hasRole('admin')) {
@@ -150,7 +167,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/users', function () {
         $user = Auth::user();
         if (!$user || !method_exists($user, 'hasRole') || !$user->hasRole('admin')) {
-            abort(403, 'Unauthorized action. Petugas dilarang mengakses kelola akun.');
+            abort(403, 'Unauthorized action.');
         }
 
         if (!Cache::has('app_users')) {
@@ -187,8 +204,7 @@ Route::middleware(['auth'])->group(function () {
             if (method_exists($newUser, 'assignRole')) {
                 $newUser->assignRole(strtolower($request->role));
             }
-        } catch (\Exception $e) {
-        }
+        } catch (\Exception $e) {}
 
         $users = Cache::get('app_users', []);
         $users[] = [
@@ -236,26 +252,22 @@ Route::middleware(['auth'])->group(function () {
         return back()->with('status', 'Pengguna berhasil dihapus!');
     })->name('admin.users.delete');
 
-    // 11. Akses Khusus Petugas
+    // Akses Khusus Petugas
     Route::get('/dashboard/petugas', function () {
         return view('dashboard');
     })->name('petugas.dashboard');
 
-    // 12. Akses Laporan (Admin & Petugas)
+    // Akses Laporan (Admin & Petugas)
     Route::get('/laporan', function () {
         $user = Auth::user();
         if (!$user || !method_exists($user, 'hasRole') || (!$user->hasRole('admin') && !$user->hasRole('petugas'))) {
-            abort(403, 'Unauthorized action. Siswa dilarang mengakses halaman laporan.');
+            abort(403, 'Unauthorized action. Siswa dilarang mengakses laporan.');
         }
 
         $peminjamans = Cache::get('peminjamans', []);
         return view('laporan.index', compact('peminjamans'));
     })->name('laporan.index');
 
-    // Rute Form Tambah Buku (Dikunci dengan Gate kelola-buku agar Siswa mendapat 403 Forbidden)
-    Route::get('/buku/create', function () {
-        return view('buku.index');
-    })->middleware(['auth', 'can:kelola-buku']);
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
