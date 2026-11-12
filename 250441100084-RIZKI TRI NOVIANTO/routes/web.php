@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
@@ -46,13 +48,30 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/saya/{id?}', [PerpustakaanAccessController::class, 'profilSendiri'])->name('profile.saya');
     Route::put('/profile/saya', [PerpustakaanAccessController::class, 'updateProfilSendiri'])->name('profile.update_saya');
 
-    // 3. Akses Katalog Buku (Semua Role)
-    Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
-    Route::get('/buku/{id}', [BukuController::class, 'show'])->name('buku.show');
+    // 3. CRUD Katalog Buku (Menggantikan route manual index & show agar /buku/create tidak bentrok dengan /buku/{id})
+    Route::resource('buku', BukuController::class);
 
     // 4. Pengajuan & Riwayat Peminjaman (Semua Role)
     Route::patch('/buku/{id}/pinjam', [PerpustakaanAccessController::class, 'ajuanPinjam'])->name('buku.pinjam');
     Route::get('/riwayat-peminjaman/{id?}', [PerpustakaanAccessController::class, 'riwayatSendiri'])->name('peminjaman.saya');
+
+    // =========================================================================
+    // MODUL 6 - SOAL 1: CELAH KEAMANAN (A2, A3, A4)
+
+    // CELAH A2: SQL Injection (Input judul langsung ke query SQL)
+    Route::get('/buku-cari', function (Request $request) {
+        $judul = $request->query('judul');
+        $hasil = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        return response()->json($hasil);
+    });
+
+    // CELAH A3: CSRF via GET untuk penghapusan buku
+    Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy']);
+
+    // CELAH A4: IDOR pada halaman detail peminjaman (tanpa mengecek kepemilikannya )
+    Route::get('/peminjaman/{id}', [PerpustakaanAccessController::class, 'showPeminjaman'])->name('peminjaman.show');
+
+    // =========================================================================
 
     // 5. Khusus Role Admin
     Route::middleware(['role:admin'])->group(function () {

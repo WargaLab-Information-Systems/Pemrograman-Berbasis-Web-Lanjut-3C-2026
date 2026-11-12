@@ -236,4 +236,11 @@ class PerpustakaanAccessController extends Controller
 
         return back()->with('success', 'Profil Anda berhasil diperbarui.');
     }
+
+    // 15. Detail Peminjaman — CELAH A4 (Soal 1: Tanpa pemeriksaan kepemilikan)
+    public function showPeminjaman($id)
+    {
+        $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
+        return view('peminjaman.show', compact('peminjaman'));
+    }
 }
