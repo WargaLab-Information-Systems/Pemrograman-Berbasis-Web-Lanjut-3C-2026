@@ -117,4 +117,10 @@ Route::middleware(['auth', 'can:kelola-buku'])->group(function () {
     Route::delete('/buku/{buku}', [BukuController::class, 'destroy'])->name('buku.destroy');
 });
 
+// soal 4
+Route::middleware(['auth'])->group(function () {
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+});
+
+
 require __DIR__ . '/auth.php';
