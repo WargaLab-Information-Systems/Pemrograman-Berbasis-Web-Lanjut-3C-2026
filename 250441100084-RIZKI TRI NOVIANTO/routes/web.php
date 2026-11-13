@@ -48,30 +48,38 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/saya/{id?}', [PerpustakaanAccessController::class, 'profilSendiri'])->name('profile.saya');
     Route::put('/profile/saya', [PerpustakaanAccessController::class, 'updateProfilSendiri'])->name('profile.update_saya');
 
-    // 3. CRUD Katalog Buku (Menggantikan route manual index & show agar /buku/create tidak bentrok dengan /buku/{id})
-    Route::resource('buku', BukuController::class);
+    // 3. Katalog & CRUD Buku (Soal 3: Proteksi Permission 'kelola-buku')
+    Route::middleware(['can:kelola-buku'])->group(function () {
+        Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');
+        Route::post('/buku', [BukuController::class, 'store'])->name('buku.store');
+        Route::get('/buku/{buku}/edit', [BukuController::class, 'edit'])->name('buku.edit');
+        Route::put('/buku/{buku}', [BukuController::class, 'update'])->name('buku.update');
+        Route::patch('/buku/{buku}', [BukuController::class, 'update']);
+        Route::delete('/buku/{buku}', [BukuController::class, 'destroy'])->name('buku.destroy');
+    });
+
+    Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
+    Route::get('/buku/{buku}', [BukuController::class, 'show'])->name('buku.show');
 
     // 4. Pengajuan & Riwayat Peminjaman (Semua Role)
     Route::patch('/buku/{id}/pinjam', [PerpustakaanAccessController::class, 'ajuanPinjam'])->name('buku.pinjam');
     Route::get('/riwayat-peminjaman/{id?}', [PerpustakaanAccessController::class, 'riwayatSendiri'])->name('peminjaman.saya');
 
     // =========================================================================
-    // MODUL 6 - SOAL 1: CELAH KEAMANAN (A2, A3, A4)
+    // MODUL 6 - PENANGANAN CELAH KEAMANAN (A2, A3, A4)
+    // =========================================================================
 
-    // CELAH A2: SQL Injection (Input judul langsung ke query SQL)
-
-
-
+    // Perbaikan A2: SQL Injection menggunakan Parameter Binding
     Route::get('/buku-cari', function (Request $request) {
         $judul = $request->query('judul');
         $hasil = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
         return response()->json($hasil);
     });
 
-    // CELAH A3: CSRF via GET untuk penghapusan buku
+    // Celah A3 (Sudah dinonaktifkan pada Soal 2)
     // Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy']);
 
-    // CELAH A4: IDOR pada halaman detail peminjaman (tanpa mengecek kepemilikannya )
+    // Celah A4: Detail peminjaman (Akan diamankan dengan Policy pada Soal 4)
     Route::get('/peminjaman/{id}', [PerpustakaanAccessController::class, 'showPeminjaman'])->name('peminjaman.show');
 
     // =========================================================================

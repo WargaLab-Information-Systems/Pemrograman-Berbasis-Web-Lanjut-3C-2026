@@ -15,13 +15,13 @@
                         perpustakaan.</p>
                 </div>
 
-                {{-- Tombol Tambah Buku yang seharusnya di ubah menjadi 'kelola-buku' --}}
-                @hasanyrole('admin|petugas')
+                {{-- Tombol Tambah Buku (Soal 3: Proteksi Permission 'kelola-buku') --}}
+                @can('kelola-buku')
                     <a href="{{ route('buku.create') }}"
                         style="padding: 10px 18px; background-color: #0d6efd; color: #fff; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">
                         + Tambah Buku Baru
                     </a>
-                @endhasanyrole
+                @endcan
             </div>
 
             {{-- Kotak Pesan Sukses / Error dari Redirect Controller --}}
@@ -69,8 +69,7 @@
                                         : 'Ajukan Pinjam';
                                 @endphp
                                 <tr style="border-bottom: 1px solid #eee;">
-                                    {{-- CELAH A1 (Soal 1): Menampilkan judul tanpa escaping HTML --}}
-
+                                    {{-- Judul Buku dengan Blade Escaping --}}
                                     <td class="p-3 text-sm font-medium">{{ $buku->judul }}</td>
 
                                     <td style="padding: 10px;">{{ $buku->penulis }}</td>
@@ -96,22 +95,22 @@
                                                 {{ $textPinjam }}
                                             </button>
 
-                                            {{-- Tombol Ubah & Hapus yang seharusnya di bungkus @can --}}
-                                            @hasanyrole('admin|petugas')
+                                            {{-- Tombol Ubah & Hapus (Soal 3: Proteksi Permission 'kelola-buku') --}}
+                                            @can('kelola-buku')
                                                 <a href="{{ route('buku.edit', $buku->id) }}"
                                                     style="padding: 6px 12px; font-size: 12px; background-color: #eab308; color: #fff; border: none; border-radius: 4px; text-decoration: none; display: inline-block;">
                                                     Ubah
                                                 </a>
 
-
                                                 <form action="{{ route('buku.destroy', $buku->id) }}" method="POST"
+                                                    style="display: inline;"
                                                     onsubmit="return confirm('Yakin ingin menghapus buku ini?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
                                                         class="bg-red-600 text-white px-3 py-1 rounded text-xs">Hapus</button>
                                                 </form>
-                                            @endhasanyrole
+                                            @endcan
                                         </div>
                                     </td>
                                 </tr>
