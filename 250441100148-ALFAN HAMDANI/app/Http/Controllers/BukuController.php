@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Models\Buku;
@@ -30,8 +30,9 @@ class BukuController extends Controller
             ]);
         }
 
-        // Jika diakses langsung lewat browser, kembalikan tampilan Blade view
-        return view('buku.index');
+        // Jika diakses langsung lewat browser, ambil datanya dan kirimkan ke view Blade
+        $bukus = Buku::all();
+        return view('buku.index', compact('bukus'));
     }
 
     // Menyimpan Buku Baru (POST)
@@ -99,5 +100,13 @@ class BukuController extends Controller
     {
         $buku = Buku::all();
         return view('siswa.buku', compact('buku'));
+    }
+
+    // b
+    public function cari(Request $request)
+    {
+        $judul = $request->query('judul');
+        $buku = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
+        return response()->json($buku);
     }
 }

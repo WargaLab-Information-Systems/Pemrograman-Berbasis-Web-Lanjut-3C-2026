@@ -93,4 +93,38 @@ Route::middleware(['auth', 'role:admin|petugas'])->prefix('admin')->name('admin.
     Route::get('/laporan', [PeminjamanController::class, 'laporan'])->name('laporan.index');
 });
 
+// A2
+Route::middleware(['auth'])->group(function () {
+    Route::get('/buku-cari', [BukuController::class, 'cari'])->middleware('auth');
+});
+
+// A3
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy'])->middleware('auth');
+// });
+
+// A4
+Route::middleware(['auth'])->group(function () {
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+});
+
+// Soal no 3
+Route::middleware(['auth', 'can:kelola-buku'])->group(function () {
+    Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');
+    Route::post('/buku', [BukuController::class, 'store'])->name('buku.store');
+    Route::get('/buku/{buku}/edit', [BukuController::class, 'edit'])->name('buku.edit');
+    Route::put('/buku/{buku}', [BukuController::class, 'update'])->name('buku.update');
+    Route::delete('/buku/{buku}', [BukuController::class, 'destroy'])->name('buku.destroy');
+});
+
+// soal 4
+Route::middleware(['auth'])->group(function () {
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+});
+
+// soal 5
+Route::get('/test-error', function () {
+    throw new \RuntimeException('Uji coba error sistem.');
+});
+
 require __DIR__ . '/auth.php';
