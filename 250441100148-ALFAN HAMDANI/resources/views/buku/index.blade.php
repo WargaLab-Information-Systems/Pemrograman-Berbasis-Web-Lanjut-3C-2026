@@ -26,26 +26,28 @@
                     <!-- Form Tambah Buku (Menggunakan Route POST biasa) -->
                     <div class="card mb-4 p-3 shadow-sm">
                         <h4>Tambah Buku Baru</h4>
-                        <form action="{{ route('buku.store') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label class="form-label">Kategori ID</label>
-                                <input type="text" name="kategori_id" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Judul Buku</label>
-                                <input type="text" name="judul" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Penulis</label>
-                                <input type="text" name="penulis" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Tahun Terbit</label>
-                                <input type="number" name="tahun_terbit" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </form>
+                        @can('kelola-buku')
+                            <form action="{{ route('buku.store') }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label">Kategori ID</label>
+                                    <input type="text" name="kategori_id" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Judul Buku</label>
+                                    <input type="text" name="judul" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Penulis</label>
+                                    <input type="text" name="penulis" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Tahun Terbit</label>
+                                    <input type="number" name="tahun_terbit" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </form>
+                        @endcan
                     </div>
 
                     <!-- Tabel Data Buku (Dirender langsung via Blade) -->
@@ -69,14 +71,16 @@
                                         <td>{{ $buku->penulis }}</td>
                                         <td>{{ $buku->tahun_terbit }}</td>
                                         <td>
-                                            <!-- Tombol Hapus (Menyesuaikan Soal A3/Soal 2c nantinya) -->
-                                            <form action="{{ route('buku.destroy', $buku->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm"
-                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">Hapus</button>
-                                            </form>
+                                            @can('kelola-buku')
+                                                <!-- Tombol Hapus (Menyesuaikan Soal A3/Soal 2c nantinya) -->
+                                                <form action="{{ route('buku.destroy', $buku->id) }}" method="POST"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">Hapus</button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach

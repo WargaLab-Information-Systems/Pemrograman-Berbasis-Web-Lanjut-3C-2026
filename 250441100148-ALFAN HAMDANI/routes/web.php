@@ -108,4 +108,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
 });
 
+// Soal no 3
+Route::middleware(['auth', 'can:kelola-buku'])->group(function () {
+    Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');
+    Route::post('/buku', [BukuController::class, 'store'])->name('buku.store');
+    Route::get('/buku/{buku}/edit', [BukuController::class, 'edit'])->name('buku.edit');
+    Route::put('/buku/{buku}', [BukuController::class, 'update'])->name('buku.update');
+    Route::delete('/buku/{buku}', [BukuController::class, 'destroy'])->name('buku.destroy');
+});
+
 require __DIR__ . '/auth.php';
