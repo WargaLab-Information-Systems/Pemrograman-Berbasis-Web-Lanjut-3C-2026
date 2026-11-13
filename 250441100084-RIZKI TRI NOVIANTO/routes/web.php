@@ -59,14 +59,17 @@ Route::middleware(['auth'])->group(function () {
     // MODUL 6 - SOAL 1: CELAH KEAMANAN (A2, A3, A4)
 
     // CELAH A2: SQL Injection (Input judul langsung ke query SQL)
+
+
+
     Route::get('/buku-cari', function (Request $request) {
         $judul = $request->query('judul');
-        $hasil = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        $hasil = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
         return response()->json($hasil);
     });
 
     // CELAH A3: CSRF via GET untuk penghapusan buku
-    Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy']);
+    // Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy']);
 
     // CELAH A4: IDOR pada halaman detail peminjaman (tanpa mengecek kepemilikannya )
     Route::get('/peminjaman/{id}', [PerpustakaanAccessController::class, 'showPeminjaman'])->name('peminjaman.show');
