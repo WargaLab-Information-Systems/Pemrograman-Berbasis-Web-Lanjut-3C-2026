@@ -65,8 +65,7 @@
                                     <tr>
                                         <td>{{ $buku->kategori_id ?? $buku->kategori }}</td>
 
-                                        <td>{!! $buku->judul !!}</td>
-
+                                        <td>{{ $buku->judul }}</td>
                                         <td>{{ $buku->penulis }}</td>
                                         <td>{{ $buku->tahun_terbit }}</td>
                                         <td>

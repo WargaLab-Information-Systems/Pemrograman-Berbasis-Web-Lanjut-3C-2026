@@ -102,12 +102,11 @@ class BukuController extends Controller
         return view('siswa.buku', compact('buku'));
     }
 
-    // A2
+    // b
     public function cari(Request $request)
     {
         $judul = $request->query('judul');
-        // Menggabungkan parameter variabel $judul secara langsung ke dalam query string SQL
-        $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        $buku = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
         return response()->json($buku);
     }
 }

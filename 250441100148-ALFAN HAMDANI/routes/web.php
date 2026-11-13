@@ -99,9 +99,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // A3
-Route::middleware(['auth'])->group(function () {
-    Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy'])->middleware('auth');
-});
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy'])->middleware('auth');
+// });
 
 // A4
 Route::middleware(['auth'])->group(function () {
