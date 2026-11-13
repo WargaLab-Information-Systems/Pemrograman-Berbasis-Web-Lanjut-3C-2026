@@ -122,5 +122,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
 });
 
+// soal 5
+Route::get('/test-error', function () {
+    throw new \RuntimeException('Uji coba error sistem.');
+});
 
 require __DIR__ . '/auth.php';
