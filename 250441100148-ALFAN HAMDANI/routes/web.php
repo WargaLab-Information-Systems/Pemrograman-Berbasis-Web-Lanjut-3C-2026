@@ -93,4 +93,19 @@ Route::middleware(['auth', 'role:admin|petugas'])->prefix('admin')->name('admin.
     Route::get('/laporan', [PeminjamanController::class, 'laporan'])->name('laporan.index');
 });
 
+// A2
+Route::middleware(['auth'])->group(function () {
+    Route::get('/buku-cari', [BukuController::class, 'cari'])->middleware('auth');
+});
+
+// A3
+Route::middleware(['auth'])->group(function () {
+    Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy'])->middleware('auth');
+});
+
+// A4
+Route::middleware(['auth'])->group(function () {
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
+});
+
 require __DIR__ . '/auth.php';

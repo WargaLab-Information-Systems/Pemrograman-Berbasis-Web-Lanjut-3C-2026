@@ -89,4 +89,17 @@ class PeminjamanController extends Controller
 
         return view('admin.laporan.index', compact('laporan'));
     }
+
+    // A4
+    public function show($id)
+    {
+        // Mengambil data secara langsung tanpa pemeriksaan pemilik (Sesuai instruksi A4)
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        // Nonaktifkan sementara Gate agar tidak memunculkan 403 Forbidden
+        // Gate::authorize('view', $peminjaman);
+
+        return view('siswa.peminjaman.show', compact('peminjaman'));
+    }
+
 }

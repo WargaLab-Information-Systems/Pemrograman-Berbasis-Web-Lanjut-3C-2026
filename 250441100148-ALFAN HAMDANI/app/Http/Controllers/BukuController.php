@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Models\Buku;
@@ -100,5 +100,14 @@ class BukuController extends Controller
     {
         $buku = Buku::all();
         return view('siswa.buku', compact('buku'));
+    }
+
+    // A2
+    public function cari(Request $request)
+    {
+        $judul = $request->query('judul');
+        // Menggabungkan parameter variabel $judul secara langsung ke dalam query string SQL
+        $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        return response()->json($buku);
     }
 }
