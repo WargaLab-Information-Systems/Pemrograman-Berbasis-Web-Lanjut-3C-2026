@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SiswaPeminjamanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\BukuController as ApiBukuController;
 
 // Halaman utama
 Route::get('/', function () {

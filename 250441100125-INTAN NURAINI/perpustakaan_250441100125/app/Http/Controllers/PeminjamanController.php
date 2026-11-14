@@ -16,6 +16,15 @@ class PeminjamanController extends Controller
         return view('peminjaman.index', compact('peminjamans'));
     }
 
+    // A4: Pengujian IDOR tanpa pemeriksaan hak akses
+    public function show(int $id)
+    {
+        $peminjaman = Peminjaman::with(['anggota', 'buku'])
+            ->findOrFail($id);
+
+        return view('peminjaman.show', compact('peminjaman'));
+    }
+
     public function updateStatus(Request $request, int $id)
     {
         $request->validate([

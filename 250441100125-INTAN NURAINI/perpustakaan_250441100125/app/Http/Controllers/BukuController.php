@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Buku;
 use App\Models\Kategori;
+use Illuminate\Support\Facades\DB;
 
 class BukuController extends Controller
 {
@@ -91,4 +92,18 @@ class BukuController extends Controller
             'buku' => $buku,
         ]);
     }
+
+    // A2: Pencarian buku dengan query yang rentan SQL Injection
+    public function cari()
+    {
+        $judul = request('judul');
+
+        $hasil = DB::select(
+            "SELECT * FROM bukus WHERE judul = '$judul'"
+        );
+
+        return response()->json($hasil);
+    }
+
+
 }
