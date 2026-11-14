@@ -22,7 +22,8 @@
                             <th class="p-3 text-sm font-bold text-gray-900 border-r border-gray-200">Kategori</th>
                             <th class="p-3 text-sm font-bold text-gray-900 border-r border-gray-200">Judul Buku</th>
                             <th class="p-3 text-sm font-bold text-gray-900 border-r border-gray-200">Penulis</th>
-                            <th class="p-3 text-sm font-bold text-gray-900 text-center">Status Peminjaman</th>
+                            <th class="p-3 text-sm font-bold text-gray-900 text-center border-r border-gray-200">Status Peminjaman</th>
+                            <th class="p-3 text-sm font-bold text-gray-900 text-center" style="width: 110px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,15 +43,22 @@
                             </td>
                             <td class="p-3 text-sm text-gray-900 font-medium border-r border-gray-200">{{ $item->buku->judul ?? '-' }}</td>
                             <td class="p-3 text-sm text-gray-800 border-r border-gray-200">{{ $item->buku->penulis ?? '-' }}</td>
-                            <td class="p-3 text-sm text-center">
+                            <td class="p-3 text-sm text-center border-r border-gray-200">
                                 <span class="{{ $badgeColor }} font-bold px-2.5 py-1 rounded text-xs">
                                     {{ $item->status }}
                                 </span>
                             </td>
+                            <td class="p-3 text-sm text-center">
+                                <a href="{{ route('peminjaman.show', $item->id) }}"
+                                   style="background-color: #4f46e5; color: #ffffff;"
+                                   class="inline-block font-semibold px-3 py-1.5 rounded text-xs hover:opacity-90">
+                                    Detail
+                                </a>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="p-4 text-center text-gray-500 text-sm">Belum ada riwayat peminjaman.</td>
+                            <td colspan="6" class="p-4 text-center text-gray-500 text-sm">Belum ada riwayat peminjaman.</td>
                         </tr>
                         @endforelse
                     </tbody>

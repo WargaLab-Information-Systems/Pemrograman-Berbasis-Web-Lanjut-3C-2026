@@ -8,6 +8,7 @@ use App\Models\Peminjaman;
 use App\Models\Anggota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
@@ -192,13 +193,13 @@ class PerpustakaanAccessController extends Controller
     }
 
     // 12. Halaman Riwayat Peminjaman Mandiri
+    // 12. Halaman Riwayat Peminjaman Mandiri (Opsional: menggunakan Policy viewHistory)
     public function riwayatSendiri($userId = null)
     {
-        if ($userId !== null && (int) $userId !== Auth::id()) {
-            abort(403, 'Akses ditolak: Anda tidak diizinkan melihat riwayat peminjaman milik pengguna lain.');
-        }
+        $targetUserId = $userId !== null ? (int) $userId : (int) Auth::id();
+        Gate::authorize('viewHistory', [Peminjaman::class, $targetUserId]);
 
-        $user = Auth::user();
+        $user = User::findOrFail($targetUserId);
         $peminjamans = Peminjaman::with('buku.kategori')
             ->where('anggota_id', $user->id)
             ->latest()
@@ -238,9 +239,13 @@ class PerpustakaanAccessController extends Controller
     }
 
     // 15. Detail Peminjaman — CELAH A4 (Soal 1: Tanpa pemeriksaan kepemilikan)
+    // 15. Detail Peminjaman — Diamankan dengan PeminjamanPolicy (Soal 4)
     public function showPeminjaman($id)
     {
         $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
+
+        Gate::authorize('view', $peminjaman);
+
         return view('peminjaman.show', compact('peminjaman'));
     }
 }

@@ -15,7 +15,7 @@
                         perpustakaan.</p>
                 </div>
 
-                {{-- Tombol Tambah Buku (Soal 3: Proteksi Permission 'kelola-buku') --}}
+                {{-- Tombol Tambah Buku (Soal 3: Proteksi Permission can'kelola-buku') --}}
                 @can('kelola-buku')
                     <a href="{{ route('buku.create') }}"
                         style="padding: 10px 18px; background-color: #0d6efd; color: #fff; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;">
