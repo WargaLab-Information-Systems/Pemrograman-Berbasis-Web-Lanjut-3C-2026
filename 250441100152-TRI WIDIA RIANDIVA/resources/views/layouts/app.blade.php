@@ -1,34 +1,32 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perpustakaan Diva</title>
-    @vite(['resources/css/app.css'])
-</head>
-<body>
-    <header class="header-utama">
-        <div class="nav-bungkus">
-            <p class="judul">PERPUSTAKAAN DIVA</p>
-        
-            <nav class="nav-utama">
-                <ul>
-                <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a></li>
-                <li><a href="{{ route('buku.index') }}" class="{{ request()->routeIs('buku.index') ? 'active' : '' }}">Daftar Buku</a></li>
-                </ul>
-            </nav>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <title>{{ config('app.name', 'Laravel') }}</title>
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="font-sans antialiased">
+        <div class="min-h-screen bg-gray-100">
+            @include('layouts.navigation')
+
+            @isset($header)
+                <header class="bg-white shadow">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
+
+            <main>
+                {{ $slot ?? '' }}
+                @yield('konten')
+            </main>
         </div>
-    </header>
-
-    <main>
-        @yield('konten')
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 Perpustakaan Diva. All rights reserved.</p>
-        </div>
-    </footer>
-
-</body>
+    </body>
 </html>

@@ -1,12 +1,17 @@
-@extends('layouts.app')
-
-@section('konten')
+<x-app-layout>
 <div class="container bagian-buku">
-    <h2 class="judul" style="font-size: 1.8rem; margin-bottom: 20px; font-weight: 900;">Pengelolaan Data Buku</h2>
+    <h2 class="judul" style="font-size: 1.8rem; margin-bottom: 20px; font-weight: 900;">
+    @can('kelola data buku')
+        Pengelolaan Data Buku
+    @else
+        Daftar Buku Perpustakaan
+    @endcan
+    </h2>
 
     <div id="alertSuccess" class="alert-notif alert-sukses" style="display:none;"></div>
     <div id="alertError" class="alert-notif alert-bahaya" style="display:none;"></div>
 
+    @can('kelola data buku')
     <div class="form-container-buku">
         <h3 id="formTitle">Tambah Buku Baru</h3>
         <form id="formBuku">
@@ -39,6 +44,7 @@
             </div>
         </form>
     </div>
+    @endcan
 
     <div class="tabel-buku-wrapper">
         <table class="table-detail">
@@ -48,11 +54,10 @@
                     <th>Judul</th>
                     <th>Penulis</th>
                     <th style="width: 70px;">Tahun</th>
-                    <th style="text-align: center; width: 140px;">Aksi</th>
+                    <th style="text-align: center; width: 180px;">Aksi</th>
                 </tr>
             </thead>
             <tbody id="tabelBukuBody">
-              
             </tbody>
         </table>
     </div>
@@ -61,6 +66,7 @@
 <script>
     const API_URL = '/api/buku';
     let dataBukuGlobal = []; 
+    const canKelolaBuku = @json(auth()->user()->can('kelola data buku'));
 
     document.addEventListener('DOMContentLoaded', loadBuku);
 
@@ -71,22 +77,21 @@
         if (isError) {
             errorDiv.innerText = message;
             errorDiv.style.display = 'block';
-            successDiv.style.display = 'none';
+            if (successDiv) successDiv.style.display = 'none';
         } else {
             successDiv.innerText = message;
             successDiv.style.display = 'block';
-            errorDiv.style.display = 'none';
+            if (errorDiv) errorDiv.style.display = 'none';
         }
         setTimeout(() => {
-            successDiv.style.display = 'none';
-            errorDiv.style.display = 'none';
+            if (successDiv) successDiv.style.display = 'none';
+            if (errorDiv) errorDiv.style.display = 'none';
         }, 5000);
     }
 
     async function loadBuku() {
         try {
             const response = await fetch(API_URL);
-            
             if (!response.ok) throw new Error('Gagal mengambil data dari server');
             
             const result = await response.json();
@@ -96,6 +101,25 @@
             tbody.innerHTML = '';
 
             dataBukuGlobal.forEach(item => {
+                let tombolDetail = `
+                    <a href="/buku/${item.id}" class="btn-primary">
+                        Detail
+                    </a>
+                `;
+
+                let tombolKelola = '';
+                if (canKelolaBuku) {
+                    tombolKelola = `
+                        <button type="button" class="btn-aksi-edit" onclick="editBukuById(${item.id})">Ubah</button>
+                        <button type="button" class="btn-aksi-hapus" onclick="deleteBuku(${item.id})">Hapus</button>
+                    `;
+                } else {
+                    
+                    tombolKelola = `
+                        <button type="button" class="btn-primary" onclick="pinjamBuku(${item.id})">Pinjam</button>
+                    `;
+                }
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${item.kategori}</td>
@@ -103,10 +127,9 @@
                         <td>${item.penulis}</td>
                         <td>${item.tahun_terbit}</td>
                         <td style="text-align: center;">
-                            <div style="display: flex; gap: 6px; justify-content: center;">
-                                <button type="button" class="btn-aksi-edit" onclick="editBukuById(${item.id})">Ubah</button>
-                                
-                                <button type="button" class="btn-aksi-hapus" onclick="deleteBuku(${item.id})">Hapus</button>
+                            <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                ${tombolDetail}
+                                ${tombolKelola}
                             </div>
                         </td>
                     </tr>
@@ -118,6 +141,8 @@
     }
 
     function editBukuById(id) {
+        if (!canKelolaBuku) return;
+
         const item = dataBukuGlobal.find(buku => buku.id === id);
         if (!item) return;
 
@@ -137,50 +162,53 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    document.getElementById('formBuku').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    if (document.getElementById('formBuku')) {
+        document.getElementById('formBuku').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-        const id = document.getElementById('bukuId').value;
-        const isEdit = id !== '';
-        const url = isEdit ? `${API_URL}/${id}` : API_URL;
-        const method = isEdit ? 'PUT' : 'POST';
+            const id = document.getElementById('bukuId').value;
+            const isEdit = id !== '';
+            const url = isEdit ? `${API_URL}/${id}` : API_URL;
+            const method = isEdit ? 'PUT' : 'POST';
 
-        const payload = {
-            kategori_id: document.getElementById('kategori_id').value,
-            judul: document.getElementById('judul').value,
-            penulis: document.getElementById('penulis').value,
-            tahun_terbit: document.getElementById('tahun_terbit').value
-        };
+            const payload = {
+                kategori_id: document.getElementById('kategori_id').value,
+                judul: document.getElementById('judul').value,
+                penulis: document.getElementById('penulis').value,
+                tahun_terbit: document.getElementById('tahun_terbit').value
+            };
 
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
 
-            const result = await response.json();
+                const result = await response.json();
 
-            if (!response.ok) {
-                let errorMsg = result.message || 'Terjadi kesalahan saat menyimpan data.';
-                if (result.errors) {
-                    errorMsg = Object.values(result.errors).flat().join('\n');
+                if (!response.ok) {
+                    let errorMsg = result.message || 'Terjadi kesalahan saat menyimpan data.';
+                    if (result.errors) {
+                        errorMsg = Object.values(result.errors).flat().join('\n');
+                    }
+                    throw new Error(errorMsg);
                 }
-                throw new Error(errorMsg);
-            }
 
-            showAlert(isEdit ? 'Buku berhasil diperbarui!' : 'Buku berhasil ditambahkan!');
-            resetForm(); 
-            await loadBuku(); 
-        } catch (error) {
-            showAlert(error.message, true);
-        }
-    });
+                showAlert(isEdit ? 'Buku berhasil diperbarui!' : 'Buku berhasil ditambahkan!');
+                resetForm(); 
+                await loadBuku(); 
+            } catch (error) {
+                showAlert(error.message, true);
+            }
+        });
+    }
 
     function resetForm() {
+        if (!canKelolaBuku) return;
         document.getElementById('bukuId').value = '';
         document.getElementById('formBuku').reset();
         document.getElementById('formTitle').innerText = 'Tambah Buku Baru';
@@ -189,6 +217,7 @@
     }
 
     async function deleteBuku(id) {
+        if (!canKelolaBuku) return;
         if (!confirm('Apakah Anda yakin ingin menghapus buku ini?')) return;
 
         try {
@@ -207,5 +236,32 @@
             showAlert(error.message, true);
         }
     }
+
+    async function pinjamBuku(bukuId) {
+    if (!confirm('Apakah kamu yakin ingin mengajukan peminjaman buku ini?')) return;
+
+    try {
+        const response = await fetch('/peminjaman/ajukan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ buku_id: bukuId })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Gagal mengajukan peminjaman.');
+        }
+
+        alert(result.message || 'Pengajuan peminjaman berhasil dikirim!');
+        window.location.href = '/riwayat-saya';
+    } catch (error) {
+        alert(error.message);
+    }
+}
 </script>
-@endsection
+</x-app-layout>

@@ -17,14 +17,12 @@ class BukuController extends Controller
                 'judul'        => $buku->judul,
                 'penulis'      => $buku->penulis,
                 'tahun_terbit' => $buku->tahun_terbit,
-                'kategori'     => $buku->kategori?->nama ?? '-',
-                'cover'        => asset($buku->cover),
-            ];
-        })->toArray();
+                'kategori'     => $buku->kategori ? $buku->kategori->nama : '-',
+                'kategori_id'  => $buku->kategori_id,
+                ];
+        });
 
-        return view('buku.index', [
-            'buku' => $bukuList
-        ]);
+        return view('buku.index', compact('bukuList'));
     }
 
     public function detail($id)
@@ -46,8 +44,6 @@ class BukuController extends Controller
             'cover'        => asset($buku->cover),
         ];
 
-        return view('buku.detail', [
-            'buku' => $bukuData
-        ]);
+        return view('buku.detail', compact('buku'));
     }
 }
