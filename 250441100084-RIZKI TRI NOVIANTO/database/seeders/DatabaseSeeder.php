@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleAndPermissionSeeder::class, // 1. Buat Role & Permission terlebih dahulu
-            UserSeeder::class,               // 2. Buat Akun Penguji (Admin, Petugas, Siswa)
+            RolePermissionSeeder::class,               // 2. Buat Akun Penguji (Admin, Petugas, Siswa)
             KategoriSeeder::class,           // 3. Data Master Kategori
             BukuSeeder::class,               // 4. Data Master Buku
             AnggotaSeeder::class,            // 5. Data Master Anggota

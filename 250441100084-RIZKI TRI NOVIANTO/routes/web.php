@@ -106,6 +106,8 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/kelola/peminjaman/{id}/status', [PerpustakaanAccessController::class, 'updateStatusPeminjaman'])->name('peminjaman.update_status');
         Route::get('/laporan', [PerpustakaanAccessController::class, 'laporanPerpustakaan'])->name('laporan.index');
     });
+
+
 });
 
 require __DIR__ . '/auth.php';

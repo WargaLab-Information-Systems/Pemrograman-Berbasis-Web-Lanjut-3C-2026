@@ -28,23 +28,33 @@ class RolePermissionSeeder extends Seeder
         $roleAnggota->givePermissionTo($permLihat);
 
         // 3. Buat Akun Admin
-        $admin = User::firstOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
-                'name' => 'Administrator Utama',
-                'password' => Hash::make('password123'),
+                'name' => 'Administrator',
+                'password' => Hash::make('admin123')
             ]
         );
-        $admin->assignRole($roleAdmin);
+        $admin->syncRoles(['admin']);
 
-        // 4. Buat Akun Anggota
-        $anggota = User::firstOrCreate(
-            ['email' => 'anggota@gmail.com'],
+        // 2. Akun Petugas
+        $petugas = User::firstOrCreate(
+            ['email' => 'petugas@gmail.com'],
             [
-                'name' => 'Anggota Perpustakaan',
-                'password' => Hash::make('password123'),
+                'name' => 'Petugas Perpustakaan',
+                'password' => Hash::make('password')
             ]
         );
-        $anggota->assignRole($roleAnggota);
+        $petugas->assignRole('petugas');
+
+        // 3. Akun Siswa
+        $siswa = User::firstOrCreate(
+            ['email' => 'siswa@gmail.com'],
+            [
+                'name' => 'Siswa Teladan',
+                'password' => Hash::make('password')
+            ]
+        );
+        $siswa->assignRole('siswa');
     }
 }
