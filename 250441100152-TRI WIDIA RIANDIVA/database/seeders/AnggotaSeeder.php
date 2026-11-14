@@ -16,3 +16,4 @@ class AnggotaSeeder extends Seeder
         Anggota::factory()->count(3)->create();
     }
 }
+

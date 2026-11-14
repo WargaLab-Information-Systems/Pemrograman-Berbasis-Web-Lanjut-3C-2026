@@ -11,8 +11,15 @@ class KategoriSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+   public function run(): void
     {
-       Kategori::factory()->count(3)->create();
+        $kategoris = [
+            'Novel/Fiksi',
+            'Pengembangan Diri/Non-Fiksi',
+        ];
+
+        foreach ($kategoris as $nama) {
+            Kategori::firstOrCreate(['nama' => $nama]);
+        }
     }
 }

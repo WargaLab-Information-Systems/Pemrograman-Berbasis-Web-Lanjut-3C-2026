@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('anggota_id')->constrained('anggotas')->onDelete('cascade');
             $table->foreignId('buku_id')->constrained('bukus')->onDelete('cascade');
             $table->date('tanggal_pinjam');
-            $table->date('tanggal_kembali')->nullable(); // Boleh kosong jika belum dikembalikan
+            $table->date('tanggal_kembali')->nullable(); 
             $table->timestamps();
         });
     }

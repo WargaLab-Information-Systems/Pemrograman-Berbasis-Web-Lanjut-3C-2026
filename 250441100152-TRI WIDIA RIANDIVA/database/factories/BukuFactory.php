@@ -23,7 +23,7 @@ class BukuFactory extends Factory
             'judul' => fake()->sentence(3),
             'penulis' => fake()->name(),
             'tahun_terbit' => fake()->numberBetween(2000, 2025),
-            'cover' => asset('images/laskarpelangi.jpg'),
+            'cover' => null,
         ];
     }
 }
