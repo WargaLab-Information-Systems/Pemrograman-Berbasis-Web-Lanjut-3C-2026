@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('judul');
             $table->string('penulis');
             $table->year('tahun_terbit');
+            $table->string('status')->default('Tersedia');
             $table->timestamps();
         });
     }
