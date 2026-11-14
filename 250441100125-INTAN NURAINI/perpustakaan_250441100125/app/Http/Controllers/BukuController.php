@@ -93,13 +93,14 @@ class BukuController extends Controller
         ]);
     }
 
-    // A2: Pencarian buku dengan query yang rentan SQL Injection
+    // A2: Perbaikan SQL Injection menggunakan Query Binding
     public function cari()
     {
         $judul = request('judul');
 
         $hasil = DB::select(
-            "SELECT * FROM bukus WHERE judul = '$judul'"
+            "SELECT * FROM bukus WHERE judul = ?",
+            [$judul]
         );
 
         return response()->json($hasil);

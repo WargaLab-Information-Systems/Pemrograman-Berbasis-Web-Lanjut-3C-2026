@@ -465,7 +465,7 @@
 
                                         {{-- A1: Judul buku ditampilkan dengan escaping --}}
                                         <td class="book-title">
-                                            {!! $item->judul !!}
+                                            {{$item->judul}}
                                         </td>
 
                                         <td>
