@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate; 
+use App\Models\Peminjaman;           
+use App\Policies\PeminjamanPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,10 +19,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+   public function boot(): void
     {
-        Gate::define('kelola-buku', function ($user) {
-        return $user->hasRole(['admin', 'petugas']);
-    });
+        // Pastikan baris ini ada di dalam function boot()
+        Gate::policy(Peminjaman::class, PeminjamanPolicy::class);
     }
+
 }

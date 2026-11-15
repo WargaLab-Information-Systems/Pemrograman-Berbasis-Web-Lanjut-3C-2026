@@ -43,14 +43,17 @@
         <!-- Tombol Tambah Buku -->
         <div style="margin-bottom: 20px;">
             <!-- <a href="{{ route('buku-crud.create') }}" style="background: #10b981; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold;">+ Tambah Buku Baru</a> -->
-             @can('kelola-buku')
-    <a href="{{ route('buku.create') }}">Tambah Buku</a>
-@endcan
-<div class="mb-4">
-    <a href="{{ route('laporan.pdf') }}" class="btn btn-danger" target="_blank">
-        <i class="fas fa-file-pdf"></i> Cetak Laporan PDF
-    </a>
-</div>
+            <!-- @can('kelola-buku')
+                <a href="{{ route('buku.create') }}">Tambah Buku</a>
+            @endcan -->
+            @if(auth()->user()->role == 'admin')
+                <a href="{{ route('laporan.pdf') }}" class="btn btn-primary">Tambah Buku</a>
+            @endif
+            <div class="mb-4">
+                <a href="{{ route('laporan.pdf') }}" class="btn btn-danger" target="_blank">
+                    <i class="fas fa-file-pdf"></i> Cetak Laporan PDF
+                </a>
+            </div>
         </div>
 
         <!-- Tabel Daftar Buku -->
@@ -66,8 +69,8 @@
             <tbody>
                 @forelse($bukus ?? [] as $buku)
                     <tr style="border-bottom: 1px solid #e5e7eb;">
-                        <!-- <td style="padding: 10px; font-weight: bold; color: #1f2937;">{{ $buku->judul }}</td> -->
-                        <td style="padding: 10px; font-weight: bold; color: #1f2937;">{!! $buku->judul !!}</td>
+                        <td style="padding: 10px; font-weight: bold; color: #1f2937;">{{ $buku->judul }}</td>
+                        <!-- <td style="padding: 10px; font-weight: bold; color: #1f2937;">{!! $buku->judul !!}</td> -->
                         <td style="padding: 10px; color: #4b5563;">{{ $buku->penulis }}</td>
                         <td style="padding: 10px; color: #4b5563;">{{ $buku->tahun_terbit }}</td>
                         <td style="padding: 10px; text-align: center;">

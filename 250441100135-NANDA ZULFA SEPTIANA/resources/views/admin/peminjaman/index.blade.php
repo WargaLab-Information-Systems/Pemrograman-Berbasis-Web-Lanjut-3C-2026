@@ -32,7 +32,7 @@
             <tbody>
                 @forelse($peminjamans as $item)
                     <tr style="border-bottom: 1px solid #e5e7eb;">
-                        <td style="padding: 12px; color: #374151;">{{ $item->anggota->name ?? 'Siswa' }}</td>
+                        <td style="padding: 12px; color: #374151;">{{ $item->user->name ?? 'Siswa' }}</td>
                         <td style="padding: 12px; color: #1f2937; font-weight: bold;">{{ $item->buku->judul ?? 'Buku Dihapus' }}</td>
                         <td style="padding: 12px; color: #6b7280; font-size: 14px;">{{ $item->tanggal_pinjam }}</td>
                         <td style="padding: 12px;">

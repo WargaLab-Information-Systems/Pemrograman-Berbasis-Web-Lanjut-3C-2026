@@ -8,37 +8,35 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
+
 class PeminjamanController extends Controller
 {
-    // Siswa mengajukan peminjaman buku[cite: 3]
+    // Siswa mengajukan peminjaman buku
     public function store($id)
     {
         Peminjaman::create([
-            'anggota_id' => Auth::id(), // Sesuai struktur migrasi tabel peminjamans kamu
+            'user_id' => auth()->id(), // Menggunakan ID user yang sedang login
             'buku_id' => $id,
             'tanggal_pinjam' => now(),
             'status' => 'dipinjam',
         ]);
 
-        return redirect()->route('siswa.riwayat')->with('success', 'Pengajuan peminjaman buku berhasil!');
+        return redirect()->route('siswa.riwayat')->with('success', 'Buku berhasil dipinjam!');
     }
 
-    // Siswa melihat status & riwayat peminjaman miliknya sendiri[cite: 3]
+    // Menampilkan daftar riwayat peminjaman siswa yang sedang login
     public function riwayat()
     {
-        $peminjamans = Peminjaman::with('buku')
-            ->where('anggota_id', Auth::id())
-            ->latest()
-            ->get();
-
+        $peminjamans = Peminjaman::where('user_id', auth()->id())->get();
+        
         return view('siswa.riwayat', compact('peminjamans'));
     }
 
-    // Siswa mengembalikan buku miliknya[cite: 3]
+    // Siswa mengembalikan buku miliknya sendiri
     public function kembalikan($id)
     {
         $peminjaman = Peminjaman::where('id', $id)
-            ->where('anggota_id', Auth::id())
+            ->where('user_id', Auth::id()) // Disesuaikan dari anggota_id ke user_id
             ->firstOrFail();
 
         $peminjaman->update([
@@ -49,14 +47,15 @@ class PeminjamanController extends Controller
         return back()->with('success', 'Buku berhasil dikembalikan.');
     }
 
-    // Admin & Petugas melihat dan memproses seluruh peminjaman[cite: 3]
+    // Admin & Petugas melihat seluruh data peminjaman
     public function indexAdmin()
     {
-        $peminjamans = Peminjaman::with(['anggota', 'buku'])->latest()->get();
+        // Relasi diganti ke 'user' sesuai migrasi ke tabel users
+        $peminjamans = Peminjaman::with(['user', 'buku'])->latest()->get();
         return view('admin.peminjaman.index', compact('peminjamans'));
     }
 
-    // Admin & Petugas memproses persetujuan/pengembalian buku[cite: 3]
+    // Admin & Petugas memproses status peminjaman
     public function prosesAdmin($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
@@ -68,17 +67,30 @@ class PeminjamanController extends Controller
         return back()->with('success', 'Status peminjaman berhasil diperbarui.');
     }
 
-//     public function show(Peminjaman $peminjaman)
+    // public function show($id)
+    // {
+    //     // Menggunakan findOrFail($id) murni tanpa Gate/pemeriksaan kepemilikan agar celah IDOR teruji
+    //     $peminjaman = Peminjaman::findOrFail($id); 
+        
+    //     return view('peminjaman.show', compact('peminjaman'));
+    // }
+//     public function show($id)
 // {
-//     // $peminjaman = Peminjaman::findOrFail($id); // Tanpa pemeriksaan kepemilikan user
-//     Gate::authorize('view', $peminjaman);
+//     // Ambil data berdasarkan ID secara langsung tanpa pemeriksaan kepemilikan/Gate (Celah IDOR)
+//     $peminjaman = Peminjaman::findOrFail($id); 
+    
 //     return view('peminjaman.show', compact('peminjaman'));
 // }
 
-public function show($id)
-{
-    $peminjaman = Peminjaman::findOrFail($id); // Tanpa pemeriksaan kepemilikan user
-    return view('peminjaman.show', compact('peminjaman'));
-}
+        public function show($id)
+    {
+        // Cari data peminjaman berdasarkan ID
+        $peminjaman = Peminjaman::findOrFail($id);
 
+        // Validasi akses menggunakan Policy (A4)
+        Gate::authorize('view', $peminjaman);
+
+        // Tampilkan view detail jika diizinkan
+        return view('peminjaman.show', compact('peminjaman'));
+    }
 }

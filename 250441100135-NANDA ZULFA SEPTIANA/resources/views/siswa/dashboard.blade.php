@@ -16,6 +16,7 @@
         <!-- Tombol Logout -->
         <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
             @csrf
+            <a href="{{ route('siswa.riwayat') }}" style="padding: 8px 15px; background: #ff1493; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">Riwayat</a>
             <a href="{{ route('profile.edit') }}" style="padding: 8px 15px; background: #6b7280; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">Profil</a>
             <button type="submit" style="padding: 8px 15px; background: #ef4444; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Logout</button>
             
