@@ -7,25 +7,23 @@
     @vite(['resources/css/app.css'])
 </head>
 <body>
-    <header class="site-header">
-        <a class="brand" href="{{ route('home') }}">Perpustakaan <span>Efqai</span></a>
-        <p>Temukan bacaan berikutnya.</p>
+    <header>
+        <h1>Perpustakaan Efqai</h1>
     </header>
 
-    <nav class="site-nav" aria-label="Navigasi utama">
-        <div class="nav-inner">
-            <a href="{{ route('home') }}" @class(['active' => request()->routeIs('home')])>Beranda</a>
-            <a href="{{ route('buku.index') }}" @class(['active' => request()->routeIs('buku.*')])>Daftar Buku</a>
-        </div>
+    <nav>
+        <a href="{{ route('home') }}">Beranda</a>
+        <a href="{{ route('buku.index') }}">Daftar Buku</a>
     </nav>
 
-    <main class="site-content">
+    <main>
         @yield('content')
     </main>
 
-    <footer class="site-footer">
-        <p>&copy; {{ date('Y') }} Perpustakaan Efqai</p>
+    <footer>
+        <p>&copy; {{ date('Y') }} Perpustakaan Efqai. All rights reserved.</p>
     </footer>
+ 
 
 </body>
 </html>

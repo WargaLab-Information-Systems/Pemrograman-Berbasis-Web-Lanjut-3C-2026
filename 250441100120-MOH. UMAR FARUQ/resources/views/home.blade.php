@@ -3,13 +3,9 @@
 @section('title', 'Beranda - Perpustakaan Efqai')
 
 @section('content')
-    <section class="hero">
-        <p class="eyebrow">Ruang untuk menemukan cerita dan pengetahuan</p>
-        <h2>Selamat Datang di Perpustakaan Efqai</h2>
-        <p>
-            Temukan koleksi pilihan yang siap menemani kegiatan belajar, mencari inspirasi,
-            dan menjelajahi ide baru.
-        </p>
-        <a href="{{ route('buku.index') }}" class="btn">Jelajahi Daftar Buku</a>
-    </section>
+    <h2>Selamat Datang di Perpustakaan Efqai</h2>
+    <p style="margin-top: 10px; line-height: 1.6;">
+        Temukan berbagai koleksi buku terbaik untuk menunjang kegiatan belajar dan penelitian Anda.
+        Gunakan menu navigasi di atas untuk melihat daftar buku yang tersedia.
+    </p>
 @endsection
