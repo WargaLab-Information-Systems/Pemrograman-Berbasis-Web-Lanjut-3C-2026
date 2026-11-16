@@ -44,6 +44,26 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
+        'mysql_local' => [
+            'driver' => 'mysql',
+            'url' => env('LOCAL_DB_URL'),
+            'host' => env('LOCAL_DB_HOST', '127.0.0.1'),
+            'port' => env('LOCAL_DB_PORT', '3306'),
+            'database' => env('LOCAL_DB_DATABASE', 'perpustakaanbersama'),
+            'username' => env('LOCAL_DB_USERNAME', 'root'),
+            'password' => env('LOCAL_DB_PASSWORD', ''),
+            'unix_socket' => env('LOCAL_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
@@ -97,7 +117,12 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+
+            'options' => extension_loaded('pdo_pgsql') ? [
+                PDO::ATTR_EMULATE_PREPARES => true,
+            ] : [],
         ],
+
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
