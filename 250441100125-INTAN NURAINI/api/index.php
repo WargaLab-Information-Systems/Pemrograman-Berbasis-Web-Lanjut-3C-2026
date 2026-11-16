@@ -23,4 +23,6 @@ foreach ($files as $file) {
     );
 }
 
+error_log('[CHECK] Laravel bootstrap starting');
+
 require $basePath . '/public/index.php';
