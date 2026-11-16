@@ -2,6 +2,16 @@
 
 $basePath = dirname(__DIR__);
 
+if (isset($_GET['debug_uri'])) {
+    header('Content-Type: text/plain');
+
+    echo "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? '-') . "\n";
+    echo "PATH_INFO: " . ($_SERVER['PATH_INFO'] ?? '-') . "\n";
+    echo "SCRIPT_NAME: " . ($_SERVER['SCRIPT_NAME'] ?? '-') . "\n";
+
+    exit;
+}
+
 $cachePath = sys_get_temp_dir() . '/laravel-cache';
 
 if (!is_dir($cachePath)) {
