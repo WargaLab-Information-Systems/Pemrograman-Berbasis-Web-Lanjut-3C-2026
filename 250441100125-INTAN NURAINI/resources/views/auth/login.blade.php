@@ -1,4 +1,11 @@
 <x-guest-layout>
+    <!-- Judul dengan NIM -->
+    <div class="text-center mb-4">
+        <h2 class="text-lg font-bold text-gray-800">
+            Sistem Perpustakaan Digital - 250441100125
+        </h2>
+    </div>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -6,7 +13,7 @@
         @csrf
 
         <!-- Email Address -->
-        <div>   
+        <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
