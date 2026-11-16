@@ -28,11 +28,9 @@ if (is_file(__DIR__ . '/providers.php')) {
     );
 }
 
-// Buat aplikasi dan atur bootstrap SEBELUM mendaftarkan provider.
 $app = new Application($basePath);
 $app->useBootstrapPath($runtimeBootstrapPath);
 
-// Konfigurasi builder Laravel 13.
 $builder = (new ApplicationBuilder($app))
     ->withKernels()
     ->withEvents()
@@ -54,6 +52,14 @@ return $builder
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Throwable $e) {
+            return response(
+                "PENYEBAB ERROR:\n" .
+                get_class($e) . "\n" .
+                $e->getMessage() . "\n" .
+                $e->getFile() . ":" . $e->getLine(),
+                500
+            )->header('Content-Type', 'text/plain');
+        });
     })
     ->create();
