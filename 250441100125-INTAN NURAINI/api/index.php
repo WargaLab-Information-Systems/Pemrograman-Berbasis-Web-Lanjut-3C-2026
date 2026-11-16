@@ -8,11 +8,6 @@ if (!is_dir($cachePath)) {
     mkdir($cachePath, 0777, true);
 }
 
-if (!is_writable($cachePath)) {
-    http_response_code(500);
-    exit('Direktori cache sementara tidak dapat ditulis.');
-}
-
 $cacheFiles = [
     'APP_PACKAGES_CACHE' => 'packages.php',
     'APP_SERVICES_CACHE' => 'services.php',
@@ -23,26 +18,44 @@ $cacheFiles = [
 
 foreach ($cacheFiles as $key => $file) {
     $path = $cachePath . '/' . $file;
-
     putenv($key . '=' . $path);
     $_ENV[$key] = $path;
     $_SERVER[$key] = $path;
 }
 
+header('Content-Type: text/plain; charset=utf-8');
+
 try {
-    require $basePath . '/public/index.php';
+    require $basePath . '/vendor/autoload.php';
+
+    $app = require $basePath . '/bootstrap/app.php';
+
+    $kernel = $app->make(
+        \Illuminate\Contracts\Http\Kernel::class
+    );
+
+    $kernel->bootstrap();
+
+    echo "BOOTSTRAP BERHASIL\n";
+    echo "PHP: " . PHP_VERSION . "\n";
+    echo "Laravel: " . $app->version() . "\n";
+    echo "View terdaftar: ";
+    var_export($app->bound('view'));
+
+    echo "\nView dapat dipanggil: ";
+    echo get_class($app->make('view'));
+
 } catch (\Throwable $e) {
     http_response_code(500);
-    header('Content-Type: text/plain; charset=utf-8');
 
-    echo "ERROR UTAMA LARAVEL:\n";
+    echo "BOOTSTRAP GAGAL\n";
+    echo "Jenis: " . get_class($e) . "\n";
+    echo "Pesan: " . $e->getMessage() . "\n";
+    echo "File: " . $e->getFile() . "\n";
+    echo "Baris: " . $e->getLine() . "\n";
 
-    do {
-        echo "\nJenis: " . get_class($e);
-        echo "\nPesan: " . $e->getMessage();
-        echo "\nFile: " . $e->getFile();
-        echo "\nBaris: " . $e->getLine() . "\n";
-
-        $e = $e->getPrevious();
-    } while ($e !== null);
+    if ($e->getPrevious()) {
+        echo "Penyebab sebelumnya: "
+            . $e->getPrevious()->getMessage() . "\n";
+    }
 }
