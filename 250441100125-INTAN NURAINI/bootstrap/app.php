@@ -13,12 +13,28 @@ $basePath = dirname(__DIR__);
 $runtimeBootstrapPath = sys_get_temp_dir() . '/laravel-bootstrap';
 $runtimeCachePath = $runtimeBootstrapPath . '/cache';
 
-if (!is_dir($runtimeCachePath)) {
-    mkdir($runtimeCachePath, 0777, true);
-}
+$runtimeStoragePath = sys_get_temp_dir() . '/laravel-storage';
 
-if (!is_writable($runtimeCachePath)) {
-    throw new RuntimeException('Folder bootstrap sementara tidak dapat ditulis.');
+$directories = [
+    $runtimeCachePath,
+    $runtimeStoragePath . '/app',
+    $runtimeStoragePath . '/framework/cache/data',
+    $runtimeStoragePath . '/framework/sessions',
+    $runtimeStoragePath . '/framework/testing',
+    $runtimeStoragePath . '/framework/views',
+    $runtimeStoragePath . '/logs',
+];
+
+foreach ($directories as $directory) {
+    if (!is_dir($directory)) {
+        mkdir($directory, 0777, true);
+    }
+
+    if (!is_writable($directory)) {
+        throw new RuntimeException(
+            'Folder tidak dapat ditulis: ' . $directory
+        );
+    }
 }
 
 if (is_file(__DIR__ . '/providers.php')) {
@@ -29,7 +45,9 @@ if (is_file(__DIR__ . '/providers.php')) {
 }
 
 $app = new Application($basePath);
+
 $app->useBootstrapPath($runtimeBootstrapPath);
+$app->useStoragePath($runtimeStoragePath);
 
 $builder = (new ApplicationBuilder($app))
     ->withKernels()
