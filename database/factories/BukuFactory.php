@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Kategori;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BukuFactory extends Factory 
+class BukuFactory extends Factory
 {
     public function definition(): array
     {

@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Alur peminjaman: diajukan -> dipinjam -> dikembalikan (atau ditolak).
-     */
     public function up(): void
     {
         Schema::table('peminjamans', function (Blueprint $table) {
@@ -21,7 +18,6 @@ return new class extends Migration
                 ->nullOnDelete();
         });
 
-        // Data lama: yang sudah punya tanggal kembali berarti sudah dikembalikan.
         DB::table('peminjamans')
             ->whereNotNull('tanggal_kembali')
             ->update(['status' => 'dikembalikan']);

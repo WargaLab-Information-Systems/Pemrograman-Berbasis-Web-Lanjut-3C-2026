@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class RiwayatController extends Controller
 {
-    /** Status peminjaman milik sendiri (yang masih berjalan). */
     public function status(Request $request)
     {
         return view('riwayat.index', [
@@ -20,7 +19,6 @@ class RiwayatController extends Controller
         ]);
     }
 
-    /** Riwayat peminjaman milik sendiri. */
     public function saya(Request $request)
     {
         return view('riwayat.index', [
@@ -30,11 +28,6 @@ class RiwayatController extends Controller
         ]);
     }
 
-    /**
-     * Riwayat milik user tertentu. Pemeriksaan identitas: selain dirinya sendiri,
-     * hanya yang berhak "kelola peminjaman" (admin/petugas) yang boleh melihat.
-     * Siswa yang mengganti ID di URL akan mendapat 403.
-     */
     public function user(Request $request, User $user)
     {
         abort_unless(

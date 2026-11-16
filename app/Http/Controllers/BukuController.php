@@ -46,9 +46,6 @@ class BukuController extends Controller
             ->with('success', "Buku \"{$buku->judul}\" berhasil diperbarui.");
     }
 
-    /**
-     * Pencarian buku berdasarkan judul (query dengan parameter binding).
-     */
     public function cari(Request $request)
     {
         $judul = $request->query('judul');
@@ -65,7 +62,6 @@ class BukuController extends Controller
         return view('buku.show', compact('buku'));
     }
 
-    /** Hapus buku: hanya lewat DELETE + token CSRF. */
     public function destroy(Buku $buku)
     {
         $judul = $buku->judul;
@@ -73,7 +69,6 @@ class BukuController extends Controller
         try {
             $buku->delete();
         } catch (QueryException) {
-            // Buku yang masih punya riwayat peminjaman tidak boleh dihapus (foreign key).
             return back()->with('error', "Buku \"{$judul}\" masih memiliki data peminjaman sehingga tidak dapat dihapus.");
         }
 

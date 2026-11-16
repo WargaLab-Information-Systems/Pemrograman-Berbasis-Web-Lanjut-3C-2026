@@ -12,9 +12,6 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
-/**
- * Pengujian skenario Modul 5 (nomor skenario mengikuti tabel pada tugas).
- */
 class RbacTest extends TestCase
 {
     use RefreshDatabase;
@@ -36,8 +33,6 @@ class RbacTest extends TestCase
         ]);
     }
 
-    // ---------------------------------------------------------------- Seeder
-
     public function test_seeder_membuat_3_role_dan_16_permission_sesuai_tabel(): void
     {
         $this->seed(RolePermissionSeeder::class);
@@ -57,8 +52,6 @@ class RbacTest extends TestCase
         $this->assertFalse(Role::findByName('siswa')->hasPermissionTo('kelola data buku'));
         $this->assertFalse(Role::findByName('siswa')->hasPermissionTo('lihat laporan perpustakaan'));
     }
-
-    // ------------------------------------------------ Skenario 1: belum login
 
     public function test_skenario_1_belum_login_dialihkan_ke_login(): void
     {
@@ -83,15 +76,13 @@ class RbacTest extends TestCase
         $this->actingAs($user)->get('/register')->assertRedirect();
     }
 
-    // ---------------------------------------------------------------- ADMIN
-
     public function test_skenario_2_admin_dapat_membuka_dashboard_admin(): void
     {
         $admin = $this->buatUser('admin');
 
         $this->actingAs($admin)->get('/dashboard')->assertRedirect(route('admin.dashboard'));
         $this->actingAs($admin)->get('/admin/dashboard')->assertOk()->assertSee('Dashboard Admin');
-        // Tidak punya permission dashboard petugas
+
         $this->actingAs($admin)->get('/petugas/dashboard')->assertForbidden();
     }
 
@@ -173,8 +164,6 @@ class RbacTest extends TestCase
         $this->actingAs($admin)->getJson('/api/rekap/buku-per-kategori')->assertOk();
     }
 
-    // -------------------------------------------------------------- PETUGAS
-
     public function test_skenario_6_petugas_dapat_membuka_dashboard_petugas(): void
     {
         $petugas = $this->buatUser('petugas');
@@ -201,23 +190,19 @@ class RbacTest extends TestCase
         $petugas = $this->buatUser('petugas');
         $siswa = $this->buatUser('siswa');
 
-        // Siswa mengajukan
         $buku = $this->buku();
         $this->actingAs($siswa)->post('/peminjaman', ['buku_id' => $buku->id])->assertRedirect(route('peminjaman.status'));
         $p = Peminjaman::firstOrFail();
         $this->assertSame('diajukan', $p->status);
 
-        // Petugas menyetujui
         $this->actingAs($petugas)->post("/peminjaman/{$p->id}/setujui")->assertSessionHas('success');
         $this->assertSame('dipinjam', $p->fresh()->status);
         $this->assertSame($petugas->id, $p->fresh()->diproses_oleh);
 
-        // Petugas mencatat pengembalian
         $this->actingAs($petugas)->post("/peminjaman/{$p->id}/kembali")->assertSessionHas('success');
         $this->assertSame('dikembalikan', $p->fresh()->status);
         $this->assertNotNull($p->fresh()->tanggal_kembali);
 
-        // Pengajuan lain dapat ditolak
         $p2 = $this->pinjaman($siswa, 'diajukan');
         $this->actingAs($petugas)->post("/peminjaman/{$p2->id}/tolak")->assertSessionHas('success');
         $this->assertSame('ditolak', $p2->fresh()->status);
@@ -228,12 +213,10 @@ class RbacTest extends TestCase
         $petugas = $this->buatUser('petugas');
         $siswa = $this->buatUser('siswa');
 
-        // kembali pada pengajuan (belum dipinjam) ditolak
         $p = $this->pinjaman($siswa, 'diajukan');
         $this->actingAs($petugas)->post("/peminjaman/{$p->id}/kembali")->assertSessionHas('error');
         $this->assertSame('diajukan', $p->fresh()->status);
 
-        // petugas tidak boleh menyetujui pengajuannya sendiri
         $milikPetugas = $this->pinjaman($petugas, 'diajukan');
         $this->actingAs($petugas)->post("/peminjaman/{$milikPetugas->id}/setujui")->assertSessionHas('error');
         $this->assertSame('diajukan', $milikPetugas->fresh()->status);
@@ -273,8 +256,6 @@ class RbacTest extends TestCase
         $this->actingAs($this->buatUser('petugas'))->get('/laporan')->assertOk();
     }
 
-    // ---------------------------------------------------------------- SISWA
-
     public function test_skenario_10_siswa_melihat_daftar_dan_detail_buku(): void
     {
         $siswa = $this->buatUser('siswa');
@@ -300,7 +281,7 @@ class RbacTest extends TestCase
         $this->assertSame('Nama Baru', $siswa->fresh()->name);
         $this->assertSame('Nama Baru', $siswa->fresh()->anggota->nama);
         $this->assertSame('0899', $siswa->fresh()->anggota->no_telepon);
-        // Data user lain tidak berubah
+
         $this->assertNotSame('Nama Baru', $lain->fresh()->name);
     }
 
@@ -355,7 +336,6 @@ class RbacTest extends TestCase
         $this->actingAs($siswa)->get('/laporan')->assertForbidden();
         $this->actingAs($siswa)->getJson('/api/rekap/peminjaman-per-buku')->assertForbidden();
 
-        // Kelola buku (lewat API yang dipakai halaman) ditolak
         $this->actingAs($siswa)->postJson('/api/buku', [
             'kategori_id' => $kategori->id, 'judul' => 'Ilegal', 'penulis' => 'Penyusup', 'tahun_terbit' => 2020,
         ])->assertForbidden();
@@ -394,11 +374,10 @@ class RbacTest extends TestCase
         $lain = $this->buatUser('siswa');
         $punyaLain = $this->pinjaman($lain);
 
-        // Lewat URL riwayat user lain
         $this->actingAs($siswa)->get("/riwayat/{$lain->id}")->assertForbidden();
-        // Lewat URL detail peminjaman milik orang lain
+
         $this->actingAs($siswa)->get("/peminjaman/{$punyaLain->id}")->assertForbidden();
-        // Siswa tidak bisa memproses peminjaman
+
         $this->actingAs($siswa)->post("/peminjaman/{$punyaLain->id}/kembali")->assertForbidden();
         $this->assertSame('dipinjam', $punyaLain->fresh()->status);
     }
@@ -425,8 +404,6 @@ class RbacTest extends TestCase
             $this->assertSame(1, $u->anggota->peminjamans()->count());
         }
     }
-
-    // ------------------------------------------------------ Skenario 15: logout
 
     public function test_skenario_15_setelah_logout_harus_login_kembali(): void
     {
@@ -458,7 +435,7 @@ class RbacTest extends TestCase
     public function test_user_tanpa_role_tidak_punya_akses_apa_pun(): void
     {
         $this->seed(RolePermissionSeeder::class);
-        $user = User::factory()->create(); // tanpa role
+        $user = User::factory()->create();
 
         $this->actingAs($user)->get('/buku')->assertForbidden();
         $this->actingAs($user)->get('/riwayat')->assertForbidden();

@@ -13,25 +13,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
- 
+
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * Role TIDAK diambil dari input: registrasi publik selalu menghasilkan "siswa".
-     * Admin/petugas hanya dapat dibuat lewat seeder atau menu Kelola Pengguna (admin).
-     *
-     * @throws ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -50,7 +39,6 @@ class RegisteredUserController extends Controller
 
             $user->assignRole(User::ROLE_SISWA);
 
-            // Setiap akun terhubung ke data anggota agar bisa meminjam buku.
             $user->anggota()->create([
                 'nama' => $user->name,
                 'email' => $user->email,

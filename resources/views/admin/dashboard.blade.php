@@ -3,7 +3,7 @@
 @section('title', 'Dashboard Admin')
 
 @section('content')
- 
+
 <div class="page-title">
     <h2>Dashboard Admin</h2>
     <p>Gambaran umum sistem perpustakaan.</p>

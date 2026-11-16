@@ -5,7 +5,7 @@
 @section('content')
 
 <div class="card card-narrow">
-    <h3>Registrasi Akun Siswa</h3> 
+    <h3>Registrasi Akun Siswa</h3>
 
     <form method="POST" action="{{ route('register') }}">
         @csrf

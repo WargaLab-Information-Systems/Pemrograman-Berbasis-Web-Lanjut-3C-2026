@@ -3,7 +3,7 @@
 @section('title', 'Dashboard Petugas')
 
 @section('content')
- 
+
 <div class="page-title">
     <h2>Dashboard Petugas</h2>
     <p>Operasional harian perpustakaan.</p>

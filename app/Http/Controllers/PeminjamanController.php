@@ -13,7 +13,6 @@ class PeminjamanController extends Controller
 {
     private const STATUS_AKTIF = [Peminjaman::STATUS_DIAJUKAN, Peminjaman::STATUS_DIPINJAM];
 
-    /** Semua data peminjaman (admin/petugas) — permission "kelola peminjaman". */
     public function index(Request $request)
     {
         $peminjamans = Peminjaman::with(['anggota', 'buku'])
@@ -25,7 +24,6 @@ class PeminjamanController extends Controller
         return view('peminjaman.index', compact('peminjamans'));
     }
 
-    /** Daftar buku yang sedang dipinjam & riwayat pengembalian — "kelola pengembalian". */
     public function pengembalian()
     {
         $dipinjam = Peminjaman::with(['anggota', 'buku'])
@@ -42,7 +40,6 @@ class PeminjamanController extends Controller
         return view('peminjaman.pengembalian', compact('dipinjam', 'dikembalikan'));
     }
 
-    /** Detail satu peminjaman: hanya pemilik atau admin/petugas (PeminjamanPolicy). */
     public function show($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
@@ -52,7 +49,6 @@ class PeminjamanController extends Controller
         return view('peminjaman.show', ['peminjaman' => $peminjaman->load(['anggota', 'buku.kategori', 'pemroses'])]);
     }
 
-    /** Mengajukan peminjaman — atas nama akun yang sedang login saja. */
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -134,7 +130,6 @@ class PeminjamanController extends Controller
         return back()->with('success', 'Pengembalian buku dicatat.');
     }
 
-    /** Status harus sesuai alur, dan petugas tidak boleh memproses peminjaman miliknya sendiri. */
     private function tolakJikaTidakValid(User $user, Peminjaman $peminjaman, string $statusDiharapkan): ?RedirectResponse
     {
         if ($peminjaman->dimilikiOleh($user)) {

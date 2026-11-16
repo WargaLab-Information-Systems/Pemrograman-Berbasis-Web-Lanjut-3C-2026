@@ -49,7 +49,6 @@ class Peminjaman extends Model
         return $this->belongsTo(User::class, 'diproses_oleh');
     }
 
-    /** Peminjaman ini milik user tersebut? (berdasarkan identitas, bukan permission) */
     public function dimilikiOleh(User $user): bool
     {
         return $this->anggota?->user_id === $user->id;

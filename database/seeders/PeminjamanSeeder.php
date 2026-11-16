@@ -15,13 +15,11 @@ class PeminjamanSeeder extends Seeder
         $anggota = Anggota::whereNull('user_id')->get();
         $buku = Buku::all();
 
-        // Data peminjaman awal dari modul sebelumnya.
         Peminjaman::factory()->count(3)->create([
             'anggota_id' => fn () => $anggota->random()->id,
             'buku_id' => fn () => $buku->random()->id,
         ]);
 
-        // Contoh riwayat untuk akun siswa demo (untuk menguji pembatasan data pribadi).
         $siswa1 = User::where('email', 'siswa1@perpustakaan.test')->first()?->anggota;
         $siswa2 = User::where('email', 'siswa2@perpustakaan.test')->first()?->anggota;
 

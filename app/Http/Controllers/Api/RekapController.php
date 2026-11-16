@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Buku;
-use App\Models\Kategori; 
+use App\Models\Kategori;
 use App\Models\Peminjaman;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;

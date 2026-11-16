@@ -18,5 +18,3 @@ class BukuResource extends JsonResource
         ];
     }
 }
-
-

@@ -39,7 +39,6 @@ class BukuController extends Controller
             );
         }
 
-        // Mengambil semua buku tanpa membatasi 10 buku per halaman.
         $bukus = $query->get();
 
         return response()->json([

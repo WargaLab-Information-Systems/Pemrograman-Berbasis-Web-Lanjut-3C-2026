@@ -5,16 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Anggota;
 use App\Models\Buku;
 use App\Models\Peminjaman;
-use App\Models\User; 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
-    /**
-     * Titik masuk setelah login: arahkan ke dashboard sesuai role.
-     * Siswa (dan pengguna lain tanpa dashboard khusus) melihat ringkasan miliknya sendiri.
-     */
     public function index(Request $request)
     {
         $user = $request->user();

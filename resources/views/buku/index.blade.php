@@ -133,7 +133,7 @@
                 <tr>
                     <td>{{ $bukus->firstItem() + $loop->index }}</td>
                     <td>{{ $buku->kategori->nama ?? '-' }}</td>
-                    {{-- Blade escaping: karakter HTML diubah menjadi entitas, tampil sebagai teks --}}
+
                     <td>{{ $buku->judul }}</td>
                     <td>{{ $buku->penulis }}</td>
                     <td>{{ $buku->tahun_terbit }}</td>

@@ -1,4 +1,4 @@
-{{-- Tombol aksi per peminjaman; tampil sesuai permission & status --}}
+
 @if ($p->status === 'diajukan')
     @can('memproses persetujuan peminjaman')
         <form class="inline-form" method="POST" action="{{ route('peminjaman.setujui', $p) }}">

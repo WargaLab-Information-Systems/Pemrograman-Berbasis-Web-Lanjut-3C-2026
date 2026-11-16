@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Menghubungkan akun login (users) dengan data anggota perpustakaan,
-     * sehingga riwayat peminjaman dapat ditelusuri ke pemiliknya.
-     */
     public function up(): void
     {
         Schema::table('anggotas', function (Blueprint $table) {

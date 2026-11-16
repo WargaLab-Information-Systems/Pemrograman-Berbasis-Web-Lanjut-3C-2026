@@ -10,7 +10,6 @@ use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-/** Pengujian Modul 6: XSS, SQL Injection, CSRF, Gate, dan Policy (IDOR). */
 class KeamananTest extends TestCase
 {
     use RefreshDatabase;
@@ -78,7 +77,6 @@ class KeamananTest extends TestCase
         $this->actingAs($admin)->get("/buku/{$buku->id}/hapus")->assertNotFound();
         $this->assertDatabaseHas('bukus', ['id' => $buku->id]);
 
-        // Token CSRF tidak diperiksa saat unit test; 419 dibuktikan lewat permintaan HTTP nyata (laporan).
         $this->actingAs($admin)->delete("/buku/{$buku->id}")->assertRedirect(route('buku.index'));
         $this->assertDatabaseMissing('bukus', ['id' => $buku->id]);
     }

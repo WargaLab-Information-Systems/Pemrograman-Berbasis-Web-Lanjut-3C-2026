@@ -4,15 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-/**
- * Kelola data pengguna (permission: "kelola data pengguna").
- * Penetapan role dipisah (permission: "kelola role pengguna").
- */
 class UserController extends Controller
 {
     private const ROLES = [User::ROLE_ADMIN, User::ROLE_PETUGAS, User::ROLE_SISWA];
@@ -52,7 +48,6 @@ class UserController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        // Role hanya dipakai jika yang membuat berhak mengelola role; selain itu "siswa".
         $role = $request->user()->can('kelola role pengguna')
             ? ($data['role'] ?? User::ROLE_SISWA)
             : User::ROLE_SISWA;
@@ -79,7 +74,7 @@ class UserController extends Controller
         $user->fill(['name' => $data['name'], 'email' => $data['email']]);
 
         if (! empty($data['password'])) {
-            $user->password = $data['password']; // di-hash oleh cast
+            $user->password = $data['password'];
         }
 
         $user->save();

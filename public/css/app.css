@@ -70,7 +70,6 @@ body {
     line-height: 1.6;
 }
 
-/* Page Title */
 .page-title {
     margin-bottom: 30px;
 }
@@ -124,7 +123,6 @@ body {
     margin-top: 15px;
 }
 
-/* Button */
 .button {
     display: inline-block;
     margin-top: 10px;
@@ -178,7 +176,6 @@ body {
     width: 150px;
 }
 
-/* Not Found */
 .not-found {
     background-color: white;
     padding: 50px;
@@ -191,7 +188,6 @@ body {
     color: #c0392b;
 }
 
-/* Footer */
 .footer {
     background-color: #2c3e50;
     color: white;
@@ -222,11 +218,6 @@ body {
     }
 }
 
-/* ============================================================
-   Modul 5 — Autentikasi & RBAC
-   ============================================================ */
-
-/* Navbar */
 .nav-content {
     align-items: center;
     flex-wrap: wrap;
@@ -259,7 +250,6 @@ body {
     background-color: #2c3e50;
 }
 
-/* Badge */
 .badge {
     display: inline-block;
     padding: 2px 9px;
@@ -281,7 +271,6 @@ body {
 .badge-dikembalikan { background-color: #abebc6; }
 .badge-ditolak { background-color: #f5b7b1; }
 
-/* Alert */
 .alert {
     padding: 12px 16px;
     margin-bottom: 20px;
@@ -298,7 +287,6 @@ body {
     color: #922b21;
 }
 
-/* Form kartu (login, registrasi, profil, pengguna) */
 .card {
     background-color: white;
     padding: 30px;
@@ -368,7 +356,6 @@ body {
     color: #2c7be5;
 }
 
-/* Tombol tambahan */
 .btn {
     display: inline-block;
     padding: 9px 15px;
@@ -394,7 +381,6 @@ body {
     display: inline;
 }
 
-/* Tabel data */
 .table-wrapper {
     overflow-x: auto;
     background-color: white;
@@ -427,7 +413,6 @@ body {
     color: #7f8c8d;
 }
 
-/* Kartu statistik dashboard */
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
