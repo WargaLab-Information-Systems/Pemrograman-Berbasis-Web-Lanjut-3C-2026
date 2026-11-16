@@ -2,21 +2,11 @@
 
 $basePath = dirname(__DIR__);
 
-// Perbaiki PATH_INFO yang dipotong oleh Vercel.
-$requestUriPath = parse_url(
-    $_SERVER['REQUEST_URI'] ?? '/',
-    PHP_URL_PATH
-);
+// Cegah /api pada lokasi fungsi Vercel dianggap sebagai base URL.
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
 
-if (
-    is_string($requestUriPath) &&
-    str_starts_with($requestUriPath, '/api/') &&
-    !str_starts_with($requestUriPath, '/api/index.php')
-) {
-    $_SERVER['PATH_INFO'] = $requestUriPath;
-}
-
-// Lokasi cache sementara untuk Vercel.
+// Lokasi cache sementara Vercel.
 $cachePath = sys_get_temp_dir() . '/laravel-cache';
 
 if (!is_dir($cachePath)) {
