@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\ServiceProvider;
 return [
 
     /*
@@ -117,6 +118,18 @@ return [
     | Supported drivers: "file", "cache", "array"
     |
     */
+
+   /*
+    |--------------------------------------------------------------------------
+    | Autoloaded Service Providers
+    |--------------------------------------------------------------------------
+    */
+
+    'providers' => ServiceProvider::defaultProviders()
+        ->merge([
+            // Provider tambahan jika diperlukan.
+        ])
+        ->toArray(),
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
