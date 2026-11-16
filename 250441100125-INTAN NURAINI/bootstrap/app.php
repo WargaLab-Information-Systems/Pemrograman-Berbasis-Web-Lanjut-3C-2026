@@ -64,7 +64,7 @@ return $builder
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
-
+        $middleware->redirectGuestsTo('/login');
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
