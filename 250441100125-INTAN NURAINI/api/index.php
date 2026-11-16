@@ -2,27 +2,29 @@
 
 $basePath = dirname(__DIR__);
 
-error_log('[VERCEL DIAG] Base path: ' . $basePath);
+if (isset($_GET['vercel-check']) && $_GET['vercel-check'] === '1') {
+    header('Content-Type: text/plain; charset=utf-8');
 
-$files = [
-    'vendor/autoload.php',
-    'bootstrap/app.php',
-    'bootstrap/providers.php',
-    'bootstrap/cache/services.php',
-    'bootstrap/cache/packages.php',
-    'bootstrap/cache/config.php',
-    'config/app.php',
-];
+    echo "=== VERCEL DIAGNOSTIC ===\n";
+    echo "PHP Version: " . PHP_VERSION . "\n";
+    echo "Base Path: " . $basePath . "\n\n";
 
-foreach ($files as $file) {
-    $path = $basePath . '/' . $file;
+    $files = [
+        'vendor/autoload.php',
+        'bootstrap/app.php',
+        'bootstrap/providers.php',
+        'config/app.php',
+        'vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php',
+    ];
 
-    error_log(
-        '[VERCEL DIAG] ' . $file . ': ' .
-        (file_exists($path) ? 'EXISTS' : 'MISSING')
-    );
+    foreach ($files as $file) {
+        echo $file . ': ';
+        echo file_exists($basePath . '/' . $file)
+            ? "EXISTS\n"
+            : "MISSING\n";
+    }
+
+    exit;
 }
-
-error_log('[CHECK] Laravel bootstrap starting');
 
 require $basePath . '/public/index.php';
