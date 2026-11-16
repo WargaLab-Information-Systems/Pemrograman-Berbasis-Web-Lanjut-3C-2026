@@ -2,7 +2,7 @@
 
 $basePath = dirname(__DIR__);
 
-// Gunakan direktori sementara Vercel yang bisa ditulis
+// Siapkan direktori cache sementara Vercel
 $cachePath = sys_get_temp_dir() . '/laravel-cache';
 
 if (!is_dir($cachePath)) {
@@ -14,7 +14,7 @@ if (!is_writable($cachePath)) {
     exit('Direktori cache sementara tidak dapat ditulis.');
 }
 
-// Arahkan seluruh cache Laravel ke /tmp
+// Arahkan cache Laravel ke direktori sementara
 $cacheFiles = [
     'APP_PACKAGES_CACHE' => 'packages.php',
     'APP_SERVICES_CACHE' => 'services.php',
