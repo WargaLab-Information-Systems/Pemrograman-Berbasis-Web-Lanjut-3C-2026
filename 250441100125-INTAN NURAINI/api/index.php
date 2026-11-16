@@ -1,13 +1,18 @@
+
 <?php
 
 $basePath = dirname(__DIR__);
 
-if (isset($_GET['debug_uri'])) {
-    header('Content-Type: text/plain');
+if (
+    isset($_GET['debug_uri']) ||
+    str_contains($_SERVER['QUERY_STRING'] ?? '', 'debug_uri=1')
+) {
+    header('Content-Type: text/plain; charset=utf-8');
 
     echo "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? '-') . "\n";
     echo "PATH_INFO: " . ($_SERVER['PATH_INFO'] ?? '-') . "\n";
     echo "SCRIPT_NAME: " . ($_SERVER['SCRIPT_NAME'] ?? '-') . "\n";
+    echo "QUERY_STRING: " . ($_SERVER['QUERY_STRING'] ?? '-') . "\n";
 
     exit;
 }
@@ -28,6 +33,7 @@ $cacheFiles = [
 
 foreach ($cacheFiles as $key => $file) {
     $path = $cachePath . '/' . $file;
+
     putenv($key . '=' . $path);
     $_ENV[$key] = $path;
     $_SERVER[$key] = $path;
