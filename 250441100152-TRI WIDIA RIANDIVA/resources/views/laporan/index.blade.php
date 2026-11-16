@@ -1,6 +1,13 @@
 <x-app-layout>
 <div class="container bagian-buku" style="padding: 20px;">
-    <h2 class="judul" style="font-size: 1.8rem; margin-bottom: 20px; font-weight: 900;">Laporan Peminjaman</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 class="judul" style="font-size: 1.8rem; margin: 0; font-weight: 900;">Laporan Peminjaman</h2>
+        
+        <button onclick="window.print()" class="no-print" style="background-color: #0f172a; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Cetak Laporan
+        </button>
+    </div>
 
     <div style="display: flex; gap: 20px; margin-bottom: 25px;">
         <div style="flex: 1; background: #0f172a; color: white; padding: 20px; border-radius: 10px;">
@@ -52,4 +59,28 @@
         </table>
     </div>
 </div>
+
+<style>
+@media print {
+
+    .no-print, nav, header, footer {
+        display: none !important;
+    }
+    
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+}
+</style>
 </x-app-layout>

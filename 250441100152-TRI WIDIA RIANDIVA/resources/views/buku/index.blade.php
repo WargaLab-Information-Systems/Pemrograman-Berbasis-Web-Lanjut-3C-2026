@@ -1,7 +1,7 @@
 <x-app-layout>
 <div class="container bagian-buku">
     <h2 class="judul" style="font-size: 1.8rem; margin-bottom: 20px; font-weight: 900;">
-    @can('kelola data buku')
+    @can('kelola-buku')
         Pengelolaan Data Buku
     @else
         Daftar Buku Perpustakaan
@@ -11,7 +11,7 @@
     <div id="alertSuccess" class="alert-notif alert-sukses" style="display:none;"></div>
     <div id="alertError" class="alert-notif alert-bahaya" style="display:none;"></div>
 
-    @can('kelola data buku')
+    @can('kelola-buku')
     <div class="form-container-buku">
         <h3 id="formTitle">Tambah Buku Baru</h3>
         <form id="formBuku">
@@ -58,6 +58,17 @@
                 </tr>
             </thead>
             <tbody id="tabelBukuBody">
+                    @foreach($bukus as $buku)
+                        <tr style="border-bottom: 1px solid #ddd; text-align: left;">
+                            <td style="padding: 10px;">{{ $buku->kategori_id }}</td>
+                            <td style="padding: 10px; font-weight: 700; color: #0f172a;">{{ $buku->judul }}</td>
+                            <td style="padding: 10px;">{{ $buku->penulis }}</td>
+                            <td style="padding: 10px;">{{ $buku->tahun_terbit }}</td>
+                            <td style="padding: 10px; text-align: center;">
+                                <a href="/buku/{{ $buku->id }}" class="btn-primary">Detail</a>
+                            </td>
+                        </tr>
+                    @endforeach
             </tbody>
         </table>
     </div>
@@ -66,7 +77,7 @@
 <script>
     const API_URL = '/api/buku';
     let dataBukuGlobal = []; 
-    const canKelolaBuku = @json(auth()->user()->can('kelola data buku'));
+    const canKelolaBuku = @json(auth()->user()->can('kelola-buku'));
 
     document.addEventListener('DOMContentLoaded', loadBuku);
 
@@ -114,7 +125,6 @@
                         <button type="button" class="btn-aksi-hapus" onclick="deleteBuku(${item.id})">Hapus</button>
                     `;
                 } else {
-                    
                     tombolKelola = `
                         <button type="button" class="btn-primary" onclick="pinjamBuku(${item.id})">Pinjam</button>
                     `;
@@ -123,7 +133,7 @@
                 tbody.innerHTML += `
                     <tr>
                         <td>${item.kategori}</td>
-                        <td style="font-weight: 700; color: #0f172a;">${item.judul}</td>
+                        <td style="font-weight: 600; color: #0f172a;">${new Option(item.judul).innerHTML}</td>
                         <td>${item.penulis}</td>
                         <td>${item.tahun_terbit}</td>
                         <td style="text-align: center;">
@@ -217,25 +227,45 @@
     }
 
     async function deleteBuku(id) {
-        if (!canKelolaBuku) return;
-        if (!confirm('Apakah Anda yakin ingin menghapus buku ini?')) return;
+    if (!canKelolaBuku) return;
+    if (!confirm('Apakah Anda yakin ingin menghapus buku ini?')) return;
 
-        try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+    try {
+        const response = await fetch(`/buku/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        });
 
-            if (!response.ok) throw new Error('Gagal menghapus data.');
+        if (response.ok) {
+            let successMsg = 'Buku berhasil dihapus!';
+            try {
+                const resData = await response.json();
+                if (resData.message) successMsg = resData.message;
+            } catch (e) {}
 
-            showAlert('Buku berhasil dihapus!');
-            loadBuku(); 
-        } catch (error) {
-            showAlert(error.message, true);
+            showAlert(successMsg, false);
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1200);
+            return;
         }
+
+        let errorMsg = 'Gagal menghapus data.';
+        try {
+            const errData = await response.json();
+            errorMsg = errData.message || errorMsg;
+        } catch (e) {}
+
+        showAlert(errorMsg, true);
+    } catch (error) {
+        showAlert(error.message, true);
     }
+}
 
     async function pinjamBuku(bukuId) {
     if (!confirm('Apakah kamu yakin ingin mengajukan peminjaman buku ini?')) return;

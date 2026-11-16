@@ -83,21 +83,29 @@ class BukuController extends Controller
     }
 
     
-   public function destroy($id)
+//    public function destroy($id)
+//     {
+//         $buku = Buku::find($id);
+
+//         if (!$buku) {
+//             return response()->json([
+//                 'message' => 'not found'
+//             ], 404);
+//         }
+
+//         $buku->delete();
+
+//         return response()->json([
+//             'message' => 'Buku berhasil dihapus'
+//         ], 200);
+//     }
+
+    public function destroy($id)
     {
-        $buku = Buku::find($id);
-
-        if (!$buku) {
-            return response()->json([
-                'message' => 'not found'
-            ], 404);
-        }
-
+        $buku = Buku::findOrFail($id);
         $buku->delete();
 
-        return response()->json([
-            'message' => 'Buku berhasil dihapus'
-        ], 200);
+        return redirect('/buku')->with('success', 'Buku berhasil dihapus');
     }
 }
 

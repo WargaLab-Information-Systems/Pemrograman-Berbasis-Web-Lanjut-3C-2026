@@ -6,6 +6,7 @@ use App\Models\Peminjaman;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
 
 class PeminjamanController extends Controller
@@ -75,5 +76,19 @@ class PeminjamanController extends Controller
         ]);
 
         return response()->json(['message' => 'Status peminjaman berhasil diperbarui!']);
+    }
+
+    public function show($id)
+    {
+    // Celah A4 IDOR: Mengambil data tanpa mengecek 
+        // $peminjaman = Peminjaman::with(['user', 'buku'])->findOrFail($id);
+
+        // return view('peminjaman.show', compact('peminjaman'));
+
+        $peminjaman = Peminjaman::with(['user', 'buku'])->findOrFail($id);
+
+        Gate::authorize('view', $peminjaman);
+    
+        return view('peminjaman.show', compact('peminjaman'));
     }
 }
