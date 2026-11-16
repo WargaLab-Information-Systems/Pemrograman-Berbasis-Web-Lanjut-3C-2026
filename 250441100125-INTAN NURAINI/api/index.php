@@ -2,22 +2,21 @@
 
 $basePath = dirname(__DIR__);
 
-$queryString = $_SERVER['QUERY_STRING'] ?? '';
+// Perbaiki PATH_INFO yang dipotong oleh Vercel.
+$requestUriPath = parse_url(
+    $_SERVER['REQUEST_URI'] ?? '/',
+    PHP_URL_PATH
+);
 
-if (str_contains($queryString, 'debug_uri=1')) {
-    header_remove();
-
-    http_response_code(200);
-    header('Content-Type: text/plain; charset=utf-8');
-
-    echo "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? '-') . "\n";
-    echo "PATH_INFO: " . ($_SERVER['PATH_INFO'] ?? '-') . "\n";
-    echo "SCRIPT_NAME: " . ($_SERVER['SCRIPT_NAME'] ?? '-') . "\n";
-    echo "QUERY_STRING: " . $queryString . "\n";
-
-    exit;
+if (
+    is_string($requestUriPath) &&
+    str_starts_with($requestUriPath, '/api/') &&
+    !str_starts_with($requestUriPath, '/api/index.php')
+) {
+    $_SERVER['PATH_INFO'] = $requestUriPath;
 }
 
+// Lokasi cache sementara untuk Vercel.
 $cachePath = sys_get_temp_dir() . '/laravel-cache';
 
 if (!is_dir($cachePath)) {
