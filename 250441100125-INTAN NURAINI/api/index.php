@@ -23,8 +23,6 @@ foreach ($cacheFiles as $key => $file) {
     $_SERVER[$key] = $path;
 }
 
-header('Content-Type: text/plain; charset=utf-8');
-
 try {
     require $basePath . '/vendor/autoload.php';
 
@@ -34,28 +32,28 @@ try {
         \Illuminate\Contracts\Http\Kernel::class
     );
 
-    $kernel->bootstrap();
+    $request = \Illuminate\Http\Request::capture();
 
-    echo "BOOTSTRAP BERHASIL\n";
-    echo "PHP: " . PHP_VERSION . "\n";
-    echo "Laravel: " . $app->version() . "\n";
-    echo "View terdaftar: ";
-    var_export($app->bound('view'));
+    $response = $kernel->handle($request);
 
-    echo "\nView dapat dipanggil: ";
-    echo get_class($app->make('view'));
+    $response->send();
+
+    $kernel->terminate($request, $response);
 
 } catch (\Throwable $e) {
     http_response_code(500);
+    header('Content-Type: text/plain; charset=utf-8');
 
-    echo "BOOTSTRAP GAGAL\n";
+    echo "ERROR SAAT MEMPROSES REQUEST\n";
     echo "Jenis: " . get_class($e) . "\n";
     echo "Pesan: " . $e->getMessage() . "\n";
     echo "File: " . $e->getFile() . "\n";
     echo "Baris: " . $e->getLine() . "\n";
 
-    if ($e->getPrevious()) {
-        echo "Penyebab sebelumnya: "
-            . $e->getPrevious()->getMessage() . "\n";
+    while ($previous = $e->getPrevious()) {
+        echo "\nPENYEBAB SEBELUMNYA:\n";
+        echo get_class($previous) . "\n";
+        echo $previous->getMessage() . "\n";
+        $e = $previous;
     }
 }
