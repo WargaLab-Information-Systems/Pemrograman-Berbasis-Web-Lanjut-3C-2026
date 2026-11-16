@@ -47,7 +47,7 @@
                 <a href="{{ route('buku.create') }}">Tambah Buku</a>
             @endcan -->
             @if(auth()->user()->role == 'admin')
-                <a href="{{ route('laporan.pdf') }}" class="btn btn-primary">Tambah Buku</a>
+                <a href="{{ route('buku.create') }}" class="btn btn-primary">Tambah Buku</a>
             @endif
             <div class="mb-4">
                 <a href="{{ route('laporan.pdf') }}" class="btn btn-danger" target="_blank">
