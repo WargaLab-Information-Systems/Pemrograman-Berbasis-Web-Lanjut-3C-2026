@@ -13,10 +13,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
-/**
- * Kelola akun pengguna (permission: kelola data pengguna).
- * Penetapan role hanya untuk yang punya permission: kelola role pengguna.
- */
+
 class UserController extends Controller
 {
     public function index(Request $request): View
@@ -61,7 +58,6 @@ class UserController extends Controller
                 'password' => Hash::make($data['password']),
             ]);
 
-            // Role hanya boleh ditentukan oleh yang berwenang; selain itu otomatis 'siswa'
             $role = ($request->user()->can('kelola role pengguna') && ! empty($data['role']))
                 ? $data['role']
                 : 'siswa';
