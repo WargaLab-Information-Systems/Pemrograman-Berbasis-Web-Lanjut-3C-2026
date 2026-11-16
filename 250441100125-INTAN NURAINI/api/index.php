@@ -1,18 +1,19 @@
-
 <?php
 
 $basePath = dirname(__DIR__);
 
-if (
-    isset($_GET['debug_uri']) ||
-    str_contains($_SERVER['QUERY_STRING'] ?? '', 'debug_uri=1')
-) {
+$queryString = $_SERVER['QUERY_STRING'] ?? '';
+
+if (str_contains($queryString, 'debug_uri=1')) {
+    header_remove();
+
+    http_response_code(200);
     header('Content-Type: text/plain; charset=utf-8');
 
     echo "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? '-') . "\n";
     echo "PATH_INFO: " . ($_SERVER['PATH_INFO'] ?? '-') . "\n";
     echo "SCRIPT_NAME: " . ($_SERVER['SCRIPT_NAME'] ?? '-') . "\n";
-    echo "QUERY_STRING: " . ($_SERVER['QUERY_STRING'] ?? '-') . "\n";
+    echo "QUERY_STRING: " . $queryString . "\n";
 
     exit;
 }
