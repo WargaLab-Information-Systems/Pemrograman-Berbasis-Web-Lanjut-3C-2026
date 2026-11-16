@@ -4,23 +4,37 @@
 
 @section('content')
     @if ($buku)
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <article class="detail-card">
+            <p class="eyebrow">Detail koleksi</p>
             <h2>{{ $buku['judul'] }}</h2>
-            <hr style="margin: 15px 0;">
-            <p><strong>ID Buku:</strong> {{ $buku['id'] }}</p>
-            <p><strong>Penulis:</strong> {{ $buku['penulis'] }}</p>
-            <p><strong>Tahun Terbit:</strong> {{ $buku['tahun_terbit'] }}</p>
-            <p><strong>Kategori:</strong> <span class="badge">{{ $buku['kategori'] }}</span></p>
-            
-            <a href="{{ route('buku.index') }}" class="btn" style="background-color: #64748b; margin-top: 20px;">
+            <dl class="book-details">
+                <div>
+                    <dt>ID Buku</dt>
+                    <dd>{{ $buku['id'] }}</dd>
+                </div>
+                <div>
+                    <dt>Penulis</dt>
+                    <dd>{{ $buku['penulis'] }}</dd>
+                </div>
+                <div>
+                    <dt>Tahun Terbit</dt>
+                    <dd>{{ $buku['tahun_terbit'] }}</dd>
+                </div>
+                <div>
+                    <dt>Kategori</dt>
+                    <dd><span class="badge">{{ $buku['kategori'] }}</span></dd>
+                </div>
+            </dl>
+
+            <a href="{{ route('buku.index') }}" class="btn btn-secondary">
                 &larr; Kembali ke Daftar Buku
             </a>
-        </div>
+        </article>
     @else
         <div class="alert">
             <h3>Data Buku Tidak Ditemukan!</h3>
-            <p>Buku dengan ID yang Anda cari tidak tersedia dalam sistem perpustakaan.</p>
-            <a href="{{ route('buku.index') }}" class="btn" style="margin-top: 15px;">Kembali ke Daftar Buku</a>
+            <p>Buku dengan ID tersebut tidak tersedia dalam koleksi perpustakaan.</p>
+            <a href="{{ route('buku.index') }}" class="btn">Kembali ke Daftar Buku</a>
         </div>
     @endif
 @endsection

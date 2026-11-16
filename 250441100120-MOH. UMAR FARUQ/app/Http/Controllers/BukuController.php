@@ -2,62 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 
 class BukuController extends Controller
 {
-   
-    private $dataBuku = [
-        [
-            'id' => 1,
-            'judul' => 'Pemrograman Web dengan Laravel',
-            'penulis' => 'Budi Raharjo',
-            'tahun_terbit' => 2023,
-            'kategori' => 'Teknologi'
-        ],
-        [
-            'id' => 2,
-            'judul' => 'Algoritma dan Struktur Data',
-            'penulis' => 'Rinaldi Munir',
-            'tahun_terbit' => 2021,
-            'kategori' => 'Komputer'
-        ],
-        [
-            'id' => 3,
-            'judul' => 'Basis Data Relasional',
-            'penulis' => 'Fathansyah',
-            'tahun_terbit' => 2020,
-            'kategori' => 'Database'
-        ],
-        [
-            'id' => 4,
-            'judul' => 'Jaringan Komputer Modern',
-            'penulis' => 'Andrew S. Tanenbaum',
-            'tahun_terbit' => 2019,
-            'kategori' => 'Jaringan'
-        ],
-        [
-            'id' => 5,
-            'judul' => 'Kecerdasan Buatan dan Pembelajaran Mesin',
-            'penulis' => 'Suyanto',
-            'tahun_terbit' => 2022,
-            'kategori' => 'Kecerdasan Buatan'
-        ],
-    ];
-
-    
-    public function index()
+    public function index(): View
     {
-        return view('buku.index', ['bukuList' => $this->dataBuku]);
+        return view('buku.index', [
+            'bukuList' => $this->bukuSementara(),
+        ]);
     }
 
-   
-public function show(int $id)
-{
-    $buku = collect($this->dataBuku)->firstWhere('id', (int) $id);
-    return view('buku.show', compact('buku'));
-}
-}
+    public function show(int $id): View
+    {
+        $buku = collect($this->bukuSementara())->firstWhere('id', $id);
 
-  
+        return view('buku.show', [
+            'buku' => $buku,
+        ]);
+    }
 
+    /**
+     * @return list<array{id: int, judul: string, penulis: string, tahun_terbit: int, kategori: string}>
+     */
+    private function bukuSementara(): array
+    {
+        return [
+            [
+                'id' => 1,
+                'judul' => 'Laskar Pelangi',
+                'penulis' => 'Andrea Hirata',
+                'tahun_terbit' => 2005,
+                'kategori' => 'Novel',
+            ],
+            [
+                'id' => 2,
+                'judul' => 'Bumi Manusia',
+                'penulis' => 'Pramoedya Ananta Toer',
+                'tahun_terbit' => 1980,
+                'kategori' => 'Sastra',
+            ],
+            [
+                'id' => 3,
+                'judul' => 'Filosofi Teras',
+                'penulis' => 'Henry Manampiring',
+                'tahun_terbit' => 2018,
+                'kategori' => 'Pengembangan Diri',
+            ],
+            [
+                'id' => 4,
+                'judul' => 'Negeri 5 Menara',
+                'penulis' => 'Ahmad Fuadi',
+                'tahun_terbit' => 2009,
+                'kategori' => 'Novel',
+            ],
+            [
+                'id' => 5,
+                'judul' => 'Atomic Habits',
+                'penulis' => 'James Clear',
+                'tahun_terbit' => 2018,
+                'kategori' => 'Pengembangan Diri',
+            ],
+        ];
+    }
+}
