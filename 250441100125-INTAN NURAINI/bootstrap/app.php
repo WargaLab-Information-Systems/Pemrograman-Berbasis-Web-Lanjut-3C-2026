@@ -4,7 +4,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\ApplicationBuilder;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
@@ -73,14 +72,6 @@ return $builder
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Throwable $e) {
-            return response(
-                "PENYEBAB ERROR:\n" .
-                get_class($e) . "\n" .
-                $e->getMessage() . "\n" .
-                $e->getFile() . ":" . $e->getLine(),
-                500
-            )->header('Content-Type', 'text/plain');
-        });
+        // Gunakan penanganan exception bawaan Laravel.
     })
     ->create();
