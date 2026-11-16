@@ -875,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sembunyikanPesan();
 
         try {
-            const response = await fetch(`/buku/${buku.id}`, {
+            const response = await fetch(`${API}/${buku.id}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json'

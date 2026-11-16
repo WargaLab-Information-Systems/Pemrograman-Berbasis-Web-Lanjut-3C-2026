@@ -9,8 +9,8 @@ use App\Http\Controllers\Api\BukuController;
 Route::apiResource('buku', BukuController::class)
     ->only(['index', 'show']);
 
-// Menambah dan mengedit buku.
-// Hanya pengguna yang login dengan role Admin atau Petugas.
+// Menambah, mengedit, dan menghapus buku.
+// Hanya pengguna yang login dan memiliki izin kelola-buku.
 Route::middleware(['web', 'auth', 'can:kelola-buku'])->group(function () {
 
     // Tambah buku
@@ -20,6 +20,10 @@ Route::middleware(['web', 'auth', 'can:kelola-buku'])->group(function () {
     // Edit buku
     Route::match(['put', 'patch'], '/buku/{id}', [BukuController::class, 'update'])
         ->name('buku.update');
+
+    // Hapus buku
+    Route::delete('/buku/{id}', [BukuController::class, 'destroy'])
+        ->name('buku.destroy');
 });
 
 // Rekap buku berdasarkan kategori
