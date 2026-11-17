@@ -103,4 +103,6 @@ Route::middleware('auth')->group(function () {
         ->name('peminjaman.kelola');
 });
 
+Route::get('/uji-error', function () {     throw new RuntimeException('Pengujian halaman error Laravel'); }); 
+
 require __DIR__.'/auth.php';

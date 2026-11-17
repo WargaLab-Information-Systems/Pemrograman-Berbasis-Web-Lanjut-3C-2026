@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
             ['email' => 'mumarfaruq@gmail.com'],
             [
                 'name' => 'Moh. Umar Faruq (Admin)',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('PasswordBaru123!'),
             ]
         );
         $admin->syncRoles(['admin']); // Memastikan role admin selalu disinkronkan
