@@ -53,4 +53,10 @@ class BukuCrudController extends Controller
     }
 }
 
- 
+public function edit(MataKuliah $mataKuliah)
+{
+    Gate::authorize('update', $mataKuliah);
+
+    // ... kode asli
+}
+
