@@ -84,13 +84,10 @@ class PeminjamanController extends Controller
 
         public function show($id)
     {
-        // Cari data peminjaman berdasarkan ID
         $peminjaman = Peminjaman::findOrFail($id);
 
-        // Validasi akses menggunakan Policy (A4)
         Gate::authorize('view', $peminjaman);
 
-        // Tampilkan view detail jika diizinkan
         return view('peminjaman.show', compact('peminjaman'));
     }
 }

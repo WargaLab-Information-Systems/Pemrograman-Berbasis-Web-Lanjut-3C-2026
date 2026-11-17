@@ -82,9 +82,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])->middleware('auth');
 
-Route::get('/test-debug', function () {
-    throw new \RuntimeException('Uji coba exception debug');
-});
+// Route::get('/test-debug', function () {
+//     throw new \RuntimeException('Uji coba exception debug');
+// });
 
 // Route::middleware(['auth', 'can:kelola-buku'])->group(function () {
 //     Route::get('/buku/create', [BukuCrudController::class, 'create'])->name('buku.create');

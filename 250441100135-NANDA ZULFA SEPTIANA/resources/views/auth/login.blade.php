@@ -1,4 +1,5 @@
 <x-guest-layout>
+<h1 class="text-center font-bold text-xl">Sistem Perpustakaan Digital</h1>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

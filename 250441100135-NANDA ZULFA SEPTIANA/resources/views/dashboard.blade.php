@@ -18,6 +18,8 @@
             <div style="display: flex; gap: 10px; align-items: center;">
                 <!-- Tombol Kelola Peminjaman (Admin & Petugas) -->
                 <a href="{{ route('admin.peminjaman.index') }}" style="background: #3b82f6; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold;">Kelola Peminjaman</a>
+
+                <a href="{{ route('laporan.pdf') }}" style="background: yellow; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold;">Cetak PDF</a>
                 
                 <!-- Tombol Kelola User (KHUSUS ADMIN) -->
                 @role('admin')
@@ -46,14 +48,11 @@
             <!-- @can('kelola-buku')
                 <a href="{{ route('buku.create') }}">Tambah Buku</a>
             @endcan -->
+            
             @if(auth()->user()->role == 'admin')
-                <a href="{{ route('buku.create') }}" class="btn btn-primary">Tambah Buku</a>
+                <a href="{{ route('buku.create') }}" style="background: #10b981; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold;">+ Tambah Buku</a>
             @endif
-            <div class="mb-4">
-                <a href="{{ route('laporan.pdf') }}" class="btn btn-danger" target="_blank">
-                    <i class="fas fa-file-pdf"></i> Cetak Laporan PDF
-                </a>
-            </div>
+        
         </div>
 
         <!-- Tabel Daftar Buku -->
