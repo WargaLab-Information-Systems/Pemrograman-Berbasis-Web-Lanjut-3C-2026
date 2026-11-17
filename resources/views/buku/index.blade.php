@@ -4,11 +4,13 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Manajemen Data Buku Perpustakaan') }}
             </h2>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('buku.create') }}" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition text-sm shadow-sm flex items-center gap-2">
-                    <span>➕ Tambah Buku Baru</span>
-                </a>
-            </div>
+           @can('kelola-buku')
+    <div class="flex items-center gap-3">
+        <a href="{{ route('buku.create') }}" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition text-sm shadow-sm flex items-center gap-2">
+            <span>➕ Tambah Buku Baru</span>
+        </a>
+    </div>
+@endcan
         </div>
     </x-slot>
 
@@ -44,17 +46,22 @@
                                     <td class="py-3 px-4 text-gray-600">{{ $b->penulis ?? '-' }}</td>
                                     <td class="py-3 px-4 text-gray-600">{{ $b->tahun_terbit ?? '-' }}</td>
                                     <td class="py-3 px-4 text-center space-x-1">
-                                        <a href="{{ route('buku.edit', $b->id) }}" class="inline-block px-3 py-1 bg-amber-500 text-white rounded hover:bg-amber-600 transition text-xs font-semibold shadow-sm">
-                                            Ubah
-                                        </a>
-                                        <form action="{{ route('buku.destroy', $b->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs font-semibold shadow-sm">
-                                        Hapus
-                                    </button>
-                                </form>
-                                    </td>
+    <!-- Tombol Detail selalu bisa dilihat -->
+    <a href="{{ route('buku.show', $b->id) }}" class="px-3 py-1 bg-sky-500 text-white rounded hover:bg-sky-600 transition text-xs font-semibold shadow-sm">Detail</a>
+
+    @can('kelola-buku')
+        <a href="{{ route('buku.edit', $b->id) }}" class="px-3 py-1 bg-amber-500 text-white rounded hover:bg-amber-600 transition text-xs font-semibold shadow-sm">
+            Ubah
+        </a>
+        <form action="{{ route('buku.destroy', $b->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs font-semibold shadow-sm">
+                Hapus
+            </button>
+        </form>
+    @endcan
+</td>
                                 </tr>
                             @empty
                                 <tr>

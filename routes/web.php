@@ -28,21 +28,24 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile.destroy');
 });
 
-Route::middleware(['auth', PermissionMiddleware::using('kelola data buku')])->group(function () {
-    Route::resource('buku', BukuController::class);
+
+// RUTE BUKU (Implementasi Soal 3 - Gate kelola-buku)
+
+// Rute Manajemen Buku (Tambah, Ubah, Hapus) dilindungi Gate kelola-buku
+Route::middleware(['auth', 'can:kelola-buku'])->group(function () {
+    Route::resource('buku', BukuController::class)->except(['index', 'show']);
 });
-// --- TEMPATKAN DI SINI (Sebelum Route resource buku) ---
+
+// Rute Lihat Buku / Katalog / Pencarian (Dapat diakses user/siswa)
 Route::middleware(['auth'])->group(function () {
+    Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
+    Route::get('/buku/{buku}', [BukuController::class, 'show'])->name('buku.show');
     Route::get('/buku-cari', [BukuController::class, 'cari'])->name('buku.cari');
-
-    // --- KODE UNTUK SOAL 1 A3 (Penghapusan via GET / Rentan CSRF) ---
-    Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy'])->name('buku.hapus.rentan');
 });
 
-// Kelompok rute resource buku bawaan
-Route::middleware(['auth', PermissionMiddleware::using('kelola data buku')])->group(function () {
-    Route::resource('buku', BukuController::class);
-});
+
+// RUTE LAINNYA
+
 
 Route::middleware(['auth', PermissionMiddleware::using('kelola data pengguna')])->group(function () {
     Route::resource('users', UserController::class)->except('show');
@@ -73,7 +76,6 @@ Route::middleware(['auth', PermissionMiddleware::using('mengajukan peminjaman bu
 });
 
 Route::middleware('auth')->group(function () {
-    // --- TEMPATKAN DI SINI (untuk Soal 1 A4 - IDOR Peminjaman) ---
     Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])
         ->whereNumber('id')
         ->name('peminjaman.show');
