@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 // Halaman beranda: terbuka untuk umum
 Route::get('/', function () {
     return view('beranda');
-})->name('home');
+})->name ('home');
 
 
 Route::middleware('auth')->group(function () {

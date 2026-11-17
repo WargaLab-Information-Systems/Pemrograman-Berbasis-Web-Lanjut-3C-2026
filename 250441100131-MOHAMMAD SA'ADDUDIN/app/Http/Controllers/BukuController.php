@@ -98,4 +98,16 @@ class BukuController extends Controller
             'kategori'     => $buku->kategori->nama,
         ];
     }
+
+    // Bentuk datanya disamakan dengan array lama, jadi View tidak perlu diubah
+    private function formatBuku(Buku $buku): array
+    {
+        return [
+            'id'           => $buku->id,
+            'judul'        => $buku->judul,
+            'penulis'      => $buku->penulis,
+            'tahun_terbit' => $buku->tahun_terbit,
+            'kategori'     => $buku->kategori->nama,
+        ];
+    }
 }
