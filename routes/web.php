@@ -31,7 +31,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', PermissionMiddleware::using('kelola data buku')])->group(function () {
     Route::resource('buku', BukuController::class);
 });
-
 // --- TEMPATKAN DI SINI (Sebelum Route resource buku) ---
 Route::middleware(['auth'])->group(function () {
     Route::get('/buku-cari', [BukuController::class, 'cari'])->name('buku.cari');

@@ -40,7 +40,7 @@
                             @forelse($bukuList as $b)
                                 <tr class="hover:bg-gray-50 transition">
                                     <td class="py-3 px-4">{{ $b->kategori->nama_kategori ?? $b->kategori->nama ?? $b->kategori_id ?? '-' }}</td>
-                                    <td class="py-3 px-4 font-medium text-gray-900">{!! $b->judul ?? $b->nama_buku !!}</td>
+                                    <td class="py-3 px-4 font-medium text-gray-900">{{ $b->judul ?? $b->nama_buku }}</td>
                                     <td class="py-3 px-4 text-gray-600">{{ $b->penulis ?? '-' }}</td>
                                     <td class="py-3 px-4 text-gray-600">{{ $b->tahun_terbit ?? '-' }}</td>
                                     <td class="py-3 px-4 text-center space-x-1">
@@ -48,12 +48,12 @@
                                             Ubah
                                         </a>
                                         <form action="{{ route('buku.destroy', $b->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs font-semibold shadow-sm">
-                                                Hapus
-                                            </button>
-                                        </form>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs font-semibold shadow-sm">
+                                        Hapus
+                                    </button>
+                                </form>
                                     </td>
                                 </tr>
                             @empty

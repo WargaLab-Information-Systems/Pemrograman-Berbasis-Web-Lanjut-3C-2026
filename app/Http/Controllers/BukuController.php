@@ -7,6 +7,7 @@ use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
 
 class BukuController extends Controller
 {
@@ -20,13 +21,10 @@ class BukuController extends Controller
 
     public function cari(Request $request)
     {
-        // Membaca query string 'judul' dari URL
-        $judul = $request->input('judul');
-
-        // Celah SQL Injection (Soal 1 A2): Menggabungkan variabel langsung ke string SQL
+        
         // (Sesuaikan nama tabel database Anda, misal 'bukus' atau 'buku')
-        $results = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
-
+        $judul = $request->input('judul');
+        $results = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
         return response()->json($results);
     }
 
@@ -90,14 +88,11 @@ class BukuController extends Controller
 
     // Menghapus data buku (Delete)
 
-    public function destroy(int $id)
-    {
-        $buku = Buku::findOrFail($id);
-        $buku->delete();
+   public function destroy(int $id)
+{
+    $buku = Buku::findOrFail($id);
+    $buku->delete();
 
-        // Mengembalikan respons JSON agar sama persis seperti target tangkapan layar
-        return response()->json([
-            'message' => 'Buku berhasil dihapus.',
-        ], 200);
-    }
+    return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus dari sistem.');
+}
 }
