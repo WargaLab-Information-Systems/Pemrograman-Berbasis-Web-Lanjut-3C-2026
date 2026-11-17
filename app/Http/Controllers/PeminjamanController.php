@@ -121,13 +121,12 @@ class PeminjamanController extends Controller
     }
 
     public function show(int $id): View
-    {
-        // Ambil data peminjaman beserta relasi anggotanya
-        $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
-        
-        // REMEDIASI IDOR (Soal 2 A4): Memvalidasi kepemilikan/otorisasi akses data
-        Gate::authorize('view', $peminjaman);
+{
+    $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
+    
+    // Menutup celah IDOR (Soal 4 A4)
+    Gate::authorize('view', $peminjaman);
 
-        return view('peminjaman.show', compact('peminjaman'));
-    }
+    return view('peminjaman.show', compact('peminjaman'));
+}
 }
