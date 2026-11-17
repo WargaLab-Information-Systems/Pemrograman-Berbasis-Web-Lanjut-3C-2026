@@ -8,23 +8,23 @@ class StoreBukuRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; //
+        return true;
     }
 
     public function rules(): array
     {
-        $currentYear = date('Y');
+        $tahunSekarang = date('Y');
         return [
-            'kategori_id' => 'required|exists:kategoris,id', //
-            'judul' => 'required|string|min:3|max:150', //[cite: 2]
-            'penulis' => 'required|string|min:3|max:100', //[cite: 2]
-            'tahun_terbit' => "required|integer|between:1900,$currentYear", //[cite: 2]
+            'kategori_id' => 'required|exists:kategoris,id',
+            'judul' => 'required|string|min:3|max:150',
+            'penulis' => 'required|string|min:3|max:100',
+            'tahun_terbit' => "required|integer|between:1900,{$tahunSekarang}",
         ];
     }
 
     public function messages(): array
     {
-        $currentYear = date('Y');
+        $tahunSekarang = date('Y');
         return [
             'kategori_id.required' => 'Kategori wajib diisi.',
             'kategori_id.exists' => 'Kategori yang dipilih tidak valid.',
@@ -38,7 +38,7 @@ class StoreBukuRequest extends FormRequest
             'penulis.max' => 'Penulis maksimal 100 karakter.',
             'tahun_terbit.required' => 'Tahun terbit wajib diisi.',
             'tahun_terbit.integer' => 'Tahun terbit harus berupa bilangan bulat.',
-            'tahun_terbit.between' => "Tahun terbit harus antara 1900 sampai $currentYear.",
+            'tahun_terbit.between' => "Tahun terbit harus antara 1900 sampai {$tahunSekarang}.",
         ];
     }
 
@@ -47,6 +47,6 @@ class StoreBukuRequest extends FormRequest
         return [
             'kategori_id' => 'kategori',
             'tahun_terbit' => 'tahun terbit',
-        ]; //[cite: 2]
+        ];
     }
 }

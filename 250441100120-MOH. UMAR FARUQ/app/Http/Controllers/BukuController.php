@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Buku;
-use Illuminate\View\View;
+use App\Models\Buku; // Import Model Buku
+use Illuminate\Http\Request;
 
 class BukuController extends Controller
 {
-    public function index(): View
+    public function index()
     {
-        $bukuList = Buku::with('kategori')->latest()->get();
+        // Mengambil semua data buku beserta relasi kategorinya
+        $buku = Buku::with('kategori')->get();
 
-        return view('buku.index', compact('bukuList'));
+        return view('buku.index', compact('buku'));
     }
 
-    public function show(int $id): View
+    public function show(int $id)
     {
-        $buku = Buku::with('kategori')->find($id);
+        // Mengambil 1 data buku berdasarkan ID dari database (akan 404 jika tidak ditemukan)
+        $buku = Buku::with('kategori')->findOrFail($id);
 
         return view('buku.show', compact('buku'));
     }

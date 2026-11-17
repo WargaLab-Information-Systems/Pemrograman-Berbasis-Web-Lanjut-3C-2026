@@ -4,19 +4,15 @@ namespace App\Http\Requests;
 
 class UpdateBukuRequest extends StoreBukuRequest
 {
-    public function authorize(): bool
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool 
     {
         return true;
+        
     }
 
-    public function rules(): array
-    {
-        $rules = parent::rules();
-
-        foreach ($rules as $field => $rule) {
-            $rules[$field] = 'sometimes|' . $rule;
-        }
-
-        return $rules;
-    }
+    // Karena meng-extends StoreBukuRequest, rules, messages, dan attributes 
+    // akan otomatis mewarisi dari StoreBukuRequest tanpa perlu ditulis ulang[cite: 2].
 }

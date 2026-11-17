@@ -1,18 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BukuController;
-use App\Http\Controllers\BukuCrudController;
+use App\Http\Controllers\Api\BukuController; // Sesuaikan namespace jika ada di folder Api
 
+// Halaman utama (Home)
 Route::get('/', function () {
     return view('home');
-    
 })->name('home');
 
+// Rute untuk menampilkan TAMPILAN HALAMAN WEB (Blade view)
+Route::get('/buku', function () {
+    return view('buku.index'); // Menunjuk ke resources/views/buku/index.blade.php
+})->name('buku.index');
 
-Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
-
-
-Route::get('/buku/{id}', [BukuController::class, 'show'])->name('buku.show');
-
-Route::get('/kelola-buku', [BukuCrudController::class, 'index'])->name('kelola-buku.index');
+// Jika ingin menggunakan Controller untuk web view detail (opsional)
+// Route::get('/buku/{id}', [BukuController::class, 'show'])->name('buku.show');
