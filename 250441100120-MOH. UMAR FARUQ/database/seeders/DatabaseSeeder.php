@@ -8,10 +8,11 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Panggil KategoriSeeder terlebih dahulu
         $this->call([
-            KategoriSeeder::class,
-            BukuSeeder::class,
+            RolePermissionSeeder::class,
+            UserSeeder::class,
+            // KategoriSeeder::class, 
+            BukuSeeder::class, // <-- Pastikan ini aktif jika filenya sudah ada
         ]);
     }
 }

@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBukuRequest;
 use App\Http\Requests\UpdateBukuRequest;
-use App\Http\Resources\BukuResource; 
+use App\Http\Resources\BukuResource; // <-- Di-import agar bisa dipakai
 use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BukuController extends Controller
 {
     /**
-     * Menampilkan daftar semua buku (dengan pencarian dan pagination).
+     * Menampilkan daftar semua buku (dengan pencarian dan filter jika ada).
      */
     public function index(Request $request)
     {
@@ -30,6 +29,7 @@ class BukuController extends Controller
 
         $buku = $query->paginate(10);
 
+        // Menggunakan BukuResource::collection agar format/nama atribut respons sesuai ketentuan Soal 1
         return BukuResource::collection($buku)->additional([
             'status' => 'success'
         ]);
@@ -44,14 +44,14 @@ class BukuController extends Controller
 
         return response()->json([
             'message' => 'Buku berhasil ditambahkan',
-            'data'    => new BukuResource($buku)
+            'data'    => new BukuResource($buku) // Dibungkus dengan Resource
         ], 201);
     }
 
     /**
      * Menampilkan detail satu buku berdasarkan ID.
      */
-    public function show(int $id)
+    public function show($id)
     {
         $buku = Buku::with('kategori')->find($id);
 
@@ -69,7 +69,7 @@ class BukuController extends Controller
     /**
      * Mengubah data buku yang sudah ada.
      */
-    public function update(UpdateBukuRequest $request, int $id)
+    public function update(UpdateBukuRequest $request, $id)
     {
         $buku = Buku::find($id);
 
@@ -83,14 +83,14 @@ class BukuController extends Controller
 
         return response()->json([
             'message' => 'Buku berhasil diubah',
-            'data'    => new BukuResource($buku)
+            'data'    => new BukuResource($buku) // Dibungkus dengan Resource
         ], 200);
     }
 
     /**
      * Menghapus buku.
      */
-    public function destroy(int $id)
+    public function destroy($id)
     {
         $buku = Buku::find($id);
 
@@ -108,7 +108,7 @@ class BukuController extends Controller
     }
 
     /**
-     * Rekap jumlah buku per kategori (menggunakan model Kategori).
+     * Rekap jumlah buku per kategori.
      */
     public function rekapBukuPerKategori()
     {
@@ -116,22 +116,6 @@ class BukuController extends Controller
         return response()->json([
             'status' => 'success',
             'data'   => $data
-        ], 200);
-    }
-
-    /**
-     * Rekap jumlah buku per kategori menggunakan join dan groupBy.
-     */
-    public function bukuPerKategori()
-    {
-        $rekap = Buku::select('kategoris.nama as kategori', DB::raw('count(bukus.id) as jumlah_buku'))
-            ->join('kategoris', 'bukus.kategori_id', '=', 'kategoris.id')
-            ->groupBy('kategoris.id', 'kategoris.nama')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $rekap
         ], 200);
     }
 
@@ -144,21 +128,6 @@ class BukuController extends Controller
         return response()->json([
             'status' => 'success',
             'data'   => $data
-        ], 200);
-    }
-
-    /**
-     * Alias peminjaman per buku.
-     */
-    public function peminjamanPerBuku()
-    {
-        $rekap = Buku::select('id', 'judul', 'penulis', 'tahun_terbit')
-            ->withCount('peminjaman')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $rekap
         ], 200);
     }
 }

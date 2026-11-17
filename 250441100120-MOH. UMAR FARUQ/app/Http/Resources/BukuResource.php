@@ -11,13 +11,12 @@ class BukuResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'kategori_id' => $this->kategori_id,
             // Mengambil nama kategori dari relasi tabel kategoris kolom 'nama'
-            'kategori' => $this->kategori->nama ?? '-',
-
+            'kategori' => $this->kategori->nama ?? '-', 
+            
             // Sesuaikan 'judul_buku' atau 'judul' dengan nama kolom di tabel buku Anda
-            'judul' => $this->judul_buku ?? $this->judul ?? '-',
-
+            'judul' => $this->judul_buku ?? $this->judul ?? '-', 
+            
             'penulis' => $this->penulis,
             'tahun_terbit' => $this->tahun_terbit,
         ];

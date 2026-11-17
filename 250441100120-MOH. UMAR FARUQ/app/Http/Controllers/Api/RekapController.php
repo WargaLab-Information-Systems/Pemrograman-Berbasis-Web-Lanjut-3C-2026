@@ -36,6 +36,4 @@ class RekapController extends Controller
             'data' => $rekap
         ], 200);
     }
-
-    
 }
