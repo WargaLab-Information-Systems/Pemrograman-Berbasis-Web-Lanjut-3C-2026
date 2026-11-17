@@ -65,10 +65,6 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/buku/{id}/pinjam', [PerpustakaanAccessController::class, 'ajuanPinjam'])->name('buku.pinjam');
     Route::get('/riwayat-peminjaman/{id?}', [PerpustakaanAccessController::class, 'riwayatSendiri'])->name('peminjaman.saya');
 
-    // =========================================================================
-    // MODUL 6 - PENANGANAN CELAH KEAMANAN (A2, A3, A4)
-    // =========================================================================
-
     // Perbaikan A2: SQL Injection menggunakan Parameter Binding
     Route::get('/buku-cari', function (Request $request) {
         $judul = $request->query('judul');
@@ -76,13 +72,10 @@ Route::middleware(['auth'])->group(function () {
         return response()->json($hasil);
     });
 
-    // Celah A3 (Sudah dinonaktifkan pada Soal 2)
-    // Route::get('/buku/{buku}/hapus', [BukuController::class, 'destroy']);
 
-    // Celah A4: Detail peminjaman (Akan diamankan dengan Policy pada Soal 4)
+    // Melihat peminjaman yang diamankan dengan Policy
     Route::get('/peminjaman/{id}', [PerpustakaanAccessController::class, 'showPeminjaman'])->name('peminjaman.show');
 
-    // =========================================================================
 
     // 5. Khusus Role Admin
     Route::middleware(['role:admin'])->group(function () {
