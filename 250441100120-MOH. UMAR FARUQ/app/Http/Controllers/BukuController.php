@@ -6,6 +6,8 @@ use App\Http\Requests\StoreBukuRequest;
 use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
 
 class BukuController extends Controller
 {
@@ -13,13 +15,24 @@ class BukuController extends Controller
     public function index()
     {
         $bukuList = Buku::with('kategori')->get();
+
         return view('buku.index', compact('bukuList'));
+    }
+
+    public function cari(Request $request)
+    {
+        
+        // (Sesuaikan nama tabel database Anda, misal 'bukus' atau 'buku')
+        $judul = $request->input('judul');
+        $results = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
+        return response()->json($results);
     }
 
     // Menampilkan form tambah buku baru
     public function create()
     {
         $kategoriList = Kategori::all();
+
         return view('buku.create', compact('kategoriList'));
     }
 
@@ -36,6 +49,7 @@ class BukuController extends Controller
     public function katalog()
     {
         $bukuList = Buku::with('kategori')->get();
+
         return view('buku.katalog', compact('bukuList'));
     }
 
@@ -43,6 +57,7 @@ class BukuController extends Controller
     public function show(int $id)
     {
         $buku = Buku::with('kategori')->findOrFail($id);
+
         return view('buku.show', compact('buku'));
     }
 
@@ -51,6 +66,7 @@ class BukuController extends Controller
     {
         $buku = Buku::findOrFail($id);
         $kategoriList = Kategori::all();
+
         return view('buku.edit', compact('buku', 'kategoriList'));
     }
 
@@ -61,7 +77,7 @@ class BukuController extends Controller
             'kategori_id' => 'required|exists:kategoris,id',
             'judul' => 'required|string|max:150',
             'penulis' => 'required|string|max:100',
-            'tahun_terbit' => 'required|integer|between:1900,' . date('Y'),
+            'tahun_terbit' => 'required|integer|between:1900,'.date('Y'),
         ]);
 
         $buku = Buku::findOrFail($id);
@@ -71,11 +87,12 @@ class BukuController extends Controller
     }
 
     // Menghapus data buku (Delete)
-    public function destroy(int $id)
-    {
-        $buku = Buku::findOrFail($id);
-        $buku->delete();
 
-        return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus dari sistem.');
-    }
+   public function destroy(int $id)
+{
+    $buku = Buku::findOrFail($id);
+    $buku->delete();
+
+    return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus dari sistem.');
+}
 }

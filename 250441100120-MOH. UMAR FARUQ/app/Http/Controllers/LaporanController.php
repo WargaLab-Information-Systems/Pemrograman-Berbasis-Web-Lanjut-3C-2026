@@ -20,7 +20,6 @@ class LaporanController extends Controller
             'dikembalikan' => $peminjamanList->where('status', 'Dikembalikan')->count(),
             'ditolak' => $peminjamanList->where('status', 'Ditolak')->count(),
         ];
-
         return view('laporan.index', compact('peminjamanList', 'stats'));
     }
 }

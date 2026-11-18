@@ -8,17 +8,10 @@ use Illuminate\View\Component;
 
 class BukuCard extends Component
 {
-    
-    public function __construct()
-    {
-     
-    }
+    public function __construct() {}
 
-    
     public function render(): View|Closure|string
     {
         return view('components.buku-card');
     }
 }
-
- 

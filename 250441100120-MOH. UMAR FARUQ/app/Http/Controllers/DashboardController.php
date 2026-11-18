@@ -21,8 +21,8 @@ class DashboardController extends Controller
             return redirect()->route('buku.katalog');
         }
 
-        if (!$user->hasAnyRole(['admin', 'petugas'])
-            || (!$user->can('akses dashboard admin') && !$user->can('akses dashboard petugas'))) {
+        if (! $user->hasAnyRole(['admin', 'petugas'])
+            || (! $user->can('akses dashboard admin') && ! $user->can('akses dashboard petugas'))) {
             abort(403, 'Akses ditolak.');
         }
 

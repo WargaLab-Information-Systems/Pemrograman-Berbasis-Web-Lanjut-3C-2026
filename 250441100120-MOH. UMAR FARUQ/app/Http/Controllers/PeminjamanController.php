@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class PeminjamanController extends Controller
 {
@@ -48,10 +49,10 @@ class PeminjamanController extends Controller
         );
 
         Peminjaman::create([
-            'anggota_id'     => $anggota->id,
-            'buku_id'        => $request->buku_id,
+            'anggota_id' => $anggota->id,
+            'buku_id' => $request->buku_id,
             'tanggal_pinjam' => now(),
-            'status'         => 'Pending',
+            'status' => 'Pending',
         ]);
 
         return redirect()->route('buku.katalog')->with('success', 'Permohonan peminjaman berhasil dikirim. Menunggu persetujuan petugas.');
@@ -81,7 +82,7 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        if (!in_array($peminjaman->status, ['Pending', 'Diajukan'], true)) {
+        if (! in_array($peminjaman->status, ['Pending', 'Diajukan'], true)) {
             return redirect()->back()->with('error', 'Pengajuan ini sudah diproses.');
         }
 
@@ -98,7 +99,7 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        if (!in_array($peminjaman->status, ['Pending', 'Diajukan'], true)) {
+        if (! in_array($peminjaman->status, ['Pending', 'Diajukan'], true)) {
             return redirect()->back()->with('error', 'Pengajuan ini sudah diproses.');
         }
 
@@ -118,4 +119,14 @@ class PeminjamanController extends Controller
             })
             ->latest();
     }
+
+    public function show(int $id): View
+{
+    $peminjaman = Peminjaman::with(['anggota', 'buku'])->findOrFail($id);
+    
+    // Menutup celah IDOR (Soal 4 A4)
+    Gate::authorize('view', $peminjaman);
+
+    return view('peminjaman.show', compact('peminjaman'));
+}
 }

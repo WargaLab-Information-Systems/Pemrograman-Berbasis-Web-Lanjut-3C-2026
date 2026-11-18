@@ -20,6 +20,7 @@
                                 <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
                                 <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
                                 <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -29,6 +30,11 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->tanggal_pinjam }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->tanggal_kembali ?? 'Belum Dikembalikan' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $item->status }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <a href="{{ route('peminjaman.show', $item->id) }}" class="font-semibold text-emerald-700 hover:text-emerald-900">
+                                            Detail
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -19,7 +19,7 @@ class RekapController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $rekap
+            'data' => $rekap,
         ], 200);
     }
 
@@ -33,7 +33,7 @@ class RekapController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $rekap
+            'data' => $rekap,
         ], 200);
     }
 }

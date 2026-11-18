@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Buku;
 use App\Models\Kategori;
+use Illuminate\Database\Seeder;
 
 class BukuSeeder extends Seeder
 {
@@ -20,33 +20,33 @@ class BukuSeeder extends Seeder
         $bukuList = [
             [
                 'kategori_id' => $teknologi->id,
-                'judul'       => 'Pemrograman API Laravel',
-                'penulis'     => 'Moh. Umar Faruq',
-                'tahun_terbit'=> 2026,
+                'judul' => 'Pemrograman API Laravel',
+                'penulis' => 'Moh. Umar Faruq',
+                'tahun_terbit' => 2026,
             ],
             [
                 'kategori_id' => $komputer->id,
-                'judul'       => 'Algoritma dan Struktur Data',
-                'penulis'     => 'Rinaldi Munir',
-                'tahun_terbit'=> 2021,
+                'judul' => 'Algoritma dan Struktur Data',
+                'penulis' => 'Rinaldi Munir',
+                'tahun_terbit' => 2021,
             ],
             [
                 'kategori_id' => $database->id,
-                'judul'       => 'Basis Data Relasional',
-                'penulis'     => 'Fathansyah',
-                'tahun_terbit'=> 2020,
+                'judul' => 'Basis Data Relasional',
+                'penulis' => 'Fathansyah',
+                'tahun_terbit' => 2020,
             ],
             [
                 'kategori_id' => $jaringan->id,
-                'judul'       => 'Jaringan Komputer Modern',
-                'penulis'     => 'Andrew S. Tanenbaum',
-                'tahun_terbit'=> 2019,
+                'judul' => 'Jaringan Komputer Modern',
+                'penulis' => 'Andrew S. Tanenbaum',
+                'tahun_terbit' => 2019,
             ],
             [
                 'kategori_id' => $ai->id,
-                'judul'       => 'Kecerdasan Buatan dan Pembelajaran Mesin',
-                'penulis'     => 'Suyanto',
-                'tahun_terbit'=> 2022,
+                'judul' => 'Kecerdasan Buatan dan Pembelajaran Mesin',
+                'penulis' => 'Suyanto',
+                'tahun_terbit' => 2022,
             ],
         ];
 

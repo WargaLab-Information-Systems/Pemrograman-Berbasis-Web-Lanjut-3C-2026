@@ -15,10 +15,10 @@ class KategoriFactory extends Factory
      *
      * @return array<string, mixed>
      */
-   public function definition(): array
-{
-    return [
-        'nama' => fake()->word(),
-    ];
-}
+    public function definition(): array
+    {
+        return [
+            'nama' => fake()->word(),
+        ];
+    }
 }

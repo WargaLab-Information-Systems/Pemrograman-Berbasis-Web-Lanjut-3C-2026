@@ -21,9 +21,9 @@ class BukuController extends Controller
 
         if ($request->has('cari')) {
             $cari = $request->cari;
-            $query->where(function($q) use ($cari) {
+            $query->where(function ($q) use ($cari) {
                 $q->where('judul', 'like', "%{$cari}%")
-                  ->orWhere('penulis', 'like', "%{$cari}%");
+                    ->orWhere('penulis', 'like', "%{$cari}%");
             });
         }
 
@@ -31,7 +31,7 @@ class BukuController extends Controller
 
         // Menggunakan BukuResource::collection agar format/nama atribut respons sesuai ketentuan Soal 1
         return BukuResource::collection($buku)->additional([
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 
@@ -44,7 +44,7 @@ class BukuController extends Controller
 
         return response()->json([
             'message' => 'Buku berhasil ditambahkan',
-            'data'    => new BukuResource($buku) // Dibungkus dengan Resource
+            'data' => new BukuResource($buku), // Dibungkus dengan Resource
         ], 201);
     }
 
@@ -55,14 +55,14 @@ class BukuController extends Controller
     {
         $buku = Buku::with('kategori')->find($id);
 
-        if (!$buku) {
+        if (! $buku) {
             return response()->json([
-                'message' => 'not found'
+                'message' => 'not found',
             ], 404);
         }
 
         return (new BukuResource($buku))->additional([
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 
@@ -73,9 +73,9 @@ class BukuController extends Controller
     {
         $buku = Buku::find($id);
 
-        if (!$buku) {
+        if (! $buku) {
             return response()->json([
-                'message' => 'not found'
+                'message' => 'not found',
             ], 404);
         }
 
@@ -83,7 +83,7 @@ class BukuController extends Controller
 
         return response()->json([
             'message' => 'Buku berhasil diubah',
-            'data'    => new BukuResource($buku) // Dibungkus dengan Resource
+            'data' => new BukuResource($buku), // Dibungkus dengan Resource
         ], 200);
     }
 
@@ -94,16 +94,16 @@ class BukuController extends Controller
     {
         $buku = Buku::find($id);
 
-        if (!$buku) {
+        if (! $buku) {
             return response()->json([
-                'message' => 'not found'
+                'message' => 'not found',
             ], 404);
         }
 
         $buku->delete();
 
         return response()->json([
-            'message' => 'Buku berhasil dihapus'
+            'message' => 'Buku berhasil dihapus',
         ], 200);
     }
 
@@ -113,9 +113,10 @@ class BukuController extends Controller
     public function rekapBukuPerKategori()
     {
         $data = Kategori::withCount('buku')->get();
+
         return response()->json([
             'status' => 'success',
-            'data'   => $data
+            'data' => $data,
         ], 200);
     }
 
@@ -125,9 +126,10 @@ class BukuController extends Controller
     public function rekapPeminjamanPerBuku()
     {
         $data = Buku::withCount('peminjaman')->get();
+
         return response()->json([
             'status' => 'success',
-            'data'   => $data
+            'data' => $data,
         ], 200);
     }
 }

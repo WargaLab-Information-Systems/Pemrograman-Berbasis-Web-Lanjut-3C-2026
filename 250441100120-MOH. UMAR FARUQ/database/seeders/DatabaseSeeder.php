@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolePermissionSeeder::class,
             UserSeeder::class,
-            // KategoriSeeder::class, 
+            // KategoriSeeder::class,
             BukuSeeder::class, // <-- Pastikan ini aktif jika filenya sudah ada
         ]);
     }

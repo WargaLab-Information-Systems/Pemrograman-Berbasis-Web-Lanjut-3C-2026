@@ -15,12 +15,12 @@ class AnggotaFactory extends Factory
      *
      * @return array<string, mixed>
      */
-   public function definition(): array
-{
-    return [
-        'nama' => fake()->name(),
-        'email' => fake()->unique()->safeEmail(),
-        'no_telepon' => fake()->phoneNumber(),
-    ];
-}
+    public function definition(): array
+    {
+        return [
+            'nama' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'no_telepon' => fake()->phoneNumber(),
+        ];
+    }
 }

@@ -14,7 +14,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -29,9 +28,24 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile.destroy');
 });
 
-Route::middleware(['auth', PermissionMiddleware::using('kelola data buku')])->group(function () {
-    Route::resource('buku', BukuController::class);
+
+// RUTE BUKU (Implementasi Soal 3 - Gate kelola-buku)
+
+// Rute Manajemen Buku (Tambah, Ubah, Hapus) dilindungi Gate kelola-buku
+Route::middleware(['auth', 'can:kelola-buku'])->group(function () {
+    Route::resource('buku', BukuController::class)->except(['index', 'show']);
 });
+
+// Rute Lihat Buku / Katalog / Pencarian (Dapat diakses user/siswa)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
+    Route::get('/buku/{buku}', [BukuController::class, 'show'])->name('buku.show');
+    Route::get('/buku-cari', [BukuController::class, 'cari'])->name('buku.cari');
+});
+
+
+// RUTE LAINNYA
+
 
 Route::middleware(['auth', PermissionMiddleware::using('kelola data pengguna')])->group(function () {
     Route::resource('users', UserController::class)->except('show');
@@ -62,6 +76,10 @@ Route::middleware(['auth', PermissionMiddleware::using('mengajukan peminjaman bu
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/peminjaman/{id}', [PeminjamanController::class, 'show'])
+        ->whereNumber('id')
+        ->name('peminjaman.show');
+
     Route::get('/peminjaman/status', [PeminjamanController::class, 'status'])
         ->middleware(PermissionMiddleware::using('melihat status peminjaman sendiri'))
         ->name('peminjaman.status');
@@ -84,5 +102,7 @@ Route::middleware('auth')->group(function () {
         ->middleware(PermissionMiddleware::using('kelola peminjaman'))
         ->name('peminjaman.kelola');
 });
+
+Route::get('/uji-error', function () {     throw new RuntimeException('Pengujian halaman error Laravel'); }); 
 
 require __DIR__.'/auth.php';

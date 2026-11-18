@@ -10,17 +10,9 @@ class UpdateBukuRequest extends StoreBukuRequest
     public function authorize(): bool
     {
         return true;
+
     }
 
-    public function rules(): array
-    {
-        $tahunSekarang = date('Y');
-
-        return [
-            'kategori_id' => 'sometimes|nullable|exists:kategoris,id',
-            'judul' => 'sometimes|string|min:3|max:150',
-            'penulis' => 'sometimes|string|min:3|max:100',
-            'tahun_terbit' => "sometimes|integer|between:1900,{$tahunSekarang}",
-        ];
-    }
+    // Karena meng-extends StoreBukuRequest, rules, messages, dan attributes
+    // akan otomatis mewarisi dari StoreBukuRequest tanpa perlu ditulis ulang[cite: 2].
 }

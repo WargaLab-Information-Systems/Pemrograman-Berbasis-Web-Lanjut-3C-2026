@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Anggota;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +23,7 @@ class UserController extends Controller
 
     public function create(): View
     {
-        return view('users.form', ['user' => new User()]);
+        return view('users.form', ['user' => new User]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -64,7 +64,7 @@ class UserController extends Controller
             'email' => $validated['email'],
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
 

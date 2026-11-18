@@ -6,8 +6,8 @@ use App\Models\Anggota;
 use App\Models\Buku;
 use App\Models\Peminjaman;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PeminjamanTest extends TestCase
@@ -84,6 +84,54 @@ class PeminjamanTest extends TestCase
             ->assertDontSee($otherBook->judul);
     }
 
+    public function test_student_status_route_is_not_matched_as_a_loan_id(): void
+    {
+        $student = User::factory()->create();
+        $student->assignRole('siswa');
+
+        $this->actingAs($student)
+            ->get(route('peminjaman.status'))
+            ->assertOk();
+    }
+
+    public function test_student_can_view_their_loan_detail(): void
+    {
+        $student = User::factory()->create();
+        $student->assignRole('siswa');
+        $member = Anggota::factory()->create(['email' => $student->email]);
+        $book = Buku::factory()->create(['judul' => 'Atomic Habits']);
+        $loan = Peminjaman::factory()->create([
+            'anggota_id' => $member->id,
+            'buku_id' => $book->id,
+            'tanggal_pinjam' => '2026-11-01',
+            'tanggal_kembali' => '2026-11-02',
+            'status' => 'Dipinjam',
+        ]);
+
+        $this->actingAs($student)
+            ->get(route('peminjaman.show', $loan))
+            ->assertOk()
+            ->assertSee('ID Peminjaman')
+            ->assertSee((string) $loan->id)
+            ->assertSee($member->nama)
+            ->assertSee($book->judul)
+            ->assertSee('2026-11-01')
+            ->assertSee('2026-11-02')
+            ->assertSee('Dipinjam');
+    }
+
+    public function test_student_cannot_view_another_members_loan_detail(): void
+    {
+        $student = User::factory()->create();
+        $student->assignRole('siswa');
+        $member = Anggota::factory()->create();
+        $loan = Peminjaman::factory()->create(['anggota_id' => $member->id]);
+
+        $this->actingAs($student)
+            ->get(route('peminjaman.show', $loan))
+            ->assertForbidden();
+    }
+
     public function test_staff_can_view_and_approve_a_loan(): void
     {
         $staff = User::factory()->create();
@@ -98,7 +146,8 @@ class PeminjamanTest extends TestCase
         $this->actingAs($staff)
             ->get(route('peminjaman.kelola'))
             ->assertOk()
-            ->assertSee($member->nama);
+            ->assertSee($member->nama)
+            ->assertSee(route('peminjaman.show', $loan));
 
         $this->put(route('peminjaman.setujui', $loan->id))
             ->assertRedirect();

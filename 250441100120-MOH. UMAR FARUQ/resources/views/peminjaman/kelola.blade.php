@@ -40,6 +40,9 @@
                                         </span>
                                     </td>
                                     <td class="py-3 px-4 text-center space-x-1">
+                                        <a href="{{ route('peminjaman.show', $p->id) }}" class="inline-block px-3 py-1 bg-emerald-700 text-white rounded hover:bg-emerald-800 transition text-xs font-semibold shadow-sm">
+                                            Detail
+                                        </a>
                                         @if(in_array($p->status, ['Pending', 'Diajukan'], true))
                                             <form action="{{ route('peminjaman.setujui', $p->id) }}" method="POST" class="inline-block">
                                                 @csrf
