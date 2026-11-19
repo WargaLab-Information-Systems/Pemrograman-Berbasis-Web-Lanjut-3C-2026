@@ -5,11 +5,11 @@
 
 
 @section('content')
-
+    
     <div class="hero">
 
         <h2>
-            Welcome to Perpustakaan Cale
+            Welcome to Perpustakaan Cale - 250441100019
         </h2>
 
         <p>

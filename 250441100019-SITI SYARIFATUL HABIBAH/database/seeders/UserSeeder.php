@@ -33,7 +33,6 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        // Siswa: akun dihubungkan ke data anggota yang SUDAH ADA (punya riwayat peminjaman)
         foreach (['Budi Santoso', 'Siti Aminah', 'Ahmad Fauzi'] as $nama) {
             $anggota = Anggota::where('nama', $nama)->firstOrFail();
 
@@ -44,7 +43,7 @@ class UserSeeder extends Seeder
             ]);
             $user->assignRole('siswa');
 
-            $anggota->user_id = $user->id;   // hubungkan akun dengan anggota
+            $anggota->user_id = $user->id;  
             $anggota->save();
         }
     }

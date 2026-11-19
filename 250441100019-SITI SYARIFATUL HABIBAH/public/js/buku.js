@@ -111,7 +111,6 @@
     const PESAN_TIDAK_TERHUBUNG =
         'Tidak dapat terhubung ke API. Pastikan server berjalan, lalu coba lagi.';
 
-    // Menampilkan error validasi (422) di bawah masing-masing kolom.
     function tampilkanErrorValidasi(errors) {
         FIELD.forEach(function (nama) {
             const pesanField = errors[nama];
@@ -138,9 +137,7 @@
             : (idDiedit === null ? 'Tambah Buku' : 'Simpan Perubahan');
     }
 
-    // ---------------------------------------------------------------
-    // Menggambar tabel (memakai textContent, jadi aman dari XSS)
-    // ---------------------------------------------------------------
+
     function buatSel(teks) {
         const td = document.createElement('td');
         td.textContent = teks;
