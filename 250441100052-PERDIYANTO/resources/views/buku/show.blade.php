@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.perpustakaan')
 
 @section('title','Detail Buku')
 
@@ -17,5 +17,13 @@
         <p><a href="{{ route('buku.index') }}">Kembali ke Daftar Buku</a></p>
     </div>
 @endif
+
+@can('mengajukan peminjaman buku')
+    <form method="POST" action="{{ route('peminjaman.store') }}">
+        @csrf
+        <input type="hidden" name="buku_id" value="{{ $buku['id'] }}">
+        <button type="submit">Ajukan Peminjaman</button>
+    </form>
+@endcan
 
 @endsection

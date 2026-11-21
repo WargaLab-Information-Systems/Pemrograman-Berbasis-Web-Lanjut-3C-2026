@@ -4,54 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Buku;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BukuController extends Controller
 {
-    protected $buku = [
-    [
-        'id' => 1,
-        'judul' => 'Laravel: Up & Running',
-        'penulis' => 'Matt Stauffer',
-        'tahun_terbit' => 2019,
-        'kategori' => 'Pemrograman Web',
-    ],
-    [
-        'id' => 2,
-        'judul' => 'Clean Code',
-        'penulis' => 'Robert C. Martin',
-        'tahun_terbit' => 2008,
-        'kategori' => 'Rekayasa Perangkat Lunak',
-    ],
-    [
-        'id' => 3,
-        'judul' => 'Database System Concepts',
-        'penulis' => 'Abraham Silberschatz',
-        'tahun_terbit' => 2019,
-        'kategori' => 'Basis Data',
-    ],
-    [
-        'id' => 4,
-        'judul' => 'Introduction to Algorithms',
-        'penulis' => 'Thomas H. Cormen',
-        'tahun_terbit' => 2009,
-        'kategori' => 'Algoritma',
-    ],
-    [
-        'id' => 5,
-        'judul' => 'Design Patterns',
-        'penulis' => 'Erich Gamma',
-        'tahun_terbit' => 1994,
-        'kategori' => 'Rekayasa Perangkat Lunak',
-    ],
-];
 
+    public function index()
+    {
+        $bukus = Buku::with('kategori')->get();
 
-    public function index() {
-        $buku = Buku::join('kategoris', 'bukus.kategori_id', '=', 'kategoris.id')
-            ->select('bukus.*', 'kategoris.nama as kategori')
-            ->get();
-
-        return view('buku.index', ['buku' => $buku]);
+        return view('buku.index', compact('bukus'));
     }
 
     public function show($id) {
@@ -62,5 +24,17 @@ class BukuController extends Controller
             ->first();
 
         return view('buku.show', ['buku' => $temu]);
+    }
+
+    public function cari(Request $request)
+    {
+        $judul = $request->query('judul');
+
+        $bukus = DB::select(
+            "SELECT * FROM bukus WHERE judul LIKE ?",
+            ["%{$judul}%"]
+        );
+
+        return response()->json($bukus);
     }
 }

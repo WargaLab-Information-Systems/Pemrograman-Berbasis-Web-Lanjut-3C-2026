@@ -1,16 +1,62 @@
-@extends('layouts.app')
+@extends('layouts.perpustakaan')
 
-@section('title','Daftar Buku')
+@section('title', 'Daftar Buku')
 
 @section('content')
-<h2>Semua Buku</h2>
+<div id="alert-area"></div>
 
-    <div class="daftar-buku">
-        @foreach ($buku as $b)
-            <x-kartu-buku :judul="$b['judul']" :penulis="$b['penulis']" :tahun="$b['tahun_terbit']" :id="$b['id']">
-                <x-slot:kategori>{{ $b['kategori'] }}</x-slot:kategori>
-            </x-kartu-buku>
-        @endforeach
-    </div>
+<table class="tabel-buku">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Kategori</th>
+            <th>Judul</th>
+            <th>Penulis</th>
+            <th>Tahun Terbit</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
 
+    <tbody id="tbody-buku">
+        @forelse ($bukus as $index => $buku)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $buku->kategori->nama }}</td>
+ 
+                <td><a href="/buku/{{ $buku->id }}">{{ $buku->judul }}</a></td>
+
+                <td>{{ $buku->penulis }}</td>
+                <td>{{ $buku->tahun_terbit }}</td>
+                <td>
+                    @can('kelola-buku')
+                        <a href="{{ route('kelola-buku.index') }}" class="btn btn-primary">
+                            Kelola Buku
+                        </a>
+                    @endcan
+            </tr>
+        @empty
+            <tr>
+                <td colspan="6">Belum ada data buku.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
+<div class="paginasi">
+    <button type="button" id="btn-prev" disabled>
+        &laquo; Sebelumnya
+    </button>
+
+    <span id="info-halaman">
+        Halaman 1
+    </span>
+
+    <button type="button" id="btn-next" disabled>
+        Berikutnya &raquo;
+    </button>
+</div>
 @endsection
+
+@push('scripts')
+    <script>const BISA_KELOLA = false;</script>
+@endpush
