@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\Anggota;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+
+class RegisteredUserController extends Controller
+{
+    /**
+     * Display the registration view.
+     */
+    public function create(): View
+    {
+        return view('auth.register');
+    }
+
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:'.User::class,
+            ],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults(),
+            ],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Role Default Pengguna Baru
+        |--------------------------------------------------------------------------
+        |
+        | Pengguna yang melakukan registrasi melalui halaman umum tidak dapat
+        | memilih role sendiri. Setiap akun baru otomatis memperoleh role siswa.
+        |
+        */
+
+        $user->assignRole('siswa');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Data Anggota
+        |--------------------------------------------------------------------------
+        |
+        | Setiap siswa yang melakukan registrasi otomatis memiliki data anggota
+        | yang terhubung dengan akun pengguna melalui user_id.
+        |
+        */
+
+        Anggota::create([
+            'user_id' => $user->id,
+            'nama' => $user->name,
+            'email' => $user->email,
+            'no_telepon' => null,
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
+    }
+}
