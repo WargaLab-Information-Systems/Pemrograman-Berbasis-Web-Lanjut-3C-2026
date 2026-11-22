@@ -42,6 +42,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'siswa',
         ]);
 
         // TAMBAHKAN INI: Otomatis assign role 'siswa' saat registrasi umum[cite: 2]

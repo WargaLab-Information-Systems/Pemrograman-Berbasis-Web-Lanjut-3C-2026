@@ -40,7 +40,7 @@
                         </td>
                         <td style="padding: 12px; text-align: center;">
                             <a href="{{ route('admin.users.edit', $user->id) }}" style="background: #f59e0b; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold;">
-                                Edit Role / Data
+                                Edit
                             </a>
                         </td>
                     </tr>

@@ -24,19 +24,21 @@ class UserController extends Controller
     }
 
     // Memproses update data dan role pengguna
+    
     public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        
-        // Update nama dan email jika diperlukan
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+{
+    $user = User::findOrFail($id);
+    
+    // 1. Update data dasar dan kolom 'role' fisik di tabel users
+    $user->update([
+        'name' => $request->name,
+        'email' => $request->email,
+        'role' => $request->role, // Dibutuhkan oleh Policy
+    ]);
 
-        // Menetapkan/mengubah role pengguna (admin, petugas, atau siswa)
-        $user->syncRoles($request->role);
+    // 2. Sinkronkan juga ke Spatie Permission (agar middleware 'role:admin' di route tidak error)
+    $user->syncRoles([$request->role]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Data dan role pengguna berhasil diperbarui!');
-    }
+    return redirect()->route('admin.users.index')->with('success', 'Data dan role pengguna berhasil diperbarui!');
+}
 }

@@ -6,6 +6,7 @@ use App\Models\Peminjaman;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
+
 class PeminjamanPolicy
 {
     /**
@@ -19,13 +20,27 @@ class PeminjamanPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Peminjaman $peminjaman)
+    public function before(User $user, $ability)
     {
-        if ($user->hasRole(['admin', 'petugas'])) {
-            return true;
+        // Ambil data role dari database, ubah ke huruf kecil untuk amannya
+        $role = strtolower(trim($user->role ?? ''));
+
+        // Jika rolenya admin atau petugas, berikan akses penuh
+        if (in_array($role, ['admin', 'petugas'])) {
+            return true; 
         }
-        return $user->id === $peminjaman->anggota_id;
     }
+
+    /**
+     * Tentukan apakah user dapat melihat peminjaman (khusus siswa)
+     */
+    public function view(User $user, Peminjaman $peminjaman): bool
+    {
+        // Siswa hanya boleh melihat peminjaman miliknya sendiri
+        return (int) $user->id === (int) $peminjaman->user_id;
+    }
+
+    
 
     /**
      * Determine whether the user can create models.

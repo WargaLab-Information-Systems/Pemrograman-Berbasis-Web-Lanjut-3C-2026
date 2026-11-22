@@ -12,17 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('peminjamans', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('anggota_id')
-                ->constrained('anggotas')
-                ->onDelete('cascade');
-            $table->foreignId('buku_id')
-                ->constrained('bukus')
-                ->onDelete('cascade');
-            $table->date('tanggal_pinjam');
-            $table->date('tanggal_kembali')->nullable();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->foreignId('user_id')->constrained()->onDelete('cascade');
+    $table->foreignId('buku_id')->constrained()->onDelete('cascade');
+    $table->dateTime('tanggal_pinjam')->nullable();
+    $table->dateTime('tanggal_kembali')->nullable(); // <-- Tambahkan baris ini
+    $table->string('status')->default('dipinjam');
+    $table->timestamps();
+});
     }
 
     /**

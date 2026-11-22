@@ -104,6 +104,9 @@ Buku::create($request->all());
 
         return view('buku.edit', compact('buku', 'kategoris'));
     }
+    
+    return redirect()->route('dashboard')->with('success', 'Buku berhasil diproses / dihapus!');
+}
 
 
     // Menyimpan perubahan data ke database
@@ -140,40 +143,45 @@ public function update(Request $request, $id)
 
     return redirect()->route('dashboard')->with('success', 'Data buku berhasil diperbarui!');
 }
-   // public function destroy($id)
-    // {
-    //     // $buku = Buku::findOrFail($id);
-    //     // $buku->delete();
 
-    //     // // Tetap di halaman dashboard setelah hapus
-    //     // return redirect()->route('dashboard')->with('success', 'Buku berhasil dihapus!');
 
-    //     $buku = Buku::findOrFail($id);
-    // $buku->delete();
-
-    // // Langsung tampilkan teks sukses di layar, tanpa redirect ke halaman lain yang berpotensi 404
-    // return redirect()->route('dashboard')->with('success', 'Klaim hadiah berhasil! (Buku telah dihapus via CSRF)');
-    // }
-
-    public function destroy($id)
+public function destroy($id)
 {
+    // Cari buku berdasarkan ID
     $buku = \App\Models\Buku::find($id);
     
+    // Jika bukunya ada, hapus dari database
     if ($buku) {
         $buku->delete();
-        return "<h2 style='color: green; text-align: center; margin-top: 50px;'>SUKSES! Buku dengan ID " . $id . " berhasil dihapus melalui simulasi CSRF!</h2>";
+        
+        // Redirect ke dashboard dengan pesan sukses
+        return redirect()->route('dashboard')->with('success', 'Buku berhasil dihapus!');
     }
     
-    return redirect()->route('dashboard')->with('success', 'Buku berhasil diproses / dihapus!');
+    // Jika tidak ditemukan, kembalikan ke dashboard dengan pesan error
+    return redirect()->route('dashboard')->with('error', 'Buku dengan ID tersebut tidak ditemukan.');
 }
+
+// public function destroy($id)
+// {
+//     // Cari buku berdasarkan ID
+//     $buku = \App\Models\Buku::find($id);
+    
+//     // Jika bukunya ada, hapus dari database
+//     if ($buku) {
+//         $buku->delete();
+//         return "<h1 style='color: deeppink; text-align: center; margin-top: 50px;'>HIHUUU</h1>";
+//     }
+    
+//     return "<h3 style='color: red; text-align: center;'>Buku dengan ID tersebut tidak ditemukan.</h3>";
+// }
 
     public function cari(Request $request)
 {
-    $judul = $request->input('judul');
-    // Celah SQL Injection langsung digabung ke string SQL
-    $results = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
-    // $results = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
-    return response()->json($results);
+    $judul = $request->query('judul');
+    // $hasil = DB::select("SELECT * FROM bukus WHERE judul = '$judul'"); 
+    $hasil = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]); 
+    return response()->json($hasil);
 }
 
 public function cetakPdf()
@@ -186,19 +194,5 @@ public function cetakPdf()
     return $pdf->download('laporan-peminjaman.pdf');
 }
 
-public function hapusDarurat($id)
-{
-    // Cari data buku berdasarkan ID
-    $buku = \App\Models\Buku::find($id);
-
-    if ($buku) {
-        // Hapus permanen dari database
-        $buku->forceDelete(); 
-        
-        return 'Data buku berhasil dihapus secara permanen dari database!';
-    }
-
-    return 'Data buku dengan ID tersebut tidak ditemukan.';
-}
 
 }
