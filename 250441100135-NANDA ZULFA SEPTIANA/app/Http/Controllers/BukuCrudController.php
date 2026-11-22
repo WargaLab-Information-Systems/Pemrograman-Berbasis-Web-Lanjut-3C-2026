@@ -104,6 +104,9 @@ Buku::create($request->all());
 
         return view('buku.edit', compact('buku', 'kategoris'));
     }
+    
+    return redirect()->route('dashboard')->with('success', 'Buku berhasil diproses / dihapus!');
+}
 
 
     // Menyimpan perubahan data ke database

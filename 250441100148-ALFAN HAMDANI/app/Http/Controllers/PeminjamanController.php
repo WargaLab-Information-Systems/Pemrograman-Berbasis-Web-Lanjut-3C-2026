@@ -6,6 +6,7 @@ use App\Models\Peminjaman;
 use App\Models\Buku;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class PeminjamanController extends Controller
 {
@@ -89,4 +90,28 @@ class PeminjamanController extends Controller
 
         return view('admin.laporan.index', compact('laporan'));
     }
+
+    // A4
+    // public function show($id)
+    // {
+    //     // Mengambil data secara langsung tanpa pemeriksaan pemilik (Sesuai instruksi A4)
+    //     $peminjaman = Peminjaman::findOrFail($id);
+
+    //     // Nonaktifkan sementara Gate agar tidak memunculkan 403 Forbidden
+    //     // Gate::authorize('view', $peminjaman);
+
+    //     return view('siswa.peminjaman.show', compact('peminjaman'));
+    // }
+
+    // soal 4
+    public function show($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        Gate::authorize('view', $peminjaman);
+
+        // Ubah menjadi 'siswa.peminjaman.show' sesuai susunan folder Anda
+        return view('siswa.peminjaman.show', compact('peminjaman'));
+    }
+
 }

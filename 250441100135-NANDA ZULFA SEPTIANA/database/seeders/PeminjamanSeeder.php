@@ -8,11 +8,12 @@ use App\Models\Peminjaman;
 use App\Models\User; // <-- 1. Tambahkan import User di sini
 use App\Models\Buku; // <-- 1. Tambahkan import Buku di sini
 
+
 class PeminjamanSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    
+
+
     public function run(): void
 {
     // Cek apakah ada user, jika belum ada, buat user dummy otomatis secara instan

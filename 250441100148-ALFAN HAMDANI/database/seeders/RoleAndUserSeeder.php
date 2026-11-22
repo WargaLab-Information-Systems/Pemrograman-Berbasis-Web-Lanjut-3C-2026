@@ -88,7 +88,7 @@ class RoleAndUserSeeder extends Seeder
         // 3. Buat Akun Pengguna Default untuk Pengujian
         $admin = User::firstOrCreate(
             ['email' => 'admin@perpus.com'],
-            ['name' => 'Administrator', 'password' => Hash::make('password')]
+            ['name' => 'Administrator', 'password' => Hash::make('admin12345')]
         );
         $admin->assignRole('admin');
 

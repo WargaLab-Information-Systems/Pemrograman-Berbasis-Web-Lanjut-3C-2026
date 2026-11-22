@@ -9,6 +9,7 @@ class Peminjaman extends Model
 {
     use HasFactory;
     protected $table = 'peminjamans';
+    protected $guarded = ['id'];
 
     protected $fillable = [
         'user_id',       // <--- Pastikan ini ada!
