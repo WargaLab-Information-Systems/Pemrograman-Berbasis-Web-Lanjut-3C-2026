@@ -1,0 +1,15 @@
+/vendor
+/node_modules
+/tests
+/.git
+/.github
+.env
+.env.example
+.editorconfig
+.gitattributes
+.gitignore
+Homestead.json
+Homestead.yaml
+README.md
+AGENTS.md
+CLAUDE.md
