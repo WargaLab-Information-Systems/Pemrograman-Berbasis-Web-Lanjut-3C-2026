@@ -5,7 +5,7 @@
 @section('content')
 
 <div class="card card-narrow">
-    <h3>Login</h3>
+    <h3>Login - NIM 250441100018</h3>
 
     @if (session('status'))
         <div class="alert alert-success">{{ session('status') }}</div>

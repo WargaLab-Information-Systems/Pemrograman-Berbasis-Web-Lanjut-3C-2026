@@ -2,7 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Configuration\Middleware; 
 use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -13,9 +13,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Middleware "auth": tamu yang membuka halaman terlindungi diarahkan ke login.
+        // Middleware "guest": pengguna yang sudah login diarahkan ke dashboard
+        // saat membuka halaman login/registrasi.
+        // Vercel berada di balik proxy HTTPS: percayai header X-Forwarded-*
+        $middleware->trustProxies(at: '*');
+
         $middleware->redirectGuestsTo(fn (Request $request) => route('login'));
         $middleware->redirectUsersTo(fn (Request $request) => route('dashboard'));
 
+        // Alias middleware Spatie Laravel Permission untuk proteksi route.
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
