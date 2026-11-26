@@ -47,7 +47,7 @@
 
         <!-- Tautan Register di Bawah Tombol Login & Forgot Password -->
         <div class="mt-6 pt-4 border-t border-gray-100 text-center text-sm text-gray-600">
-            Belum punya akun? 
+            Apakah Kamu belum punya akun? 
             <a href="{{ route('register') }}" class="font-semibold text-indigo-600 hover:text-indigo-900 underline ms-1">
                 Daftar / Register Akun Baru
             </a>
